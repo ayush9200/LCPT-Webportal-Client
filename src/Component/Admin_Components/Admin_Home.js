@@ -6,7 +6,7 @@ import EnterIndividualForm from './EnterIndividualForm';
 import EnterHomeForm from './EnterHomeForm';
 function Admin_Home() {
     return (
-        <div>
+        <div style={{ marginTop: "7vh" }}>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
                 <Tab eventKey="profile" title="Profile">
                     <h1 style={{ textAlign: "center" }}>Profile</h1>
