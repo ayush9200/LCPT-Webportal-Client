@@ -22,7 +22,7 @@ function Header() {
       <Container>
         <Navbar.Brand href="/">LCPT Orientation Webportal</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav pullright="true">
             <Nav.Link href="#home">User</Nav.Link>
             <Nav.Link href="#link">Organization</Nav.Link>
