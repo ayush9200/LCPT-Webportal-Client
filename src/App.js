@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Layout from './Component/Layout'
 import Admin_Home from './Component/Admin_Components/Admin_Home';
 import LoginForm from './Component/login/LoginForm';
+import Organisation from './Component/organisation_component/organisation'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh" }}>Home Page</h1>} />
         <Route exact path="/login" element={<LoginForm />} />
         <Route exact path="/admin_home" element={<Admin_Home />} />
+        <Route exact path="/organisation/:id" element={<Organisation/>}/>
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Routes>
     </Layout>
