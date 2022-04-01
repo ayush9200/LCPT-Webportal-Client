@@ -34,6 +34,7 @@ var passwordFieldChanged = (event) => {
 function LoginForm() {
   const [state, setState] = useState({ username: "", password: "" });
   const [isloggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
 
 
 
@@ -71,9 +72,16 @@ function LoginForm() {
 
 
     if (document.getElementById("username").value == "admin" && document.getElementById("password").value == "1234") {
+      setRole("admin")
       setIsLoggedIn(true);
 
-    } else if (document.getElementById("username").value == "" || document.getElementById("password").value == "") {
+    } else if (document.getElementById("username").value == "organization" && document.getElementById("password").value == "1234") {
+      setRole("organization")
+      setIsLoggedIn(true);
+
+    }
+
+    else if (document.getElementById("username").value == "" || document.getElementById("password").value == "") {
       if (document.getElementById("username").value == "" && document.getElementById("password").value == "") {
         document.getElementById("errorH6UserName").style.display = "block"
         document.getElementById("errorH6Password").style.display = "block"
@@ -146,7 +154,13 @@ function LoginForm() {
 
 
   if (isloggedIn) {
-    return <Navigate to='/admin_home' />
+    if (role == "admin") {
+
+      return (<Navigate to='/admin_home' />)
+    } else if (role == "organization") {
+      return (<Navigate to='/organisation/1' />)
+
+    }
   }
 
   return (
