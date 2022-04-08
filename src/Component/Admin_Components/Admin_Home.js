@@ -4,6 +4,7 @@ import CreateUserForm from './CreateUserForm';
 import EnterOrganizationForm from './EnterOrganizationForm';
 import EnterIndividualForm from './EnterIndividualForm';
 import EnterHomeForm from './EnterHomeForm';
+import MicroCredsDashboard from './MicroCredsDashboard';
 function Admin_Home() {
     return (
         <div style={{ marginTop: "7vh" }}>
@@ -16,19 +17,19 @@ function Admin_Home() {
 
                 </Tab>
                 <Tab eventKey="microCardDash" title="Micro-cred Dashboard" >
-                    <h1 style={{ textAlign: "center" }}>Micro-cred Dashboard</h1>
+                    <h1 style={{ textAlign: "center" }}><MicroCredsDashboard /></h1>
                 </Tab>
                 <Tab eventKey="verifyCredentials" title="Verify Credentials" >
                     <h1 style={{ textAlign: "center" }}>Verify Credentials</h1>
                 </Tab>
 
-                <Tab eventKey="organizationView" title="Organization View" >
+                <Tab eventKey="organizationView" title="Organizations" >
                     <EnterOrganizationForm />
                 </Tab>
-                <Tab eventKey="homeView" title="Home View" >
+                <Tab eventKey="homeView" title="Homes" >
                     <EnterHomeForm />
                 </Tab>
-                <Tab eventKey="individualView" title="Individual View" >
+                <Tab eventKey="individualView" title="Users" >
                     <EnterIndividualForm />
                 </Tab>
             </Tabs></div>)
