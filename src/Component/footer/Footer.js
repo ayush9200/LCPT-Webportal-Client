@@ -3,7 +3,7 @@ import { Button, Navbar, Container, Row, Col, Nav, NavDropdown } from 'react-boo
 
 const Footer = () => {
 return (
-	<Navbar bg="light" expand="lg" fixed="bottom">
+	<Navbar bg="light" expand="lg" class="sticky-bottom">
         <Container>
             <Row>
                 <Col>

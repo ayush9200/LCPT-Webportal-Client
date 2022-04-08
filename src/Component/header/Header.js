@@ -24,8 +24,9 @@ function Header() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav pullright="true">
-            <Nav.Link href="#home">User</Nav.Link>
-            <Nav.Link href="#link">Organization</Nav.Link>
+            <Nav.Link href="/user">User</Nav.Link>
+            <Nav.Link href="/organisation/1">Organization</Nav.Link>
+            <Nav.Link href="/admin_home">Administrator</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>

@@ -37,7 +37,9 @@ function LoginForm() {
   const [role, setRole] = useState("");
 
 
+  const register = async () => {
 
+  }
   const loginFunction = async () => {
 
 
@@ -178,6 +180,11 @@ function LoginForm() {
             e.preventDefault();
 
             loginFunction()
+          }} />
+          
+          <input type="submit" class="fadeIn fourth" value="Register" onClick={async (e) => {
+            e.preventDefault();
+            register()
           }} />
         </form>
 
