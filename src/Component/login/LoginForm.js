@@ -8,6 +8,7 @@ import { Navigate } from 'react-router-dom';
 
 
 
+
 var userNameFieldChanged = (event) => {
   document.getElementById("errorH4").style.display = "none"
   if (document.getElementById("username").value != "") {
@@ -38,7 +39,8 @@ function LoginForm() {
 
 
   const register = async () => {
-
+   // return (<Navigate to='/userRegistration' />)
+   //<Redirect to="/userRegistration" />
   }
   const loginFunction = async () => {
 

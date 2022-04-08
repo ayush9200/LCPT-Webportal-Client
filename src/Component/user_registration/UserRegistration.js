@@ -1,27 +1,30 @@
 import React from 'react'
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
 
-function UserProfile() {
-
-    var mainDivStyling = {
-        width: "80vw",
-        margin: "auto"
-    }
-
+function UserRegistration() {
 
     return (
-        <div>
+        <div  style={{ marginTop: "4pc" }}>
             <Container>
-            <Form>
+                
+                <Form>
+                <Row>
                     <Form.Group as={Col} controlId="formGridName">
                         <Form.Label>Full Name</Form.Label>
                         <Form.Control type="text" placeholder="Enter your name" />
                     </Form.Group>
+                    </Row>
                     <br></br>
+                    <Row>
                     <Form.Group as={Col} controlId="formGridDOB">
                         <Form.Label>Date of Birth</Form.Label>
                         <Form.Control type="date" placeholder="MM/dd/yyyy" />
                     </Form.Group>
+                    <Form.Group as={Col} controlId="formSIN">
+                        <Form.Label>SIN Number</Form.Label>
+                        <Form.Control type="number" placeholder="SIN number" />
+                    </Form.Group>
+                    </Row>
                     <br></br>
                 <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridEmail">
@@ -65,10 +68,37 @@ function UserProfile() {
                     </Form.Group>
                 </Row>
 
+               
+                <br></br>
+                <hr>
+               </hr>
+                <br></br>
+                <Row>
+                    <Col xs={12} md={6}>
+                    <Form.Group as={Col} controlId="formEmployer">
+                    <Form.Label>Please select your employer</Form.Label>
+                        <Form.Select defaultValue="Choose...">
+                            <option>Choose...</option>
+                            <option>KPMG</option>
+                            <option>PWC</option>
+                        </Form.Select>
+                    </Form.Group>
+                    </Col>
+                    <Col xs={12} md={6}>
+                    <Form.Group as={Col} controlId="formRole">
+                    <Form.Label>Role</Form.Label>
+                        <Form.Select defaultValue="Choose...">
+                            <option>Choose...</option>
+                            <option>Project Manager</option>
+                            <option>Software Developer</option>
+                        </Form.Select>
+                    </Form.Group>
+                    </Col>
+                </Row>
+                <br></br>
                 <Button variant="primary" type="submit">
                     Submit
                 </Button>
-                
             </Form>
             <br></br>
             </Container>
@@ -76,7 +106,7 @@ function UserProfile() {
     )
 }
 
-export default UserProfile;
+export default UserRegistration;
 
 
 

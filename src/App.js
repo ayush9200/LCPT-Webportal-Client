@@ -9,6 +9,7 @@ import Admin_Home from './Component/Admin_Components/Admin_Home';
 import LoginForm from './Component/login/LoginForm';
 import Organisation from './Component/organisation_component/organisation'
 import UserHomePage from './Component/user/UserHomePage';
+import UserRegistration from './Component/user_registration/UserRegistration';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
         <Route exact path="/admin_home" element={<Admin_Home />} />
         <Route exact path="/organisation/:id" element={<Organisation/>}/>
         <Route exact path="/user" element={<UserHomePage/>}/>
+        <Route exact path="/userRegistration" element={<UserRegistration/>}/>
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Routes>
     </Layout>
