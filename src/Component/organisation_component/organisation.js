@@ -7,31 +7,129 @@ import HomeCheckListComponent from "./HomeCheckListComponent";
 import AuditReportComponent from "./AuditReportComponent";
 import OrganisationListComponent from "./OrganisationListComponent";
 import TrainStandardComponent from "./TrainStandardComponent";
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+
 export default function Organisation() {
 
-const params = useParams().id;
-console.log(params)
+    const [homeDetails, setHomeDetails] = useState({});
+    const params = useParams().id;
 
-return (
-  
-  <div style={{marginTop: "8vh"}}>
-    <h1>Organisation : {params} </h1>
-      <Tabs defaultActiveKey="trainStandard" id="uncontrolled-tab-example" className="mb-3">
-          
-          <Tab eventKey="trainStandard" title="Training Standard">
-              <TrainStandardComponent />
+    useEffect(() => {
 
-          </Tab>
-          <Tab eventKey="organistionList" title="Homes List" >
-              <OrganisationListComponent />
-          </Tab>
-          <Tab eventKey="homeCheckList" title="Home CheckList Component" >
-              <HomeCheckListComponent />
-          </Tab>
+        const gethomeDetailsUrl = "http://localhost:5000/orgnization/getOrganisationDetails/" + params
+        axios.get(gethomeDetailsUrl)
+            .then(res => {
+                console.log(res.data[0]);
+                setHomeDetails(res.data[0])
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }, [])
 
-          <Tab eventKey="auditReport" title="Audit Report" >
-              <AuditReportComponent />
-          </Tab>
-      </Tabs></div>)
+
+    function changeOrgText(event, id) {
+        let newHomeDetailObj ={}; 
+        newHomeDetailObj={...homeDetails};
+        if (id === 'det1')
+            newHomeDetailObj.org_name = event.target.value;
+        else if (id === 'det2')
+            newHomeDetailObj.contact_firstName = event.target.value;
+        else if (id === 'det3')
+            newHomeDetailObj.contact_lastName = event.target.value;
+        else if (id === 'det4')
+            newHomeDetailObj.phone_no = event.target.value;
+        else if (id === 'det5')
+            newHomeDetailObj.email_id = event.target.value;
+            setHomeDetails(homeDetails=>({
+                ...homeDetails,...newHomeDetailObj
+            }));
+
+        setHomeDetails(newHomeDetailObj);
+        console.log("home details:",homeDetails)
+
+    }
+    function saveOrgText(event,id){
+        console.log("In saveText")
+        console.log(homeDetails)
+        axios.put("http://localhost:5000/orgnization/editOrgDetails",{homeDetails})
+            .then(res => {
+                console.log(res);
+                
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+   
+
+    return (
+
+        <div style={{ marginTop: "8vh" }} >
+            <h1>Organisation : {params} </h1>
+            <Tabs defaultActiveKey="OrgDetails" id="uncontrolled-tab-example" className="mb-3">
+                <Tab eventKey="OrgDetails" title="Organisation Details">
+                    <div className='org-container'>
+                    <Form>
+                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Organisation Name</Form.Label>
+                            <Form.Control type="text" value={homeDetails.org_name} onChange={(e) => {
+                                changeOrgText(e, 'det1');
+                            }} />
+                        </Form.Group>
+                        <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Organisation ID</Form.Label>
+                            <Form.Control type="text" value={homeDetails.org_id} disabled />
+                        </Form.Group>
+                        <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Contact First-Name</Form.Label>
+                            <Form.Control type="text" value={homeDetails.contact_firstName} onChange={(e) => {
+                                changeOrgText(e, 'det2');
+                            }} />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Contact Last-Name</Form.Label>
+                            <Form.Control type="text" value={homeDetails.contact_lastName} onChange={(e) => {
+                                changeOrgText(e, 'det3');
+                            }} />
+                        </Form.Group>
+                        <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Control type="text" value={homeDetails.phone_no} onChange={(e) => {
+                                changeOrgText(e, 'det4');
+                            }} />
+                        </Form.Group>
+                        <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Contact Email</Form.Label>
+                            <Form.Control type="text" value={homeDetails.email_id} onChange={(e) => {
+                                changeOrgText(e, 'det5');
+                            }} />
+                        </Form.Group>
+                        <Button onClick={(e) => {
+                                saveOrgText(e, 'det1');
+                            }}  variant="warning" type="submit" > 
+                            Save Changes
+                        </Button>
+                    </Form>
+                    </div>
+                </Tab>
+                <Tab eventKey="trainStandard" title="Training Standard">
+                    <TrainStandardComponent />
+
+                </Tab>
+                <Tab eventKey="organistionList" title="Homes List" >
+                    <OrganisationListComponent />
+                </Tab>
+                <Tab eventKey="homeCheckList" title="Home CheckList Component" >
+                    <HomeCheckListComponent />
+                </Tab>
+
+                <Tab eventKey="auditReport" title="Audit Report" >
+                    <AuditReportComponent />
+                </Tab>
+            </Tabs></div>)
 
 }
