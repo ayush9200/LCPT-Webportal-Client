@@ -48,13 +48,13 @@ function EditCourseForm() {
 
     var editCourseSubmitted = function (e) {
         e.preventDefault();
-        var formGridCourseSelect = document.getElementById("formGridCourseSelect");
-        var titleText = document.getElementById("formGridTitle");
-        var descText = document.getElementById("formGridDescription");
-        var trDurText = document.getElementById("formGridTrainingDuration");
-        var vlDurText = document.getElementById("formGridValidityDuration");
+        var formGridCourseSelect = document.getElementById("formGridCourseSelectEdit");
+        var titleText = document.getElementById("formGridTitleEdit");
+        var descText = document.getElementById("formGridDescriptionEdit");
+        var trDurText = document.getElementById("formGridTrainingDurationEdit");
+        var vlDurText = document.getElementById("formGridValidityDurationEdit");
         if (formGridCourseSelect.value == "" || titleText.value == "" || descText.value == "" || trDurText.value == "" || vlDurText.value == "") {
-            var emptyFieldMsg = document.getElementById("emptyFieldMsg");
+            var emptyFieldMsg = document.getElementById("emptyFieldMsgEdit");
             emptyFieldMsg.style.display = "block";
 
         } else {
@@ -66,16 +66,16 @@ function EditCourseForm() {
             }
             var crsId = formGridCourseSelect.value;
 
-            // axios.post("http://localhost:5000/course/create-course", { courseFormDetails, crsId })
-            //     .then(res => {
-            //         console.log(res.data);
+            axios.put("http://localhost:5000/course/update-course", { courseFormDetails, crsId })
+                .then(res => {
+                    console.log(res.data);
 
-            //         var successMesage = document.getElementById("successMesage");
-            //         successMesage.style.display = "block";
-            //     })
-            //     .catch(err => {
-            //         console.log(err);
-            //     })
+                    var successMesage = document.getElementById("successMesageEdit");
+                    successMesage.style.display = "block";
+                })
+                .catch(err => {
+                    console.log(err);
+                })
 
         }
 
@@ -84,12 +84,12 @@ function EditCourseForm() {
 
     return (
         <div>
-            <h3 id='emptyFieldMsg' style={{ "textAlign": 'center', "color": "red", "display": "none" }}>Field is Empty</h3>
-            <h3 id='successMesage' style={{ "textAlign": 'center', "color": "green", "display": "none" }}>Your entry was saved</h3>
+            <h3 id='emptyFieldMsgEdit' style={{ "textAlign": 'center', "color": "red", "display": "none" }}>Field is Empty</h3>
+            <h3 id='successMesageEdit' style={{ "textAlign": 'center', "color": "green", "display": "none" }}>Your entry was saved</h3>
             <Container>
                 <Form>
                     <Row>
-                        <Form.Group as={Col} controlId="formGridCourseSelect">
+                        <Form.Group as={Col} controlId="formGridCourseSelectEdit">
                             <Form.Label>Select Course</Form.Label>
                             <Form.Select onChange={courseEditSelectChanged}>
                                 {allCourses.map((o) => {
@@ -98,40 +98,40 @@ function EditCourseForm() {
                                 })}
                             </Form.Select>
                         </Form.Group>
-                        <Form.Group as={Col} controlId="formGridTitle">
+                        <Form.Group as={Col} controlId="formGridTitleEdit">
                             <Form.Label>Title</Form.Label>
-                            <Form.Control placeholder="Enter Title" value={(allCourses.length > 0) ? allCourses[selectedCourseIndx].title : ""} />
+                            <Form.Control placeholder="Enter Title" defaultValue={(allCourses.length > 0) ? allCourses[selectedCourseIndx].title : ""} />
 
                         </Form.Group>
                     </Row>
                     <Row>
-                        <Form.Group as={Col} controlId="formGridDescription">
+                        <Form.Group as={Col} controlId="formGridDescriptionEdit">
                             <Form.Label>Description</Form.Label>
-                            <Form.Control placeholder="Enter Description" value={(allCourses.length > 0) ? allCourses[selectedCourseIndx].description : ""} />
+                            <Form.Control placeholder="Enter Description" defaultValue={(allCourses.length > 0) ? allCourses[selectedCourseIndx].description : ""} />
                         </Form.Group>
                     </Row>
                     <Row>
-                        <Form.Group as={Col} controlId="formGridTrainingDuration">
+                        <Form.Group as={Col} controlId="formGridTrainingDurationEdit">
                             <Form.Label>Traning Duration</Form.Label>
-                            <Form.Control placeholder="Enter Total Training in Days" value={(allCourses.length > 0) ? allCourses[selectedCourseIndx].training_duration : ""} />
+                            <Form.Control placeholder="Enter Total Training in Days" defaultValue={(allCourses.length > 0) ? allCourses[selectedCourseIndx].training_duration : ""} />
                         </Form.Group>
-                        <Form.Group as={Col} controlId="formGridValidityDuration">
+                        <Form.Group as={Col} controlId="formGridValidityDurationEdit">
                             <Form.Label>ValidityDuration</Form.Label>
-                            <Form.Control placeholder="Enter Total Validity in Days" value={(allCourses.length > 0) ? allCourses[selectedCourseIndx].validity_duration : ""} />
+                            <Form.Control placeholder="Enter Total Validity in Days" defaultValue={(allCourses.length > 0) ? allCourses[selectedCourseIndx].validity_duration : ""} />
                         </Form.Group>
 
                     </Row>
 
 
 
-                    <Button variant="primary" type="submit" onSubmit={editCourseSubmitted} >
+                    <Button variant="primary" type="submit" onClick={editCourseSubmitted}>
                         Submit
                     </Button>
                 </Form>
 
                 <br></br>
             </Container>
-        </div>
+        </div >
     )
 }
 
