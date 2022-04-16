@@ -64,7 +64,7 @@ function CreateUserForm() {
                     Submit
                 </Button>
             </Form>
-        </div >
+        </div>
     )
 }
 
