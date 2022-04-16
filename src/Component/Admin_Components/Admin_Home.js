@@ -8,7 +8,7 @@ import MicroCredsDashboard from './MicroCredsDashboard';
 function Admin_Home() {
     return (
         <div style={{ marginTop: "7vh" }}>
-            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3" fill>
                 <Tab eventKey="profile" title="Profile">
                     <h1 style={{ textAlign: "center" }}>Profile</h1>
                 </Tab>
@@ -17,7 +17,7 @@ function Admin_Home() {
 
                 </Tab>
                 <Tab eventKey="microCardDash" title="Micro-cred Dashboard" >
-                    <h1 style={{ textAlign: "center" }}><MicroCredsDashboard /></h1>
+                    <MicroCredsDashboard />
                 </Tab>
                 <Tab eventKey="verifyCredentials" title="Verify Credentials" >
                     <h1 style={{ textAlign: "center" }}>Verify Credentials</h1>

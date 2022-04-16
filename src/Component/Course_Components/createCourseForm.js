@@ -1,11 +1,16 @@
 import React from 'react'
 import { Form, Row, Col, Button } from 'react-bootstrap'
 
-function createCourseForm() {
+function CreateCourseForm() {
+
+    var mainDivStyling = {
+        width: "80vw",
+        margin: "auto"
+    }
     return (
         <div style={mainDivStyling}>
             <Form>
-                <Row className="mb-3">
+                <Row>
                     <Form.Group as={Col} controlId="formGridCourseId">
                         <Form.Label>Course ID</Form.Label>
                         <Form.Control placeholder="Enter Course ID" />
@@ -14,11 +19,14 @@ function createCourseForm() {
                         <Form.Label>Title</Form.Label>
                         <Form.Control placeholder="Enter Title" />
                     </Form.Group>
+                </Row>
+                <Row>
                     <Form.Group as={Col} controlId="formGridDescription">
                         <Form.Label>Description</Form.Label>
                         <Form.Control placeholder="Enter Description" />
                     </Form.Group>
-
+                </Row>
+                <Row>
                     <Form.Group as={Col} controlId="formGridTrainingDuration">
                         <Form.Label>Traning Duration</Form.Label>
                         <Form.Control placeholder="Enter Total Training in Days" />
@@ -36,8 +44,8 @@ function createCourseForm() {
                     Submit
                 </Button>
             </Form>
-        </div>
+        </div >
     )
 }
 
-export default createCourseForm
+export default CreateCourseForm
