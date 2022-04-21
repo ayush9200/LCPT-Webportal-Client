@@ -1,7 +1,4 @@
-html {
-    /* background-color: #56baed; */
-}
-
+/**
 body {
     font-family: "Poppins", sans-serif;
     height: 100vh;
@@ -26,7 +23,7 @@ h2 {
 
 
 
-/* STRUCTURE */
+
 
 .wrapper {
     display: flex;
@@ -64,7 +61,7 @@ h2 {
 
 
 
-/* TABS */
+
 
 h2.inactive {
     color: #cccccc;
@@ -77,7 +74,6 @@ h2.active {
 
 
 
-/* FORM TYPOGRAPHY*/
 
 input[type=button],
 input[type=submit],
@@ -151,9 +147,7 @@ input[type=text]:placeholder {
 
 
 
-/* ANIMATIONS */
 
-/* Simple CSS3 Fade-in-down Animation */
 .fadeInDown {
     -webkit-animation-name: fadeInDown;
     animation-name: fadeInDown;
@@ -191,7 +185,7 @@ input[type=text]:placeholder {
     }
 }
 
-/* Simple CSS3 Fade-in Animation */
+
 @-webkit-keyframes fadeIn {
     from {
         opacity: 0;
@@ -261,7 +255,7 @@ input[type=text]:placeholder {
     animation-delay: 1s;
 }
 
-/* Simple CSS3 Fade-in Animation */
+
 .underlineHover:after {
     display: block;
     left: 0;
@@ -283,7 +277,7 @@ input[type=text]:placeholder {
 
 
 
-/* OTHERS */
+
 
 *:focus {
     outline: none;
@@ -292,3 +286,34 @@ input[type=text]:placeholder {
 #icon {
     width: 60%;
 }
+
+*/
+
+@media all and (min-width: 480px) {
+    .Login {
+      padding: 60px 0;
+    }
+
+    .login-body {
+        background-color: #0f6fc5;
+    }
+
+    .Login h1 {
+        color: #0f6fc5;
+    }
+  
+    .Login {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: left;
+        margin: auto;
+        background: #ffffff;
+        box-shadow: 0px 14px 80px rgba(255, 255, 255, 0.2);
+        padding: 40px 55px 45px 55px;
+        border-radius: 15px;
+        transition: all .3s;
+        max-width: 450px;
+        border-color: #0f6fc5;
+    }
+  }

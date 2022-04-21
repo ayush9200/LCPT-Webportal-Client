@@ -8,7 +8,7 @@ return (
             <Row>
                 <Col>
                         <h4>About Us</h4>
-                        <ul class="list-unstyled">
+                        <ul className="list-unstyled">
                         <li>Home</li>
                         <li>User</li>
                         <li>Admin</li>
@@ -16,7 +16,7 @@ return (
                 </Col>
                 <Col>
                     <h4>Contact Us</h4>
-                        <ul class="list-unstyled">
+                        <ul className="list-unstyled">
                         <li>Home</li>
                         <li>User</li>
                         <li>Admin</li>
@@ -26,8 +26,8 @@ return (
                
                 </Col>
             </Row>
-                <div class="footer-bottom">
-                    <p class="test-xs-center">
+                <div className='footer-bottom'>
+                    <p className='test-xs-center'>
                         &copy;{new Date().getFullYear()} LCPT Webportal - All Rights Reserved
                     </p>
                 </div>
