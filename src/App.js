@@ -11,6 +11,8 @@ import Organisation from './Component/organisation_component/organisation'
 import UserHomePage from './Component/user/UserHomePage';
 import UserRegistration from './Component/user_registration/UserRegistration';
 
+import StaffComponent from './Component/organisation_component/StaffComponent';
+import HomeDetailComponent from './Component/organisation_component/HomeDetailComponent';
 function App() {
 
   return (
@@ -21,6 +23,9 @@ function App() {
         <Route exact path="/login" element={<LoginForm />} />
         <Route exact path="/admin_home" element={<Admin_Home />} />
         <Route exact path="/organisation/:id" element={<Organisation/>}/>
+        <Route exact path="/home/:id" element={<HomeDetailComponent/>}/>
+
+        <Route exact path="/showStaff/:id" element={<StaffComponent/>}/>
         <Route exact path="/user/:id" element={<UserHomePage/>}/>
         <Route exact path="/userRegistration" element={<UserRegistration/>}/>
         <Route path="*" component={() => "404 NOT FOUND"} />
