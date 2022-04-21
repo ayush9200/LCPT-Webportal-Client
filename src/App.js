@@ -1,8 +1,5 @@
-//import { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-//import Axios from 'axios';
-import Crud from './Component/crud_practice/Crud';
 import 'bootstrap/dist/css/bootstrap.css';
 import Layout from './Component/Layout'
 import Admin_Home from './Component/Admin_Components/Admin_Home';
@@ -20,6 +17,7 @@ function App() {
       <Routes >
 
         <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh", 'minHeight':'40pc' }}>Home Page</h1>} />
+        <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh" }}>Home Page</h1>} />
         <Route exact path="/login" element={<LoginForm />} />
         <Route exact path="/admin_home" element={<Admin_Home />} />
         <Route exact path="/organisation/:id" element={<Organisation/>}/>

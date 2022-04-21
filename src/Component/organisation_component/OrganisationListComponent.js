@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import { Link } from 'react-router-dom'
 
 
 export default function OrganisationListComponent() {
@@ -44,8 +45,9 @@ export default function OrganisationListComponent() {
                         <tr >
                             <td>{data.home_id}</td>
                             <td>{data.name}</td>
-                            <td> <Button variant="link">View</Button>/<Button variant="link">Edit</Button>/<Button variant="link">Delete</Button></td>
-                            <td><Button variant="warning">View Staff Members</Button></td>
+                            <td> <Button variant="warning"><Link to={`/home/${data.home_id}`}>View Home Details</Link></Button></td>
+                            <td><Button variant="warning" 
+                           ><Link to={`/showStaff/${data.home_id}`}>View Staff Members</Link></Button></td>
                         </tr>
                     </tbody>
                 })}

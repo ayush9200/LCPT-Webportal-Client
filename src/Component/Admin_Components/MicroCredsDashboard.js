@@ -1,51 +1,46 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Tabs, Tab } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-
+import CreateCourseForm from '../Course_Components/createCourseForm';
+import ViewCourseTable from '../Course_Components/viewCourseTable';
+import EditCourseForm from '../Course_Components/editCourseForm';
+import DeleteCourseForm from '../Course_Components/deleteCourseForm';
 function MicroCredsDashboard() {
-    var microCredsObj = [
-        { EMP_USR_ID: "UI001", USER_ID: "UI001", COURSE_ID: "CI001", STATUS: true, VALIDITY: "2022-10-22", DOCUMENT_URL: "xyz@url.com" },
-        { EMP_USR_ID: "UI002", USER_ID: "UI002", COURSE_ID: "CI002", STATUS: true, VALIDITY: "2022-12-22", DOCUMENT_URL: "xyz2@url.com" },
-        { EMP_USR_ID: "UI003", USER_ID: "UI003", COURSE_ID: "CI004", STATUS: false, VALIDITY: "", DOCUMENT_URL: "xyz@url.com" },
-        { EMP_USR_ID: "UI004", USER_ID: "UI004", COURSE_ID: "CI004", STATUS: true, VALIDITY: "2022-10-22", DOCUMENT_URL: "xyz@url.com" },
-        { EMP_USR_ID: "UI005", USER_ID: "UI005", COURSE_ID: "CI005", STATUS: true, VALIDITY: "2022-10-22", DOCUMENT_URL: "xyz@url.com" }
-    ]
 
-    var cols = [{
-        dataField: 'EMP_USR_ID',
-        text: 'Employee User ID'
-    },
-    {
-        dataField: 'USER_ID',
-        text: 'User ID'
-    },
-    {
-        dataField: 'COURSE_ID',
-        text: 'COURSE ID'
-    },
-    {
-        dataField: 'STATUS',
-        text: 'STATUS'
-    },
-    {
-        dataField: 'VALIDITY',
-        text: 'VALIDITY'
-    },
-    {
-        dataField: 'DOCUMENT_URL',
-        text: 'DOCUMENT URL'
-    },
-    ]
     return (
-        <div>
+        <div style={{ marginTop: "1vh" }}>
+            <Tabs defaultActiveKey="course" fill>
 
-            <BootstrapTable striped hover keyField='EMP_USR_ID' data={microCredsObj} columns={cols} />
+                <Tab eventKey="course" title="Course" style={{ marginTop: "1vh" }}>
+                    <Tabs defaultActiveKey="view" fill>
+                        <Tab eventKey="create_form" title="Create Course">
+                            <CreateCourseForm />
+                        </Tab>
+                        <Tab eventKey="view" title="View Courses">
+                            <ViewCourseTable />
+                        </Tab>
+                        <Tab eventKey="update_form" title="Update Course">
+                            <EditCourseForm />
+                        </Tab>
+                        <Tab eventKey="delete_form" title="Delete Course">
+                            <DeleteCourseForm />
+                        </Tab>
+                    </Tabs>
+                </Tab>
 
 
+                <Tab eventKey="course-home-mapping" title="course-home-mapping">
+                    <h1 style={{ textAlign: "center" }}>course-home-mapping</h1>
+                </Tab>
 
 
+                <Tab eventKey="course-user-mapping" title="course-user-mapping">
+                    <h1 style={{ textAlign: "center" }}>course-user-mapping</h1>
+                </Tab>
+            </Tabs>
         </div>
     )
+
 }
 
 export default MicroCredsDashboard

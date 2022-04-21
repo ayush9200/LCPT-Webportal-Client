@@ -10,19 +10,24 @@ import TrainStandardComponent from "./TrainStandardComponent";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import Spinner from 'react-bootstrap/Spinner'
 
 export default function Organisation() {
-
-    const [homeDetails, setHomeDetails] = useState({});
     const params = useParams().id;
+    const [homeDetails, setHomeDetails] = useState({id:params});    
+    const [showSpinner, setshowSpinner] = useState(false);
+    const toggleshowSpinner = () => setshowSpinner(!showSpinner);
 
     useEffect(() => {
-
+       // toggleshowSpinner()
+       setshowSpinner(true)
         const gethomeDetailsUrl = "http://localhost:5000/orgnization/getOrganisationDetails/" + params
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data[0]);
                 setHomeDetails(res.data[0])
+                setshowSpinner(false)
+               // toggleshowSpinner()
             })
             .catch(err => {
                 console.log(err);
@@ -54,10 +59,11 @@ export default function Organisation() {
     function saveOrgText(event,id){
         console.log("In saveText")
         console.log(homeDetails)
-        axios.put("http://localhost:5000/orgnization/editOrgDetails",{homeDetails})
+        toggleshowSpinner()
+        axios.put("http://localhost:5000/orgnization/editOrgDetails",homeDetails)
             .then(res => {
                 console.log(res);
-                
+                setshowSpinner(false)
             })
             .catch(err => {
                 console.log(err);
@@ -72,6 +78,11 @@ export default function Organisation() {
             <Tabs defaultActiveKey="OrgDetails" id="uncontrolled-tab-example" className="mb-3">
                 <Tab eventKey="OrgDetails" title="Organisation Details">
                     <div className='org-container'>
+                    {showSpinner? <div  style={{paddingLeft: "50%",paddingTop: "10%",position:"absolute"}}>
+                        <Spinner show={showSpinner}  animation="border" size="lg" variant='primary'/>
+
+                        </div> : <div></div>}
+                        
                     <Form>
                         <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
                             <Form.Label>Organisation Name</Form.Label>
@@ -110,7 +121,7 @@ export default function Organisation() {
                         </Form.Group>
                         <Button onClick={(e) => {
                                 saveOrgText(e, 'det1');
-                            }}  variant="warning" type="submit" > 
+                            }}  variant="warning" > 
                             Save Changes
                         </Button>
                     </Form>
