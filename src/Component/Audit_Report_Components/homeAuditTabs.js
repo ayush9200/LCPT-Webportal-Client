@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Tabs, Tab } from 'react-bootstrap'
+import { Tabs, Tab, Form } from 'react-bootstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 
 function HomeAuditTabs(props) {
-    const [x, setX] = useState([]);
+    const [staffRoleID, setStaffRoleID] = useState("");
 
     useEffect(() => {
 
@@ -266,14 +266,33 @@ function HomeAuditTabs(props) {
         text: 'Status'
     }
     ];
+    var createRoleIDSelectItems = () => {
+        let items = [];
+        items.push(<option value="">All</option>)
+        console.log(homeSummary)
 
-
+        for (var i in homeSummary) {
+            console.log(homeSummary[i]);
+            items.push(<option value={homeSummary[i].role_id}> {homeSummary[i].role_id} </option>);
+        }
+        return items;
+    }
+    var homeStaffData = (homeStaff
+        .filter((val) => {
+            // console.log(val)
+            if (staffRoleID == "") {
+                return val;
+            } else if (val.role_id.toString().toLocaleLowerCase().includes(staffRoleID.toLocaleLowerCase())) {
+                return val;
+            }
+        }))
 
     return (
         <div>
             {/* <h3 style={{ textAlign: "center" }}> Home ID : {props.homeID} </h3> */}
             <Tabs defaultActiveKey="home" fill>
                 <Tab eventKey="home" title="Home Summary">
+                    <BootstrapTable id='homeSummaryTable' keyField='id' data={homeSummary} columns={homeSummCols} />
                     <ReactHTMLTableToExcel
                         id="test-table-xls-button"
                         className="download-table-xls-button btn btn-dark mb-3"
@@ -281,19 +300,29 @@ function HomeAuditTabs(props) {
                         filename="tablexls"
                         sheet="tablexls"
                         buttonText="Download In Excel" />
-                    <BootstrapTable id='homeSummaryTable' keyField='id' data={homeSummary} columns={homeSummCols} />
 
                 </Tab>
 
                 <Tab eventKey="home-staff-specific" title="Home Staff Summary">
-                    <ReactHTMLTableToExcel
-                        id="test-table-xls-button"
-                        className="download-table-xls-button btn btn-dark mb-3"
-                        table="homeStaffSpecificTable"
-                        filename="tablexls"
-                        sheet="tablexls"
-                        buttonText="Download In Excel" />
-                    <BootstrapTable id='homeStaffSpecificTable' keyField='id' data={homeStaff} columns={homeStaffCols} />
+                    <div style={{ display: "flex", marginLeft: "22%" }}>
+                        <h4>Role ID:  </h4>
+                        <select size="lg" style={{ width: "50%" }} onChange={(e) => {
+                            var roleID = e.target.value;
+                            setStaffRoleID(roleID);
+
+                        }}>
+                            {createRoleIDSelectItems()}
+                        </select>
+
+                        <ReactHTMLTableToExcel
+                            id="test-table-xls-button"
+                            className="download-table-xls-button btn btn-dark mb-3"
+                            table="homeStaffSpecificTable"
+                            filename="tablexls"
+                            sheet="tablexls"
+                            buttonText="Download In Excel" />
+                    </div>
+                    <BootstrapTable id='homeStaffSpecificTable' keyField='id' data={homeStaffData} columns={homeStaffCols} />
                 </Tab>
 
             </Tabs></div>

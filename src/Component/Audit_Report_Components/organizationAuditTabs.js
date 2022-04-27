@@ -7,6 +7,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import axios from 'axios'
 import Form from 'react-bootstrap/Form'
+import OrganizationStaffSummary from './organizationStaffSummary'
 // import { Row } from 'react-bootstrap'
 function OrganizationAuditTabs(props) {
     const [homeDetails, setHomeDetails] = useState([]);
@@ -117,6 +118,7 @@ function OrganizationAuditTabs(props) {
                 </Tab>
                 <Tab eventKey="staff-summary" title="Organization Staff Summary">
                     {/* <EditCourseForm /> */}
+                    <OrganizationStaffSummary />
                 </Tab>
 
             </Tabs>

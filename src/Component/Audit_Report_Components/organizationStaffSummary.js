@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Tabs, Tab } from 'react-bootstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
+// import { Button } from 'react-bootstrap';
 function OrganizationStaffSummary() {
     const [x, setX] = useState([]);
 
@@ -9,6 +10,7 @@ function OrganizationStaffSummary() {
 
 
     }, [])
+    var orgStaffSummData = []
     var orgStaffSummCols = [{
         dataField: 'home_id',
         text: 'Home ID'
