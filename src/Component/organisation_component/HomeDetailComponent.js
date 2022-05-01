@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Tabs, Tab } from 'react-bootstrap'
 import HomeCheckListComponent from "./HomeCheckListComponent";
-import AuditReportComponent from "./AuditReportComponent";
+// import AuditReportComponent from "./AuditReportComponent";
 import OrganisationListComponent from "./OrganisationListComponent";
 import TrainStandardComponent from "./TrainStandardComponent";
 import Form from 'react-bootstrap/Form';
