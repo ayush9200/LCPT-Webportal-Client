@@ -25,6 +25,8 @@ function UserProfile() {
     const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
     const [newUser, setNewUser] = useState(intialState)
     const params = useParams().id;
+    
+    
 
     useEffect(() => {
         const getUserData = BASE_URL_USER + params
@@ -33,12 +35,14 @@ function UserProfile() {
                 console.log(res.data.data);
                 if(res.data !== undefined){
                     setNewUser(res.data.data)
+                   
+                    
                 }else{
                     setNewUser(intialState)
                 }
             })
             .catch(err => {
-                console.log(err);
+                console.log({err});
             })
     }, []);
 
