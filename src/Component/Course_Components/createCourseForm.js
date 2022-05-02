@@ -29,7 +29,7 @@ function CreateCourseForm() {
                 "validity_duration": vlDurText.value
             }
 
-            axios.post("http://localhost:5000/course/create-course", { courseFormDetails })
+            axios.post("https://lcpt-webportal-backend.herokuapp.com/course/create-course", { courseFormDetails })
                 .then(res => {
                     console.log(res.data);
 

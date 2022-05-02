@@ -25,7 +25,7 @@ export default function TrainStandardComponent() {
     }, [])
 
     function getTrainingData(){
-        const trainStandardsUrl = "http://localhost:5000/orgnization/getOrganisationDetails/" + params
+        const trainStandardsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getOrganisationDetails/" + params
         axios.get(trainStandardsUrl)
             .then(res => {
                 console.log(res);
@@ -58,7 +58,7 @@ export default function TrainStandardComponent() {
             newtrainStandards.push(newStandard);
             console.log(newtrainStandards)  
             setTrainStandards(newtrainStandards);
-            let trainStandardsUrl = "http://localhost:5000/orgnization/addNewStandard/" 
+            let trainStandardsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewStandard/" 
             axios.post(trainStandardsUrl,{id:params,trainStandards:newtrainStandards})
             .then(res => {
                 console.log(res);
@@ -72,7 +72,7 @@ export default function TrainStandardComponent() {
     }
     function saveText(event){
         console.log("saveText")
-        axios.put("http://localhost:5000/orgnization/editTrainingStandards",{id:params,trainStandards:trainStandards})
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editTrainingStandards",{id:params,trainStandards:trainStandards})
             .then(res => {
                 console.log(res);
                 
@@ -87,7 +87,7 @@ export default function TrainStandardComponent() {
         
         newtrainStandards.splice(id, 1);
         console.log(newtrainStandards)
-        axios.put("http://localhost:5000/orgnization/editTrainingStandards",{id:params,trainStandards:newtrainStandards})
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editTrainingStandards",{id:params,trainStandards:newtrainStandards})
         .then(res => {
             getTrainingData();
         })

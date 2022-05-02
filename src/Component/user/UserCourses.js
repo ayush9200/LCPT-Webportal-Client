@@ -34,16 +34,16 @@ function UserCourses() {
   
    
 
-    const BASE_URL_GET_HOMELIST = "http://localhost:5000/orgnization/getHomesList/";
-    const BASE_URL_GET_ROLELIST = "http://localhost:5000/orgnization/getRoleByHomeId/";
-    const BASE_URL_GET_COURSELIST = "http://localhost:5000/course/fetchCourseDetails";
+    const BASE_URL_GET_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/";
+    const BASE_URL_GET_ROLELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getRoleByHomeId/";
+    const BASE_URL_GET_COURSELIST = "https://lcpt-webportal-backend.herokuapp.com/course/fetchCourseDetails";
 
     useEffect(() => {
         fetchData();
     },[]);
 
     async function fetchData() {
-        const BASE_URL_USER = "http://localhost:5000/user/getUser/";
+        const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
         const getUserData = BASE_URL_USER + params
         let response = await axios.get(
             getUserData

@@ -30,7 +30,7 @@ function ViewCourseTable() {
 
     ]
     useEffect(() => {
-        axios.get("http://localhost:5000/course/view-all-courses")
+        axios.get("https://lcpt-webportal-backend.herokuapp.com/course/view-all-courses")
             .then(res => {
                 // console.log(res.data[0]);
                 setAllCourses(res.data);

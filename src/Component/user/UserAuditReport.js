@@ -14,9 +14,9 @@ function UserAuditReport() {
     const [finalList, setFinalList] = useState([]);
   
    
-
-    const BASE_URL_GET_COURSELIST = "http://localhost:5000/course/fetchCourseDetails";
-    const BASE_URL_USER = "http://localhost:5000/user/getUser/";
+    // https://lcpt-webportal.herokuapp.com/
+    const BASE_URL_GET_COURSELIST = "https://lcpt-webportal.herokuapp.com/course/fetchCourseDetails";
+    const BASE_URL_USER = "https://lcpt-webportal.herokuapp.com/user/getUser/";
 
     useEffect(() => {
         fetchData();

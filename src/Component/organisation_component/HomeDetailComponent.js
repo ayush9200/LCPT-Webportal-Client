@@ -14,7 +14,7 @@ export default function HomeDetailComponent() {
 
     useEffect(() => {
 
-        const gethomeDetailsUrl = "http://localhost:5000/orgnization/getHomeDetails/" + params
+        const gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomeDetails/" + params
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 if (res.data == "" || res.data.length == 0)
@@ -55,7 +55,7 @@ export default function HomeDetailComponent() {
     function saveHomeText() {
         console.log("In saveText")
         console.log(homeDetails)
-        axios.put("http://localhost:5000/orgnization/editHomeDetails", { homeDetails })
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editHomeDetails", { homeDetails })
             .then(res => {
                 console.log(res);
 
