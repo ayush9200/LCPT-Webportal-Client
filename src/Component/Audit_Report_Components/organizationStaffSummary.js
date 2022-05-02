@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Tabs, Tab } from 'react-bootstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
+
 // import { Button } from 'react-bootstrap';
 function OrganizationStaffSummary() {
     const [x, setX] = useState([]);
+    
 
     useEffect(() => {
 
@@ -33,14 +35,15 @@ function OrganizationStaffSummary() {
     ];
     return (
         <div>
-            <ReactHTMLTableToExcel
+            <h1>Organization Staff Summary</h1>
+            {/* <ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="download-table-xls-button btn btn-dark mb-3"
                 table="organizationStaffSpecificTable"
                 filename="tablexls"
                 sheet="tablexls"
                 buttonText="Download In Excel" />
-            <BootstrapTable id='organizationStaffSpecificTable' keyField='id' data={orgStaffSummData} columns={orgStaffSummCols} />
+            <BootstrapTable id='organizationStaffSpecificTable' keyField='id' data={orgStaffSummData} columns={orgStaffSummCols} /> */}
         </div>
     )
 }

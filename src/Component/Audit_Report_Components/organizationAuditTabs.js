@@ -12,7 +12,7 @@ import OrganizationStaffSummary from './organizationStaffSummary'
 function OrganizationAuditTabs(props) {
     const [homeDetails, setHomeDetails] = useState([]);
     const [userCourseHomeDetails, setUserCourseHomeDetails] = useState([]);
-    const [chosenHome, setChosenHome] = useState("h001");
+    const [chosenHome, setChosenHome] = useState("1");
 
 
     const organizationID = props.organizationID;
@@ -86,8 +86,8 @@ function OrganizationAuditTabs(props) {
 
             <Tabs defaultActiveKey="organization" fill>
                 <Tab eventKey="organization" title="Organization Summary">
-                    <BootstrapTable id='organizationSummaryTable' keyField='id' data={orgSumm} columns={columns} />
-                    {/* <OrganizationSummaryComponent /> */}
+                    <OrganizationSummaryComponent />
+                    {/* <BootstrapTable id='organizationSummaryTable' keyField='id' data={orgSumm} columns={columns} />
 
                     <ReactHTMLTableToExcel
                         id="test-table-xls-button"
@@ -95,7 +95,7 @@ function OrganizationAuditTabs(props) {
                         table="organizationSummaryTable"
                         filename="tablexls"
                         sheet="tablexls"
-                        buttonText="Download In Excel" />
+                        buttonText="Download In Excel" /> */}
                 </Tab>
                 <Tab eventKey="home" title="Home Specific">
                     <div style={{ display: "flex", marginLeft: "28%" }}>
@@ -105,10 +105,10 @@ function OrganizationAuditTabs(props) {
                             setChosenHome(homeID);
 
                         }}>
-                            <option value="h001">h001</option>
-                            <option value="h002">h002</option>
-                            <option value="h003">h003</option>
-                            <option value="h004">h004</option>
+                            <option value="1">h001</option>
+                            <option value="2">h002</option>
+                            <option value="3">h003</option>
+                            <option value="4">h004</option>
                         </Form.Select>
 
                     </div>
