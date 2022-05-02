@@ -2,11 +2,6 @@
 import './organisation.css';
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Tabs, Tab } from 'react-bootstrap'
-import HomeCheckListComponent from "./HomeCheckListComponent";
-// import AuditReportComponent from "./AuditReportComponent";
-import OrganisationListComponent from "./OrganisationListComponent";
-import TrainStandardComponent from "./TrainStandardComponent";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
@@ -85,7 +80,7 @@ export default function HomeDetailComponent() {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
-                            <Form.Label>Organisation ID</Form.Label>
+                            <Form.Label>Home ID</Form.Label>
                             <Form.Control type="text" 
                               defaultValue={homeDetails.home_id} disabled 
                              />

@@ -136,9 +136,9 @@ export default function Organisation() {
                 <Tab eventKey="organistionList" title="Homes List" >
                     <OrganisationListComponent />
                 </Tab>
-                <Tab eventKey="homeCheckList" title="Home CheckList Component" >
+                {/* <Tab eventKey="homeCheckList" title="Home CheckList Component" >
                     <HomeCheckListComponent />
-                </Tab>
+                </Tab> */}
 
                 <Tab eventKey="auditReport" title="Audit Report" >
                     <OrganizationAuditTabs organizationID={id} />
