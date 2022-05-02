@@ -84,10 +84,10 @@ const data = {
 };
 
 function UserRegistration() {
-    const BASE_URL_USER_SAVE = "http://localhost:5000/user/save/";
-    const BASE_URL_USER = "http://localhost:5000/user/getUser/";
+    const BASE_URL_USER_SAVE = "https://lcpt-webportal-backend.herokuapp.com/user/save/";
+    const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
     const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
-    const BASE_URL_GET_HOMELIST = "http://localhost:5000/user/orgnization/getHomesList/";
+    const BASE_URL_GET_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/user/orgnization/getHomesList/";
     ///getHomesList/:id
     const [newUser, setNewUser] = useState(intialState)
     const [passwordError, setPasswordError] = useState(passVerificationError);

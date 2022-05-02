@@ -20,8 +20,8 @@ const intialState = {
 
 
 function UserProfile() {
-    const BASE_URL_USER = "http://localhost:5000/user/getUser/";
-    const BASE_URL_USER_UPDATE = "http://localhost:5000/user/update/";
+    const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
+    const BASE_URL_USER_UPDATE = "https://lcpt-webportal-backend.herokuapp.com/user/update/";
     const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
     const [newUser, setNewUser] = useState(intialState)
     const params = useParams().id;

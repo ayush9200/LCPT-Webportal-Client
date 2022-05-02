@@ -35,7 +35,7 @@ export default function StaffComponent() {
     }, [])
 
     function getStaffData() {
-        const staffListUrl = "http://localhost:5000/orgnization/getStaffList/" + params
+        const staffListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getStaffList/" + params
         axios.get(staffListUrl)
             .then(res => {
                 console.log(res);
@@ -77,7 +77,7 @@ export default function StaffComponent() {
     function saveStaffDetail() {
 
         console.log("staff details:", staffDetail)
-        const staffListUrl = "http://localhost:5000/orgnization/addNewStaff"
+        const staffListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewStaff"
         axios.post(staffListUrl, staffDetail)
             .then(res => {
                 console.log(res);
@@ -94,7 +94,7 @@ export default function StaffComponent() {
 
     function changeEmpStatus(event, id) {
         //console.log(event.target.value," for ",id)
-        const staffStatusUrl = "http://localhost:5000/orgnization/editStaffStatus"
+        const staffStatusUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editStaffStatus"
         //var status = ""+event.target.value
         axios.put(staffStatusUrl, { "id": id+1, "emp_status": String(event.target.value) })
             .then(res => {

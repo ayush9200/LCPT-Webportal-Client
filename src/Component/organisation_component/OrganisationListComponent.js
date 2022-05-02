@@ -14,7 +14,7 @@ export default function OrganisationListComponent() {
     const params = useParams().id;
     useEffect(() => {
 
-        const homeListUrl = "http://localhost:5000/orgnization/getHomesList/" + params
+        const homeListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/" + params
         axios.get(homeListUrl)
             .then(res => {
                 console.log(res);

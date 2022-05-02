@@ -15,9 +15,9 @@ function UserCoursesCheck() {
     const [show, setshow] = useState(false);
    
 
-    const BASE_URL_GET_ALL_HOMELIST = "http://localhost:5000/orgnization/getAllHomes";
-    const BASE_URL_GET_HOME_ROLE_CRS_LIST = "http://localhost:5000/orgnization/getHomeInfo/";
-    const BASE_URL_GET_HRC_LIST = "http://localhost:5000/orgnization/getHRCInfo/";
+    const BASE_URL_GET_ALL_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getAllHomes";
+    const BASE_URL_GET_HOME_ROLE_CRS_LIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomeInfo/";
+    const BASE_URL_GET_HRC_LIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHRCInfo/";
 
 
     useEffect(() => {

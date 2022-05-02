@@ -13,7 +13,7 @@ import "./login.css";
 
 function LoginForm(){
 
-    const BASE_URL_USER = "http://localhost:5000/user/";
+    const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/";
     const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
     const [username, setUsername] = useState('amail@gmail.com');
 	const [password, setPassword] = useState('abcD@1234');
