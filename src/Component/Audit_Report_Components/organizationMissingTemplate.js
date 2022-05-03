@@ -3,22 +3,22 @@ import { Tabs, Tab } from 'react-bootstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
-function OrganizationMissingTemplate() {
+function OrganizationMissingTemplate(props) {
     const [orgStaffTemplateData, setOrgStaffTemplateSumm] = useState([]);
 
 
     useEffect(() => {
-        // var orgId = props.org_id;
-        // var gethomeDetailsUrl = "http://localhost:5000/audit-report/org-template-specific/" + orgId;
-        // axios.get(gethomeDetailsUrl)
-        //     .then(res => {
-        //         console.log(res.data);
-        //         setOrgStaffSummData(res.data)
-        //         // toggleshowSpinner()
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //     })
+        var orgId = props.org_id;
+        var gethomeDetailsUrl = "http://localhost:5000/audit-report/org-missing-courses/" + orgId;
+        axios.get(gethomeDetailsUrl)
+            .then(res => {
+                console.log(res.data);
+                setOrgStaffTemplateSumm(res.data)
+                // toggleshowSpinner()
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
     }, [])
     var orgStaffTemplateCols = [{
@@ -34,13 +34,10 @@ function OrganizationMissingTemplate() {
         text: 'Home ID'
     }
         , {
-        dataField: 'incomplete_course_id',
-        text: 'Incomplete Course ID'
+        dataField: 'missing_courses',
+        text: 'Incomplete Course IDs'
     }
-        , {
-        dataField: 'incomplete_course_name',
-        text: 'Incomplete Course Name'
-    }
+
     ];
     return (
         <div>
