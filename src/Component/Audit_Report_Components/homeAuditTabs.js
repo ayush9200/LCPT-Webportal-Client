@@ -96,15 +96,7 @@ function HomeAuditTabs(props) {
         }
         return items;
     }
-    // var homeStaffData = (homeStaff
-    //     .filter((val) => {
-    //         // console.log(val)
-    //         if (staffRoleID == "") {
-    //             return val;
-    //         } else if (val.role_id.toString().toLocaleLowerCase().includes(staffRoleID.toLocaleLowerCase())) {
-    //             return val;
-    //         }
-    //     }))
+ 
     var filteredHomeStaffData = [];
     if (homeStaffDataFinal != null) {
         filteredHomeStaffData = homeStaffDataFinal.filter((val) => {

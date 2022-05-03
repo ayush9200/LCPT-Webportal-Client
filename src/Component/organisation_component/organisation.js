@@ -15,7 +15,7 @@ import OrganizationAuditTabs from '../Audit_Report_Components/organizationAuditT
 
 export default function Organisation() {
     const params = useParams().id;
-    const id = useParams.id;
+    const id = useParams().id;
     const [homeDetails, setHomeDetails] = useState({ id: params });
     const [showSpinner, setshowSpinner] = useState(false);
     const toggleshowSpinner = () => setshowSpinner(!showSpinner);
