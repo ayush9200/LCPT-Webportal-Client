@@ -103,6 +103,7 @@ function OrganizationAuditTabs(props) {
                         <Form.Select size="lg" style={{ width: "50%" }} onChange={(e) => {
                             var homeID = e.target.value;
                             setChosenHome(homeID);
+                            console.log(homeID);
 
                         }}>
                             <option value="1">h001</option>
