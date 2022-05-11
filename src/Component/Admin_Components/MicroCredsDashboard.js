@@ -5,6 +5,8 @@ import CreateCourseForm from '../Course_Components/createCourseForm';
 import ViewCourseTable from '../Course_Components/viewCourseTable';
 import EditCourseForm from '../Course_Components/editCourseForm';
 import DeleteCourseForm from '../Course_Components/deleteCourseForm';
+import AdminHomeCourse from './AdminHomeCourse';
+import AdminUserCourse from './AdminUserCourse';
 function MicroCredsDashboard() {
 
     return (
@@ -31,11 +33,14 @@ function MicroCredsDashboard() {
 
                 <Tab eventKey="course-home-mapping" title="course-home-mapping">
                     <h1 style={{ textAlign: "center" }}>course-home-mapping</h1>
+                    <AdminHomeCourse />
+
                 </Tab>
 
 
                 <Tab eventKey="course-user-mapping" title="course-user-mapping">
                     <h1 style={{ textAlign: "center" }}>course-user-mapping</h1>
+                    <AdminUserCourse />
                 </Tab>
             </Tabs>
         </div>
