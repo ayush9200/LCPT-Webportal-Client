@@ -8,23 +8,24 @@ import axios from 'axios';
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
 
-export default function TrainStandardComponent() {
+export default function TrainStandardComponent(props) {
 
     const [trainStandards, setTrainStandards] = useState([]);
     const [show, setShow] = useState(false);
     const [newStandard, setNewStandard] = useState('');
 
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-    const params = useParams().id;
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    // const params = useParams().id;
+    const params = props.id;
 
     useEffect(() => {
-     getTrainingData();
-        
+        getTrainingData();
+
     }, [])
 
-    function getTrainingData(){
+    function getTrainingData() {
         const trainStandardsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getOrganisationDetails/" + params
         axios.get(trainStandardsUrl)
             .then(res => {
@@ -40,96 +41,96 @@ export default function TrainStandardComponent() {
         console.log(event.target.value)
         console.log(trainStandards[id])
         trainStandards[id] = event.target.value
-        let newtrainStandards = [...trainStandards];     
-        newtrainStandards[id] = event.target.value; 
-        console.log(newtrainStandards)                 
-        setTrainStandards( newtrainStandards );
+        let newtrainStandards = [...trainStandards];
+        newtrainStandards[id] = event.target.value;
+        console.log(newtrainStandards)
+        setTrainStandards(newtrainStandards);
     }
 
-    function addTrainingText(event,id){
+    function addTrainingText(event, id) {
         setNewStandard(event.target.value)
     }
 
-    function saveNewStandard(){
+    function saveNewStandard() {
         console.log(newStandard);
-        if(newStandard!=''){
+        if (newStandard != '') {
             handleClose();
-            let newtrainStandards = [...trainStandards];  
+            let newtrainStandards = [...trainStandards];
             newtrainStandards.push(newStandard);
-            console.log(newtrainStandards)  
+            console.log(newtrainStandards)
             setTrainStandards(newtrainStandards);
-            let trainStandardsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewStandard/" 
-            axios.post(trainStandardsUrl,{id:params,trainStandards:newtrainStandards})
-            .then(res => {
-                console.log(res);
-                setTrainStandards(res.data[0].train_standards)
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            let trainStandardsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewStandard/"
+            axios.post(trainStandardsUrl, { id: params, trainStandards: newtrainStandards })
+                .then(res => {
+                    console.log(res);
+                    setTrainStandards(res.data[0].train_standards)
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
-        
+
     }
-    function saveText(event){
+    function saveText(event) {
         console.log("saveText")
-        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editTrainingStandards",{id:params,trainStandards:trainStandards})
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editTrainingStandards", { id: params, trainStandards: trainStandards })
             .then(res => {
                 console.log(res);
-                
+
             })
             .catch(err => {
                 console.log(err);
             })
     }
-    function removeStandard(event,id){
-       
-        let newtrainStandards = [...trainStandards];  
-        
+    function removeStandard(event, id) {
+
+        let newtrainStandards = [...trainStandards];
+
         newtrainStandards.splice(id, 1);
         console.log(newtrainStandards)
-        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editTrainingStandards",{id:params,trainStandards:newtrainStandards})
-        .then(res => {
-            getTrainingData();
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editTrainingStandards", { id: params, trainStandards: newtrainStandards })
+            .then(res => {
+                getTrainingData();
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
 
     return (
         <div className='org-container'>
             <h1>Set Training Standards for Organisation</h1>
-            <Button style={{float:"right",marginRight:"1%",marginBottom:"1%"}} variant="warning" onClick={handleShow}>Add New Standard</Button>
+            <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShow}>Add New Standard</Button>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add New HR Training Standard</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <Form>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add New HR Training Standard</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
                         <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
                             <Form.Label>Enter the Training Standard</Form.Label>
-                            <Form.Control type="text" 
-                            defaultValue={newStandard} onChange={(e) => {
-                                addTrainingText(e, 'tran1');
-                            }} 
+                            <Form.Control type="text"
+                                defaultValue={newStandard} onChange={(e) => {
+                                    addTrainingText(e, 'tran1');
+                                }}
                             />
                         </Form.Group>
-                         
+
                     </Form>
 
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={saveNewStandard}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-            <Button style={{float:"right",marginRight:"1%",marginBottom:"1%"}} onClick={saveText} variant="warning">Save</Button>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={saveNewStandard}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} onClick={saveText} variant="warning">Save</Button>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -146,14 +147,14 @@ export default function TrainStandardComponent() {
                     return <tbody key={id}>
                         <tr >
                             <td>{id + 1}</td>
-                            <td><div style={{width:"100%",display:"flex"}}> <input style={{flex:1}}  value={data} onChange={(e) => {
+                            <td><div style={{ width: "100%", display: "flex" }}> <input style={{ flex: 1 }} value={data} onChange={(e) => {
                                 changeText(e, id);
                             }}></input></div>
                             </td>
                             <td>
-                            <Button variant="link" onClick={(e) => {
-                                removeStandard(e, id);
-                            }} >Delete</Button></td>
+                                <Button variant="link" onClick={(e) => {
+                                    removeStandard(e, id);
+                                }} >Delete</Button></td>
                         </tr>
                     </tbody>
                 })}

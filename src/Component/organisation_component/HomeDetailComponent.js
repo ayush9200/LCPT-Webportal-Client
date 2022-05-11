@@ -7,8 +7,15 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
 
-export default function HomeDetailComponent() {
-    const params = useParams().id;
+export default function HomeDetailComponent(props) {
+    // const params = useParams().id;
+    var paramId = useParams().id
+    var propsId = props.homeIdFprAdmin
+    var params = propsId;
+    if (!propsId) {
+
+        params = paramId;
+    }
     const [homeDetails, setHomeDetails] = useState({ id: params });
 
 
@@ -70,11 +77,11 @@ export default function HomeDetailComponent() {
 
         <div style={{ marginTop: "8vh" }} >
             <h1>Home : {params} </h1>
-            <div style={{textAlign:"center",marginRight:"5%"}}>
-            <Button  variant="warning" style={{marginRight:"1%"}}
-            ><Link to={`/showStaff/${params}`}>View Staff Members</Link></Button>
-            <Button variant="warning"
-            ><Link to={`/checkList/${params}`}>View CheckList Component</Link></Button></div>
+            <div style={{ textAlign: "center", marginRight: "5%" }}>
+                <Button variant="warning" style={{ marginRight: "1%" }}
+                ><Link to={`/showStaff/${params}`}>View Staff Members</Link></Button>
+                <Button variant="warning"
+                ><Link to={`/checkList/${params}`}>View CheckList Component</Link></Button></div>
             <div className='org-container'>
                 <Form>
                     <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">

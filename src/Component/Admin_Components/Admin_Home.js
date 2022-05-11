@@ -1,11 +1,22 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tabs, Tab } from 'react-bootstrap'
 import CreateUserForm from './CreateUserForm';
 import EnterOrganizationForm from './EnterOrganizationForm';
 import EnterIndividualForm from './EnterIndividualForm';
 import EnterHomeForm from './EnterHomeForm';
 import MicroCredsDashboard from './MicroCredsDashboard';
+import Organisation from '../organisation_component/organisation';
+import HomeDetailComponent from '../organisation_component/HomeDetailComponent';
 function Admin_Home() {
+
+    const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
+    const [homeIdForAdmin, setomeIdForAdmin] = useState("1");
+    useEffect(() => {
+
+
+
+    }, [])
+
     return (
         <div style={{ marginTop: "7vh" }}>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3" fill>
@@ -24,10 +35,12 @@ function Admin_Home() {
                 </Tab>
 
                 <Tab eventKey="organizationView" title="Organizations" >
-                    <EnterOrganizationForm />
+                    <Organisation orgIdForAdmin={orgIdForAdmin} />
+                    {/* <EnterOrganizationForm /> */}
                 </Tab>
                 <Tab eventKey="homeView" title="Homes" >
-                    <EnterHomeForm />
+                    {/* <EnterHomeForm /> */}
+                    <HomeDetailComponent homeIdFprAdmin={homeIdForAdmin} />
                 </Tab>
                 <Tab eventKey="individualView" title="Users" >
                     <EnterIndividualForm />

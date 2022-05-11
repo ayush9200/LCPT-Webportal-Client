@@ -52,7 +52,7 @@ function OrganizationAuditTabs(props) {
 
             <Tabs defaultActiveKey="organization" fill>
                 <Tab eventKey="organization" title="Organization Summary">
-                    <OrganizationSummaryComponent />
+                    <OrganizationSummaryComponent org_id={organizationID} />
                     {/* <BootstrapTable id='organizationSummaryTable' keyField='id' data={orgSumm} columns={columns} />
 
                     <ReactHTMLTableToExcel
@@ -86,7 +86,7 @@ function OrganizationAuditTabs(props) {
                 </Tab>
                 <Tab eventKey="staff-summary" title="Organization Staff Summary">
                     {/* <EditCourseForm /> */}
-                    <OrganizationStaffSummary org_id= {organizationID} />
+                    <OrganizationStaffSummary org_id={organizationID} />
                 </Tab>
 
             </Tabs>

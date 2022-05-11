@@ -13,17 +13,23 @@ import axios from 'axios';
 import Spinner from 'react-bootstrap/Spinner'
 import OrganizationAuditTabs from '../Audit_Report_Components/organizationAuditTabs';
 
-export default function Organisation() {
-    const params = useParams().id;
-    const id = useParams().id;
-    const [homeDetails, setHomeDetails] = useState({ id: params });
+export default function Organisation(props) {
+    var paramId = useParams().id
+    var propsId = props.orgIdForAdmin
+    var id = propsId;
+    if (!propsId) {
+
+        id = paramId;
+    }
+    // id = useParams().id;
+    const [homeDetails, setHomeDetails] = useState({ id: id });
     const [showSpinner, setshowSpinner] = useState(false);
     const toggleshowSpinner = () => setshowSpinner(!showSpinner);
 
     useEffect(() => {
         // toggleshowSpinner()
         setshowSpinner(true)
-        const gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getOrganisationDetails/" + params
+        const gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getOrganisationDetails/" + id
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data[0]);
@@ -76,7 +82,7 @@ export default function Organisation() {
     return (
 
         <div style={{ marginTop: "8vh" }} >
-            <h1>Organisation : {params} </h1>
+            <h1>Organisation : {id} </h1>
             <Tabs defaultActiveKey="OrgDetails" id="uncontrolled-tab-example" className="mb-3" fill>
                 <Tab eventKey="OrgDetails" title="Organisation Details">
                     <div className='org-container'>
@@ -130,11 +136,11 @@ export default function Organisation() {
                     </div>
                 </Tab>
                 <Tab eventKey="trainStandard" title="Training Standard">
-                    <TrainStandardComponent />
+                    <TrainStandardComponent id={id} />
 
                 </Tab>
                 <Tab eventKey="organistionList" title="Homes List" >
-                    <OrganisationListComponent />
+                    <OrganisationListComponent id={id} />
                 </Tab>
                 {/* <Tab eventKey="homeCheckList" title="Home CheckList Component" >
                     <HomeCheckListComponent />
