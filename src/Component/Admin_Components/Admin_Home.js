@@ -7,6 +7,7 @@ import EnterHomeForm from './EnterHomeForm';
 import MicroCredsDashboard from './MicroCredsDashboard';
 import Organisation from '../organisation_component/organisation';
 import HomeDetailComponent from '../organisation_component/HomeDetailComponent';
+import AdminUserEditor from './AdminUserEditor';
 function Admin_Home() {
 
     const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
@@ -30,8 +31,9 @@ function Admin_Home() {
                 <Tab eventKey="microCardDash" title="Micro-cred Dashboard" >
                     <MicroCredsDashboard />
                 </Tab>
-                <Tab eventKey="verifyCredentials" title="Verify Credentials" >
-                    <h1 style={{ textAlign: "center" }}>Verify Credentials</h1>
+                <Tab eventKey="verifyCredentials" title="User Editor" >
+                    {/* <h1 style={{ textAlign: "center" }}>Verify Credentials</h1> */}
+                    <AdminUserEditor />
                 </Tab>
 
                 <Tab eventKey="organizationView" title="Organizations" >

@@ -50,7 +50,8 @@ function AdminUserCourse() {
                 filename="tablexls"
                 sheet="tablexls"
                 buttonText="Download In Excel" />
-            <BootstrapTable id='organizationStaffSpecificTable' keyField='id' data={adminUserCrsData} columns={adminUserCrsCols} /></div>
+            <BootstrapTable id='organizationStaffSpecificTable' keyField='id' data={adminUserCrsData} columns={adminUserCrsCols} />
+        </div>
     )
 }
 
