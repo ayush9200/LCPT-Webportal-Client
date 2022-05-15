@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
+import Config from '../config.json'
 
 function AdminHomeCourse() {
     const [adminHomeCrsData, setadminHomeCrsData] = useState([]);
+    var backendPortUrl = Config.back_end_port + '/';
 
 
     useEffect(() => {
         // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
-        var getAdmHmCrsURL = "https://lcpt-webportal-backend.herokuapp.com/admin-data/home-crs-role";
+        var getAdmHmCrsURL = backendPortUrl + "admin-data/home-crs-role";
         axios.get(getAdmHmCrsURL)
             .then(res => {
                 console.log(res.data);
@@ -37,7 +39,7 @@ function AdminHomeCourse() {
         dataField: 'course_id_arr',
         text: 'Course IDs'
     }
-        
+
         , {
         dataField: 'archived',
         text: 'Is Archived?'

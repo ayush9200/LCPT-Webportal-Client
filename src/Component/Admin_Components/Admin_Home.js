@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Row, Col, Button, Container, Tabs, Tab, } from 'react-bootstrap'
 import axios from 'axios';
-
+import Config from '../config.json'
 import CreateUserForm from './CreateUserForm';
 import EnterOrganizationForm from './EnterOrganizationForm';
 import EnterIndividualForm from './EnterIndividualForm';
@@ -11,13 +11,15 @@ import Organisation from '../organisation_component/organisation';
 import HomeDetailComponent from '../organisation_component/HomeDetailComponent';
 import AdminUserEditor from './AdminUserEditor';
 function Admin_Home() {
+    console.log(Config)
+    var backendPortUrl = Config.back_end_port + '/';
 
     const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
     const [homeIdForAdmin, setomeIdForAdmin] = useState("1");
     const [homeDetails, setHomeDetails] = useState([]);
     useEffect(() => {
         var organizationID = "1";
-        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/" + organizationID;
+        var gethomeDetailsUrl = backendPortUrl + "orgnization/getHomesList/" + organizationID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
 
@@ -61,7 +63,7 @@ function Admin_Home() {
                 <Tab eventKey="microCardDash" title="Micro-cred Dashboard" >
                     <MicroCredsDashboard />
                 </Tab>
-                <Tab eventKey="verifyCredentials" title="User Editor" >
+                <Tab eventKey="verifyCredentials" title="Verify Credentials" >
                     {/* <h1 style={{ textAlign: "center" }}>Verify Credentials</h1> */}
                     <AdminUserEditor />
                 </Tab>
