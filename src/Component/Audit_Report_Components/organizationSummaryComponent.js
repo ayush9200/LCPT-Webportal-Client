@@ -4,8 +4,9 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useParams } from "react-router-dom";
 
 import axios from 'axios'
-function OrganizationSummaryComponent() {
-    const org_id = useParams().id;
+function OrganizationSummaryComponent(props) {
+    // const org_id = useParams().id;
+    const org_id = props.org_id;
     console.log(org_id)
     const [orgSummDetails, setOrgSummDetails] = useState([]);
     const [orgSummFinal, setOrgSummFinal] = useState([]);

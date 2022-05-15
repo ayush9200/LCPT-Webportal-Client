@@ -131,7 +131,7 @@ function EditCourseForm() {
 
                 <br></br>
             </Container>
-        </div >
+        </div>
     )
 }
 

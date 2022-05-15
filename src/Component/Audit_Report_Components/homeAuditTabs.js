@@ -7,6 +7,7 @@ import axios from 'axios'
 function HomeAuditTabs(props) {
     const [staffRoleID, setStaffRoleID] = useState("");
     const [homeSummData, setHomeSummData] = useState(null);
+    const [homeStaffDataFinal, setHomeStaffDataFinal] = useState(null);
     // var homeSummary = [];
     var homeStaff = [];
     var homeID = props.homeID;
@@ -24,32 +25,24 @@ function HomeAuditTabs(props) {
             .catch(err => {
                 console.log(err);
             })
+        // /audit-report/home-staff-summary/1
+        var gethomeStaffDetailsUrl = "http://localhost:5000/audit-report/home-staff-summary/" + homeID;
+        axios.get(gethomeStaffDetailsUrl)
+            .then(res => {
+                console.log(res.data);
+                setHomeStaffDataFinal(res.data)
+                // toggleshowSpinner()
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
 
-    }, [])
+    }, [props.homeID])
     if (homeSummData == null) {
         return <h1>Loading</h1>
     }
-    // if (homeID == "h001") {
-    //     homeSummary = homeSummary1;
-    //     homeStaff = homeStaff1;
 
-    // }
-    // else if (homeID == "h002") {
-    //     homeSummary = homeSummary2;
-    //     homeStaff = homeStaff2;
-
-    // }
-    // else if (homeID == "h003") {
-    //     homeSummary = homeSummary3;
-    //     homeStaff = homeStaff3;
-
-    // }
-    // else if (homeID == "h004") {
-    //     homeSummary = homeSummary4;
-    //     homeStaff = homeStaff4;
-
-    // }
 
     var homeSummCols = [{
         dataField: 'home_id',
@@ -71,7 +64,6 @@ function HomeAuditTabs(props) {
         text: 'Non-Complaint Staff'
     }
     ];
-    // data = { homeStaff } columns = { homeStaffCols } 
     var homeStaffCols = [{
         dataField: 'home_id',
         text: 'Home ID'
@@ -86,7 +78,12 @@ function HomeAuditTabs(props) {
         , {
         dataField: 'status',
         text: 'Status'
-    }
+    },
+        , {
+        dataField: 'is_complaint',
+        text: 'Is Compolaint ?'
+    },
+
     ];
     var createRoleIDSelectItems = () => {
         let items = [];
@@ -99,19 +96,21 @@ function HomeAuditTabs(props) {
         }
         return items;
     }
-    var homeStaffData = (homeStaff
-        .filter((val) => {
-            // console.log(val)
+ 
+    var filteredHomeStaffData = [];
+    if (homeStaffDataFinal != null) {
+        filteredHomeStaffData = homeStaffDataFinal.filter((val) => {
             if (staffRoleID == "") {
                 return val;
-            } else if (val.role_id.toString().toLocaleLowerCase().includes(staffRoleID.toLocaleLowerCase())) {
+            } else if (staffRoleID == val.role_id) {
                 return val;
             }
-        }))
+        })
+    }
 
     return (
-        <div>
-            {/* <h3 style={{ textAlign: "center" }}> Home ID : {props.homeID} </h3> */}
+        <div key={props.homeID}>
+            <h3 style={{ textAlign: "center" }}> Home ID : {props.homeID} </h3>
             <Tabs defaultActiveKey="home" fill>
                 <Tab eventKey="home" title="Home Summary">
                     <BootstrapTable id='homeSummaryTable' keyField='id' data={homeSummData} columns={homeSummCols} />
@@ -144,7 +143,7 @@ function HomeAuditTabs(props) {
                             sheet="tablexls"
                             buttonText="Download In Excel" />
                     </div>
-                    <BootstrapTable id='homeStaffSpecificTable' keyField='id' data={homeStaffData} columns={homeStaffCols} />
+                    <BootstrapTable id='homeStaffSpecificTable' keyField='id' data={filteredHomeStaffData} columns={homeStaffCols} />
                 </Tab>
 
             </Tabs></div>

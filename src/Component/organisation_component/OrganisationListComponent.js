@@ -9,25 +9,27 @@ import { Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
 
-export default function OrganisationListComponent() {
+export default function OrganisationListComponent(props) {
     const handleCloseHome = () => setHomeShow(false);
     const handleShowHome = () => setHomeShow(true);
     const [showHome, setHomeShow] = useState(false);
     const [newHomeId, setNewHomeId] = useState('');
     const [HomeDetails, setHomeDetails] = useState({});
     const [homeListArray, setHomeListArray] = useState([]);
-    const params = useParams().id;
+    // const params = useParams().id;
+    const params = props.id;
+
     useEffect(() => {
         getHomeData();
-        
+
     }, [])
-    function getHomeData(){
+    function getHomeData() {
         const homeListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/" + params
         axios.get(homeListUrl)
             .then(res => {
                 console.log(res);
                 setHomeListArray(res.data)
-                setNewHomeId(String(res.data.length+1))
+                setNewHomeId(String(res.data.length + 1))
             })
             .catch(err => {
                 console.log(err);
@@ -48,19 +50,19 @@ export default function OrganisationListComponent() {
         else if (id === 'hm5')
             newHomeDetailObj.phone_no = event.target.value;
         else if (id === 'hm6')
-        newHomeDetailObj.email_id = event.target.value;
+            newHomeDetailObj.email_id = event.target.value;
         newHomeDetailObj.org_id = params;
         newHomeDetailObj.home_id = newHomeId;
         setHomeDetails(HomeDetails => ({
             ...HomeDetails, ...newHomeDetailObj
         }));
 
-     //   setHomeDetail(newHomeDetailObj);
-         console.log("Home details:",HomeDetails)
+        //   setHomeDetail(newHomeDetailObj);
+        console.log("Home details:", HomeDetails)
 
 
     }
-    function saveNewHomeText(){
+    function saveNewHomeText() {
         console.log(HomeDetails)
         const saveHomeUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewHome"
         axios.post(saveHomeUrl, HomeDetails)
@@ -69,8 +71,8 @@ export default function OrganisationListComponent() {
                 //setStaffList(res.data)
                 handleCloseHome()
                 getHomeData()
-                
-              //  setNotificationText("New Staff Member was added");
+
+                //  setNotificationText("New Staff Member was added");
             })
             .catch(err => {
                 console.log(err);

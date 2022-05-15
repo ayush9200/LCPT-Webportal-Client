@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form'
 import OrganizationStaffSummary from './organizationStaffSummary'
 // import { Row } from 'react-bootstrap'
 function OrganizationAuditTabs(props) {
-    const [homeDetails, setHomeDetails] = useState([]);
+    const [homeDetails, setHomeDetails] = useState(null);
     const [userCourseHomeDetails, setUserCourseHomeDetails] = useState([]);
     const [chosenHome, setChosenHome] = useState("1");
 
@@ -18,11 +18,12 @@ function OrganizationAuditTabs(props) {
     const organizationID = props.organizationID;
 
     useEffect(() => {
-        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getOrganisationDetails/" + organizationID;
+        var gethomeDetailsUrl = "http://localhost:5000/orgnization/getHomesList/" + organizationID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
-                console.log(res.data[0]);
-                setHomeDetails(res.data[0])
+
+                console.log(res.data);
+                setHomeDetails(res.data)
                 // toggleshowSpinner()
             })
             .catch(err => {
@@ -30,55 +31,20 @@ function OrganizationAuditTabs(props) {
             })
 
     }, [])
-    var orgSumm = [{
-        'home_id': 'h001',
-        'home_name': '"luffy home" ',
-        'is_complaint': true,
-        'num_complaint': 5,
-        'num_non_complaint': 0,
-    },
-    {
-        'home_id': 'h002',
-        'home_name': '"zoro home" ',
-        'is_complaint': true,
-        'num_complaint': 1,
-        'num_non_complaint': 0,
-    },
-    {
-        'home_id': 'h003',
-        'home_name': '"kaido home" ',
-        'is_complaint': false,
-        'num_complaint': 5,
-        'num_non_complaint': 2,
-    },
-    {
-        'home_id': 'h004',
-        'home_name': '"linlin home" ',
-        'is_complaint': false,
-        'num_complaint': 1,
-        'num_non_complaint': 3,
+    var createHomeIDSelectItems = () => {
+        let items = [];
+        // items.push(<option value="">All</option>)
+        console.log(homeDetails)
+
+        for (var i in homeDetails) {
+            console.log(homeDetails[i]);
+            items.push(<option value={homeDetails[i].home_id}> {homeDetails[i].home_id} </option>);
+        }
+        return items;
     }
-    ];
-    var columns = [{
-        dataField: 'home_id',
-        text: 'Home ID'
-    }, {
-        dataField: 'home_name',
-        text: 'Home Name'
-    }
-        , {
-        dataField: 'is_complaint',
-        text: 'Is Complaint?'
-    }
-        , {
-        dataField: 'num_complaint',
-        text: 'Total Complaint'
-    }
-        , {
-        dataField: 'num_non_complaint',
-        text: 'Total Non-Complaint'
-    }
-    ];
+    // if (homeDetails == null) {
+    //     return <h1>Loading Homes....</h1>
+    // }
 
 
     return (
@@ -86,7 +52,7 @@ function OrganizationAuditTabs(props) {
 
             <Tabs defaultActiveKey="organization" fill>
                 <Tab eventKey="organization" title="Organization Summary">
-                    <OrganizationSummaryComponent />
+                    <OrganizationSummaryComponent org_id={organizationID} />
                     {/* <BootstrapTable id='organizationSummaryTable' keyField='id' data={orgSumm} columns={columns} />
 
                     <ReactHTMLTableToExcel
@@ -103,12 +69,14 @@ function OrganizationAuditTabs(props) {
                         <Form.Select size="lg" style={{ width: "50%" }} onChange={(e) => {
                             var homeID = e.target.value;
                             setChosenHome(homeID);
+                            console.log(homeID);
 
                         }}>
-                            <option value="1">h001</option>
+                            {createHomeIDSelectItems()}
+                            {/* <option value="1">h001</option>
                             <option value="2">h002</option>
                             <option value="3">h003</option>
-                            <option value="4">h004</option>
+                            <option value="4">h004</option> */}
                         </Form.Select>
 
                     </div>
@@ -118,7 +86,7 @@ function OrganizationAuditTabs(props) {
                 </Tab>
                 <Tab eventKey="staff-summary" title="Organization Staff Summary">
                     {/* <EditCourseForm /> */}
-                    <OrganizationStaffSummary />
+                    <OrganizationStaffSummary org_id={organizationID} />
                 </Tab>
 
             </Tabs>
