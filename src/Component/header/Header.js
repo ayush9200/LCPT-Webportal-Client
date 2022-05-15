@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
-import { Navigate } from 'react-router-dom';
+import React from 'react';
+import { Button, Navbar, Container, Nav } from 'react-bootstrap';
 
 function Header() {
   var loginPgCall = () => {
@@ -24,7 +23,8 @@ function Header() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav pullright="true">
-            <Nav.Link href="/user">User</Nav.Link>
+            <Nav.Link href="">About Us</Nav.Link>
+            <Nav.Link href="">Contact Us</Nav.Link>
             <Nav.Link href="/organisation/1">Organization</Nav.Link>
             <Nav.Link href="/admin_home">Administrator</Nav.Link>
             {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">

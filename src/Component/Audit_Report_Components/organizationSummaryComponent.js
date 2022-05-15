@@ -31,7 +31,7 @@ function OrganizationSummaryComponent() {
 
     useEffect(() => {
         // toggleshowSpinner()
-        const gethomeDetailsUrl = "http://localhost:5000/audit-report/org-summary/" + org_id
+        const gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/org-summary/" + org_id
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);

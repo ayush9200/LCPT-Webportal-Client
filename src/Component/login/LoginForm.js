@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
 	Container,
 	Row,
@@ -14,6 +14,7 @@ import "./login.css";
 function LoginForm(){
 
     const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/";
+    //const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
     const BASE_URL_USER_FRONT_END = "https://lcpt-webportal.herokuapp.com/user/";
     const [username, setUsername] = useState('amail@gmail.com');
 	const [password, setPassword] = useState('abcD@1234');
@@ -55,7 +56,7 @@ function LoginForm(){
             const resJson = res.data.data;
               if(resJson!==undefined){
                   //alert(resJson.userId);
-                return window.location.href = BASE_URL_USER_FRONT_END+resJson.userId;
+                return window.location.href = BASE_URL_USER_FRONT_END+resJson.user_id;
               }else{
                 return alert("Invalid Credentials. Please try again.");
               }
@@ -68,7 +69,7 @@ function LoginForm(){
     return(
         <html>
             <body className="login-body">
-        <Container className="Login" style={{marginTop:"10pc",marginBottom:"8pc"}}>
+        <Container className="Login" style={{marginTop:"4pc",marginBottom:"3pc"}}>
         <Row>
             <Col>
                 <h1 className="text-center">LCPT Login</h1>

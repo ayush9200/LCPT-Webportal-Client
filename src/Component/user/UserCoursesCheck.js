@@ -139,7 +139,7 @@ function UserCoursesCheck() {
                         <h5>Select role</h5>
                         <div as={Col} style={{borderBlock:'1px groove'}}>
                             <Col xs={6} md={12}>
-                                <ListGroup vertical>
+                                <ListGroup vertical='true'>
                                     {/* {roleList.map((data, id) => (<Button style={{margin:'2%'}} id={data.role_id} onClick={fetchAllCourses(4)} className={this.state.condition? "class" : "anotherClass"} variant="outline-primary">{data.role_name}</Button>))} */}
                                     {roleList.map((data, id) => (<ListGroup.Item action value={data.role_id} onClick={fetchAllCourses}>{data.role_name}</ListGroup.Item>))}
                                 </ListGroup>

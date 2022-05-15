@@ -62,7 +62,7 @@ export default function OrganisationListComponent() {
     }
     function saveNewHomeText(){
         console.log(HomeDetails)
-        const saveHomeUrl = "http://localhost:5000/orgnization/addNewHome"
+        const saveHomeUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewHome"
         axios.post(saveHomeUrl, HomeDetails)
             .then(res => {
                 console.log(res);

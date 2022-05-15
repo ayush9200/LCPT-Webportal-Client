@@ -11,14 +11,10 @@ const intialState = {
     email:'',
     number:'',
     address:'',
+    country:'',
     city:'',
     state:'',
-    postalCode:'',
-    empStatus:'',
-    orgId:'',
-    homeId:'',
-    roleId:'',
-
+    postalCode:''
 }
 
 const passVerificationError ={
@@ -86,8 +82,10 @@ const data = {
 function UserRegistration() {
     const BASE_URL_USER_SAVE = "https://lcpt-webportal-backend.herokuapp.com/user/save/";
     const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
-    const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
-    const BASE_URL_GET_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/user/orgnization/getHomesList/";
+    //const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
+    const BASE_URL_USER_FRONT_END = "https://lcpt-webportal.herokuapp.com/user/";
+    
+   // const BASE_URL_GET_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/user/orgnization/getHomesList/";
     ///getHomesList/:id
     const [newUser, setNewUser] = useState(intialState)
     const [passwordError, setPasswordError] = useState(passVerificationError);
@@ -102,23 +100,23 @@ function UserRegistration() {
     const params = useParams().id;
 
     useEffect(() => {
-        const getUserData = BASE_URL_USER + params
-        axios.get(getUserData)
-            .then(res => {
-                console.log(res.data.data);
-                const responseJson = res.data.data;
-                if(res.data !== undefined){
-                    //setNewUser(res.data.data)
-                    console.log("orgId -> ",responseJson.orgId);
-                    console.log("homeId -> ",responseJson.orgId);
-                    console.log("roleId -> ",responseJson.orgId);
-                }else{
-                    //setNewUser(intialState)
-                }
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        // const getUserData = BASE_URL_USER + params
+        // axios.get(getUserData)
+        //     .then(res => {
+        //         console.log(res.data.data);
+        //         const responseJson = res.data.data;
+        //         if(res.data !== undefined){
+        //             //setNewUser(res.data.data)
+        //             console.log("orgId -> ",responseJson.orgId);
+        //             console.log("homeId -> ",responseJson.orgId);
+        //             console.log("roleId -> ",responseJson.orgId);
+        //         }else{
+        //             //setNewUser(intialState)
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //     })
     }, [newUser]);
 
     const handleOnChange = e => {
@@ -162,7 +160,7 @@ function UserRegistration() {
             });
             const resJson = res.data.data;
               if(resJson!==undefined){
-                return window.location.href = BASE_URL_USER_FRONT_END+resJson.userId;
+                return window.location.href = BASE_URL_USER_FRONT_END+resJson.user_id;
               }else{
                 return alert("Something went wrong! Please try again.");
               }
@@ -236,7 +234,7 @@ function UserRegistration() {
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridState">
                                 <Form.Label>Country</Form.Label>
-                                <Form.Select name="country" value={newUser.state} onChange={handleOnChange}>
+                                <Form.Select name="country" value={newUser.country} onChange={handleOnChange}>
                                     <option>--Choose Country--</option>
                                     {data.countries.map((e, key) => {
                                         return (

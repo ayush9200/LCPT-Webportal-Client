@@ -14,7 +14,7 @@ function HomeAuditTabs(props) {
 
     useEffect(() => {
         // /audit-report/home-summary/1
-        var gethomeDetailsUrl = "http://localhost:5000/audit-report/home-summary/" + homeID;
+        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/home-summary/" + homeID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);

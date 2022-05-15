@@ -56,7 +56,7 @@ export default function StaffComponent() {
             })
     }
     function getRoleDetailByHome() {
-        const getCheckListUrl = "http://localhost:5000/orgnization/showHomeCheckList/" + params
+        const getCheckListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/showHomeCheckList/" + params
         axios.get(getCheckListUrl)
             .then(res => {
                 console.log(res.data)
@@ -88,7 +88,7 @@ export default function StaffComponent() {
     function savePositionDetail() {
 
         console.log("position details:", positionDetail)
-        const savePositionUrl = "http://localhost:5000/orgnization/addNewPosition"
+        const savePositionUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewPosition"
         axios.post(savePositionUrl, positionDetail)
             .then(res => {
                 console.log(res);
@@ -186,7 +186,7 @@ export default function StaffComponent() {
     }
     function saveAssignRoleDetail(newAssignRoleObj) {
         console.log(assignRoleDetail)
-        axios.put("http://localhost:5000/orgnization/addAssignRoleText", newAssignRoleObj)
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/addAssignRoleText", newAssignRoleObj)
             .then(res => {
                 console.log(res);
                 getStaffData();

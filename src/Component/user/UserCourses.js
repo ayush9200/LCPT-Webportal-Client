@@ -15,12 +15,13 @@ function UserCourses() {
 
 
     const params = useParams().id;
+    const [mappingData, setMappingData] = useState([{'':''}]);
     const [orgId, setorgId] = useState(0);
     const [homeId, sethomeId] = useState(0);
     const [roleId, setroleId] = useState(0);
     const [userId, setuserId] = useState(0);
-    const [homeList, sethomelist] = useState([]);
-    const [roleList, setroleList] = useState([]); 
+    const [homeList, sethomelist] = useState([{'':''}]);
+    const [roleList, setroleList] = useState([{'':''}]); 
     const [courseList, setCourseList] = useState([]); 
     const [completedCourses, setCompletedCourses] = useState([]);
     const [pendingCourses, setPendingCourses] = useState([]);
@@ -34,62 +35,113 @@ function UserCourses() {
   
    
 
-    const BASE_URL_GET_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/";
+    const BASE_URL_GET_All_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getAllHomes";
     const BASE_URL_GET_ROLELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getRoleByHomeId/";
     const BASE_URL_GET_COURSELIST = "https://lcpt-webportal-backend.herokuapp.com/course/fetchCourseDetails";
+    const BASE_URL_GET_USER_HOME_ROLE = "https://lcpt-webportal-backend.herokuapp.com/user/fetchUHRdetails/";
 
     useEffect(() => {
-        fetchData();
+       // fetchData();
+       console.log('User ID: ', params);
+        const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;
+       const res = axios.get(getUserHomeRoleData, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+        }).then(response =>{
+            console.log(" ========== > ", response);
+            setMappingData(response.data);
+            getHomeList(response.data);
+        });
     },[]);
 
-    async function fetchData() {
-        const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
-        const getUserData = BASE_URL_USER + params
-        let response = await axios.get(
-            getUserData
-        );
-             let responseJson = response.data.data;
-            console.log(" ==== Response json ==== ",responseJson);
-            console.log("OrgId : "+responseJson.orgId);
-            console.log("HomeId : "+responseJson.homeId);
-            console.log("RoleId : "+responseJson.roleId);
-            console.log("UserId : "+responseJson.userId);
-            getHomeList(responseJson.orgId,responseJson.homeId,responseJson.roleId,responseJson.userId);
-    }
+    // async function fetchData() {
+    //     const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
+    //     const getUserData = BASE_URL_USER + params
+    //     let response = await axios.get(
+    //         getUserData
+    //     );
+    //          let responseJson = response.data.data;
+    //         console.log(" ==== Response json ==== ",responseJson);
+    //         getHomeList(responseJson.orgId,responseJson.homeId,responseJson.roleId,responseJson.userId);
+    // }
     
-   const getHomeList = async(passOrg, passHome, passRole, passUser) => {
+   const getHomeList = (resp) => {
      try {
-        console.log("OrgId === : "+passOrg);
-        console.log("HomeId === : "+passHome);
-        console.log("RoleId === : "+passRole);
-
-        setorgId(passOrg);
-        sethomeId(passHome);
-        setroleId(passRole);
-        setuserId(passUser);
+        // setorgId(passOrg);
+        // sethomeId(passHome);
+        // setroleId(passRole);
+        // setuserId(passUser);
         
-        const res = await axios.get(BASE_URL_GET_HOMELIST+passOrg, {
+        const res = axios.get(BASE_URL_GET_All_HOMELIST, {
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response =>{
-            console.log(" ========== > ", response);
-            sethomelist(response.data);
+            console.log(" ========== Home List > ", response);
+            
+            const userMappedHome = resp.map((c)=>{  
+                const inner = response.data.find(
+                    (s) => {
+                        console.log(c.home_id,"   ",s.home_id);
+                        if(c.home_id === s.home_id){
+                            
+                    
+                        return (s);
+                        }
+                    });
+                
+                // ((allHome)=>{
+                //     if(c.home_id === allHome.home_id) 
+                //         return (allHome)
+                // });
+                return (inner);   
+            }); 
+            console.log('==== Only Required home === ',userMappedHome);
+            sethomelist(userMappedHome);
+            console.log('==== Only Required home 2 === ',homeList);
         });
-        //onst resJson = res.data;
-        //console.log("===== > Home json ", resJson);
-         // if(resJson!==undefined){
-            //sethomelist(res.data);
            console.log("Home list : "+homeList);
-           getRoleList(passRole);
-        //   }else{
-        //     return alert("Invalid Credentials. Please try again.");
-        //   }
-
+     
     }catch (error) {
         console.log(error);
     }
 };
+
+    const filterRoleDropdown = e => {
+        console.log("Dropdown filter : ",homeList);
+        const{name, value} = e.target
+        console.log(" Value ", value);
+        const roleHomeMapping = mappingData.map((c)=>{  
+            sethomeId(c.home_id);
+            setuserId(c.user_id);
+            //setroleList([{'':''}]);
+            console.log('Value ',value,' Select Home ', c.home_id);
+            if(String(value) === String(c.home_id)){
+                if(c.role_arr && c.role_arr.length>0){
+                console.log('Role going on : ', c.role_arr);
+                setroleList(c.role_arr);
+                return (c.role_arr);
+                }
+            }
+            //return val;
+        }); 
+        // const finalMap = roleHomeMapping.map((fm)=> { if(fm != undefined){return (fm)} });
+        // console.log("=== Final Map === ", finalMap)
+        //setroleList(roleHomeMapping);
+        //console.log('==== Only Required Roles map === ',roleHomeMapping);
+        console.log('==== Only Required Roles === ',roleList);
+        //sethomelist(userMappedHome);
+
+        
+    }
+
+    const setRoleValue = e => {
+        const{name, value} = e.target
+        console.log(" Role ID ", value);
+        setroleId(value);
+        //console.log('==== Selected Roles === ',roleId);    
+    }
 
 const getRoleList = async(passRoleId) => {
     try {
@@ -126,34 +178,28 @@ const getRoleList = async(passRoleId) => {
         }).then(res => {
                 console.log(res);
                 resJson = res.data;
-                //setshowSpinner(false)
+                if(resJson!==undefined){
+                    setCourseList(resJson);
+                    setCompletedCourses(courseList.completedCourses);
+                    setPendingCourses(courseList.pendingCourses);
+                    lastMethodCall(resJson);
+                    console.log(resJson);
+                  }else{
+                    return alert("Selected role don't have courses specified yet. Please contact admin and try again");
+                  }
             })
             .catch(err => {
                 console.log(err);
             })
         //const resJson = res.data;
-          if(resJson!==undefined){
-            setCourseList(resJson);
-            console.log("Course list : "+courseList);
-            console.log("Pending Courses : "+courseList.pendingCourses);
-            console.log("CompletedCourses : "+courseList.completedCourses);
-            console.log("Course list All in system : "+courseList.allCourseList);
-
-            setCompletedCourses(courseList.completedCourses);
-            setPendingCourses(courseList.pendingCourses);
-            lastMethodCall(resJson);
-            console.log(resJson);
-           // alert();
-          }else{
-            return alert("Invalid Credentials. Please try again.");
-          }
+          
  
     }catch (error) {
         console.log(error);
      }
   }
 
-  const lastMethodCall = async(passresJson) => {
+  const lastMethodCall = (passresJson) => {
     try {
         setCourseList(passresJson);
         console.log("Course list : "+courseList);
@@ -231,16 +277,18 @@ const getRoleList = async(passRoleId) => {
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridHome">
                             <Form.Label>Home</Form.Label>
-                            <Form.Select defaultValue="Choose...">
-                            {homeList.map((data, id) => (<option key={data.home_id}>{data.name}</option>))} 
+                            <Form.Select defaultValue="Choose..." onChange={filterRoleDropdown}>
+                            <option> -- Select Home -- </option>
+                            {homeList?.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))} 
                             </Form.Select>
                         </Form.Group>
                         </Row>
                         <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridRole">
                             <Form.Label>Role</Form.Label>
-                            <Form.Select defaultValue="Choose...">
-                                {roleList.map((data, id) => (<option key={data.role_id}>{data.role_name}</option>))}
+                            <Form.Select defaultValue="Choose..." onChange={setRoleValue}>
+                            <option> -- Select Role -- </option>
+                                {roleList?.map((data, id) => (<option value={data.role_id} key={data.role_id}>{data.role_name}</option>))}
                             </Form.Select>
                         </Form.Group>
                     </Row>

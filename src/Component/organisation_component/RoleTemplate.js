@@ -14,7 +14,7 @@ export default function HomeDetailComponent() {
     useEffect(() => {
         const params = homeId +"/"+ roleId
 
-        const getRoleTemplateUrl = "http://localhost:5000/orgnization/getRoleTemplateDetails/" + params
+        const getRoleTemplateUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getRoleTemplateDetails/" + params
         axios.get(getRoleTemplateUrl)
             .then(res => {
                 if(res.data=="" || res.data.length==0)
@@ -57,7 +57,7 @@ export default function HomeDetailComponent() {
     function saveRoleTemplateText(){
         console.log("In saveText")
         console.log(templateDetails)
-        axios.put("http://localhost:5000/orgnization/editRoleTemplateDetails",templateDetails)
+        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editRoleTemplateDetails",templateDetails)
             .then(res => {
                 console.log(res);
                 

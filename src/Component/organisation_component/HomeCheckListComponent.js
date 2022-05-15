@@ -38,7 +38,7 @@ export default function HomeCheckListComponent() {
           
     }, [])
     function getInitialData(){
-        const getCoursesUrl = "http://localhost:5000/orgnization/getCourseList/"
+        const getCoursesUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getCourseList/"
         axios.get(getCoursesUrl)
             .then(res => {
                 setCourseList(res.data)
@@ -47,7 +47,7 @@ export default function HomeCheckListComponent() {
             .catch(err => {
                 console.log(err);
             })
-        const getCheckListUrl = "http://localhost:5000/orgnization/showHomeCheckList/" + params
+        const getCheckListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/showHomeCheckList/" + params
         axios.get(getCheckListUrl)
             .then(res => {
                 console.log(res.data)
@@ -71,7 +71,7 @@ export default function HomeCheckListComponent() {
         tempArray[id].course_details = tempArray[id].course_details.filter(function(el) { return el.id != courseDetail.courseID; }); 
         setRoleDetails(tempArray)
         console.log(roleDetails)
-        const editCourseDetails = "http://localhost:5000/orgnization/editCourseDetails/" 
+        const editCourseDetails = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editCourseDetails/" 
 
         axios.put(editCourseDetails,roleDetail)
         .then(res => {
@@ -112,7 +112,7 @@ export default function HomeCheckListComponent() {
     }
     function changeArchiveStatus(event, role_id) {
         console.log(role_id, " roleid")
-        const archiveStatusUrl = "http://localhost:5000/orgnization/editRoleArchiveStatus"
+        const archiveStatusUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editRoleArchiveStatus"
         //var status = ""+event.target.value
         axios.put(archiveStatusUrl, { "role_id": String(role_id), "archived": String(event.target.value), "home_id": String(params) })
             .then(res => {
@@ -129,7 +129,7 @@ export default function HomeCheckListComponent() {
 
         handleCloseOption()
         console.log(globalRole)
-        const addNewRoleUrl = "http://localhost:5000/orgnization/addCheckListRole/" 
+        const addNewRoleUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addCheckListRole/" 
         axios.put(addNewRoleUrl,globalRole)
             .then(res => {
                 // console.log(res.data)
