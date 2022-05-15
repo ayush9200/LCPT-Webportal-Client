@@ -4,10 +4,24 @@ import { Form, Row, Col, Button, Container } from 'react-bootstrap'
 function VerifyCredentials(props) {
     console.log(props)
     var userCrsRowData = props.userCrsRowData;
+    var validityDate = new Date(userCrsRowData.validityDate);
+
+    var month = '' + (validityDate.getMonth() + 1);
+    var day = '' + validityDate.getDate();
+    var year = validityDate.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    validityDate = [year, month, day].join('-');
+
+    console.log(userCrsRowData.status)
     var editUsrCrsForm = (e) => {
 
     }
-
+    // userCrsRowData.validityDate
     return (
         <div>
             <Container>
@@ -37,15 +51,18 @@ function VerifyCredentials(props) {
                     <Row>
                         <Form.Group as={Col} controlId="userCrsValDate">
                             <Form.Label>Validity Date</Form.Label>
-                            <Form.Control defaultValue={userCrsRowData.validityDate} type='date' />
+                            <Form.Control type='date' defaultValue={validityDate} />
                         </Form.Group>
                         <Form.Group as={Col} controlId="userCrsIsURLValid">
                             <Form.Label>Is URL Valid?</Form.Label>
+                            <Form.Select aria-label="Default select example" defaultValue={userCrsRowData.status}>
+                                <option value='false'>NOT VALID</option>
+                                <option value='true' >IS VALID</option>
+                            </Form.Select>
 
-                            <Form.Check
-                                type="switch"
-                            // id="custom-switch"
-                            />
+                            {/* <Form.Check type="switch" onChange={(e) => {
+                                console.log(e.target.value);
+                            }} /> */}
                         </Form.Group>
 
                     </Row>
@@ -59,7 +76,7 @@ function VerifyCredentials(props) {
 
                 <br></br>
             </Container>
-        </div>
+        </div >
     )
 }
 

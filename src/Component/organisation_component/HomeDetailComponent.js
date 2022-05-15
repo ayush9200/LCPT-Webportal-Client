@@ -35,7 +35,7 @@ export default function HomeDetailComponent(props) {
             .catch(err => {
                 console.log(err);
             })
-    }, [])
+    }, [params])
 
 
     function changeHomeText(event, id) {
@@ -76,7 +76,7 @@ export default function HomeDetailComponent(props) {
     return (
 
         <div style={{ marginTop: "8vh" }} >
-            <h1>Home : {params} </h1>
+            {/* <h1>Home : {params} </h1> */}
             <div style={{ textAlign: "center", marginRight: "5%" }}>
                 <Button variant="warning" style={{ marginRight: "1%" }}
                 ><Link to={`/showStaff/${params}`}>View Staff Members</Link></Button>

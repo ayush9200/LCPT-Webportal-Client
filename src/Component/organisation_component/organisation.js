@@ -82,7 +82,7 @@ export default function Organisation(props) {
     return (
 
         <div style={{ marginTop: "8vh" }} >
-            <h1>Organisation : {id} </h1>
+            {/* <h1>Organisation : {id} </h1> */}
             <Tabs defaultActiveKey="OrgDetails" id="uncontrolled-tab-example" className="mb-3" fill>
                 <Tab eventKey="OrgDetails" title="Organisation Details">
                     <div className='org-container'>

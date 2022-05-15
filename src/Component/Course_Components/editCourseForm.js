@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
-
+import Config from '../config.json'
 function EditCourseForm() {
     const [allCourses, setAllCourses] = useState([]);
     const [selectedCourseIndx, setSelectedCourseIndx] = useState(0);
 
     useEffect(() => {
+        console.log(Config)
         axios.get("https://lcpt-webportal-backend.herokuapp.com/course/view-all-courses")
             .then(res => {
                 console.log(res.data);
