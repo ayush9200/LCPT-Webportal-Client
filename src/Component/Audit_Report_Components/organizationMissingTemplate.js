@@ -9,7 +9,7 @@ function OrganizationMissingTemplate(props) {
 
     useEffect(() => {
         var orgId = props.org_id;
-        var gethomeDetailsUrl = "http://localhost:5000/audit-report/org-missing-courses/" + orgId;
+        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/org-missing-courses/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);

@@ -8,7 +8,7 @@ function AdminUserCourse() {
 
 
     useEffect(() => {
-        var getAdmUsrCrsURL = "http://localhost:5000/admin-data/user-crs";
+        var getAdmUsrCrsURL = "https://lcpt-webportal-backend.herokuapp.com/admin-data/user-crs";
         axios.get(getAdmUsrCrsURL)
             .then(res => {
                 console.log(res.data);

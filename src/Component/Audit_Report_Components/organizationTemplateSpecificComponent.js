@@ -9,9 +9,9 @@ function OrganizationTemplateSpecificComponent(props) {
 
 
     useEffect(() => {
-        // http://localhost:5000/audit-report/org-template-specific/1
+        // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
         var orgId = props.org_id;
-        var gethomeDetailsUrl = "http://localhost:5000/audit-report/org-template-specific/" + orgId;
+        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);

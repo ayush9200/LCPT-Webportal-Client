@@ -26,7 +26,7 @@ function HomeAuditTabs(props) {
                 console.log(err);
             })
         // /audit-report/home-staff-summary/1
-        var gethomeStaffDetailsUrl = "http://localhost:5000/audit-report/home-staff-summary/" + homeID;
+        var gethomeStaffDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/home-staff-summary/" + homeID;
         axios.get(gethomeStaffDetailsUrl)
             .then(res => {
                 console.log(res.data);

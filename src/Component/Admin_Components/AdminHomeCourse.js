@@ -8,8 +8,8 @@ function AdminHomeCourse() {
 
 
     useEffect(() => {
-        // http://localhost:5000/audit-report/org-template-specific/1
-        var getAdmHmCrsURL = "http://localhost:5000/admin-data/home-crs-role";
+        // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
+        var getAdmHmCrsURL = "https://lcpt-webportal-backend.herokuapp.com/admin-data/home-crs-role";
         axios.get(getAdmHmCrsURL)
             .then(res => {
                 console.log(res.data);

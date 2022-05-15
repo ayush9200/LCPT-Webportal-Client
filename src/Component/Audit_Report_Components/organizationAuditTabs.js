@@ -18,7 +18,7 @@ function OrganizationAuditTabs(props) {
     const organizationID = props.organizationID;
 
     useEffect(() => {
-        var gethomeDetailsUrl = "http://localhost:5000/orgnization/getHomesList/" + organizationID;
+        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/" + organizationID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
 
