@@ -3,6 +3,7 @@ import { Form, Row, Col, Button, Container, Table } from 'react-bootstrap'
 import axios from 'axios';
 import { useParams, Link } from "react-router-dom";
 import * as XLSX from "xlsx";
+import { BASE_API_URL } from '../Url-config';
 
 function UserAuditReport() {
 
@@ -12,14 +13,27 @@ function UserAuditReport() {
     const [pendingCourses, setPendingCourses] = useState([]);
     const [userList, setUserList] = useState([]);
     const [finalList, setFinalList] = useState([]);
+    const [mappingData, setMappingData] = useState([{'':''}]);
   
    
     // https://lcpt-webportal.herokuapp.com/
-    const BASE_URL_GET_COURSELIST = "https://lcpt-webportal.herokuapp.com/course/fetchCourseDetails";
-    const BASE_URL_USER = "https://lcpt-webportal.herokuapp.com/user/getUser/";
+    const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
+    const BASE_URL_USER = BASE_API_URL+"user/getUser/";
+    const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
 
     useEffect(() => {
-        fetchData();
+        //fetchData();
+        const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;
+        const res = axios.get(getUserHomeRoleData, {
+         headers: {
+             'Content-Type': 'application/json'
+         }
+         }).then(response =>{
+             console.log(" ========== > ", response);
+             setMappingData(response.data);
+             fetchCourseDetails(response.data);
+             fetchData();
+         });
     },[]);
 
     async function fetchData() {
@@ -27,43 +41,48 @@ function UserAuditReport() {
         let response = await axios.get(
             getUserData
         );
-        fetchCourseDetails(response.data.data);
+        //fetchCourseDetails(response.data.data);
+        setUserList(response.data.data);
     }
 
    
-    const fetchCourseDetails = async (response) => {
+    const fetchCourseDetails = (response) => {
        try {
-           setUserList(response);
-           const body = JSON.stringify({ userId: userList.userId, orgId: userList.orgId, roleId: userList.roleId, homeId: userList.homeId });
-           console.log(body);
-           var resJson = [];
-           const res = await axios.post(BASE_URL_GET_COURSELIST, body, {
-               headers: {
-                   'Content-Type': 'application/json'
-               }
-           }).then(res => {
-                   console.log('+++++++++++ = ',res);
-                   resJson = res.data;
-                   if(resJson!==undefined){
-                    setCourseList(resJson);
-                    console.log("Course list : "+courseList);
-                    console.log("Pending Courses : "+courseList.pendingCourses);
-                    console.log("CompletedCourses : "+courseList.completedCourses);
-                    console.log("Course list All in system : "+courseList.allCourseList);
-       
-                    setCompletedCourses(courseList.completedCourses);
-                    setPendingCourses(courseList.pendingCourses);
+           //setUserList(response[0]);
+           console.log("> Get Audit  userlist: ",userList);
+           console.log("> Get Audit  Response: ",response);
+          
+        var responseArray = [];
+           //const inner = response.role_arr.find(
+            const userMappedHome = response.map((c)=>{  
+                const inner = c.role_arr.find(
+                (s) => {
+                var b = { 'userId': c.user_id, 'roleId': s.role_id, 'homeId': c.home_id };
+                console.log("Audit request body : ",b);
+                axios.post(BASE_URL_GET_COURSELIST, b, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res => {
+                        console.log('+++++++++++ Audit Report => ',res);
+                        var resJson = res.data;
+                        responseArray.push(resJson);
+                        if(resJson === undefined){
+                            return alert("Invalid Credentials. Please try again.");
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                   return (responseArray);
+            });
+            return (inner);
+            });
+            //console.log("In the middle => ", inner);
+            console.log("In the middle json => ", responseArray);
+            console.log("In the middle Audit => ", userMappedHome);
 
-                   
-                   lastMethodCall(resJson);
-                   console.log(resJson);
-                 }else{
-                   return alert("Invalid Credentials. Please try again.");
-                 }
-               })
-               .catch(err => {
-                   console.log(err);
-               })
+            setTimeout(() => lastMethodCall(responseArray), 3000);
                
     
        }catch (error) {
@@ -71,17 +90,34 @@ function UserAuditReport() {
         }
      }
    
-     const lastMethodCall = async(passresJson) => {
+     const lastMethodCall = (passresJson) => {
        try {
-           setCourseList(passresJson);
-           console.log("> Course list : "+courseList);
-           console.log("> Pending Courses : "+courseList.pendingCourses);
-           console.log("> CompletedCourses : "+courseList.completedCourses);
-           console.log("> Course list All in system : "+courseList.allCourseList);
-   
-           setCompletedCourses(courseList.completedCourses);
-           setPendingCourses(courseList.pendingCourses);
-
+           var list = [];
+           var courseIds = [];
+        const arrayOfResponse = passresJson.map((c)=>{  
+            const inner = c.completedCourses.find(
+                (s) => {
+                    if(!courseIds.includes(s.crsId)){
+                        courseIds.push(s.crsId);
+                         list.push(s)
+                    }
+                    
+                });
+                const inner2 = c.pendingCourses.find(
+                    (s) => {
+                        if(!courseIds.includes(s.crsId)){
+                            courseIds.push(s.crsId);
+                            list.push(s)
+                        }
+                        
+                    });
+            return list;
+        });
+           //setCourseList(passresJson);
+           console.log("> Mapped Home list : "+list);
+           //setCompletedCourses(passresJson.completedCourses);
+           //setPendingCourses(passresJson.pendingCourses);
+            setFinalList(list);
              // className='text-center' style={{justifyContent:'center', maxWidth: '450px'}}
        }catch (error) {
            console.log(error);
@@ -91,11 +127,14 @@ function UserAuditReport() {
      const printAuditReport = async e =>{
          var arrayOfData = [];
       // arrayOfData.push(mapForUserData);
-        {completedCourses?.map((data, id) => { 
+      var courseIds = [];
+        {finalList?.map((data, id) => { 
             console.log(" >><<< ", data)
+           
+            
             var mapForCourses = {
                 'USER NAME': userList.fullName,
-                'USER ID': userList.userId,
+                'USER ID': userList.user_id,
                 'EMAIL ID': userList.email,
                 'CONTACT NUMBER': userList.number,
                 'DATE OF BIRTH': userList.dob,
@@ -110,26 +149,26 @@ function UserAuditReport() {
             }
             arrayOfData.push(mapForCourses);
            })};
-          
-        {pendingCourses?.map((data, id) => { 
-        console.log(" >><<< ", data)
-            var mapForCourses = {
-                'USER NAME': userList.fullName,
-                'USER ID': userList.userId,
-                'EMAIL ID': userList.email,
-                'CONTACT NUMBER': userList.number,
-                'DATE OF BIRTH': userList.dob,
-                'ADDRESS': userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode,
-                'COURSE ID': data.crsId,
-                'COURSE TITLE': data.title,
-                'STATUS': data.status,
-                'VALIDITY': data.validity,
-                'SHARED WITH EMPLOYER': data.sharedEmp,
-                'EXTERNAL DOCUMENT': data.extDoc,
-                'TRAINING DURATION': data.trainDuration
-            }
-            arrayOfData.push(mapForCourses);
-        })};
+         
+        // {pendingCourses?.map((data, id) => { 
+        // console.log(" >><<< ", data)
+        //     var mapForCourses = {
+        //         'USER NAME': userList.fullName,
+        //         'USER ID': userList.userId,
+        //         'EMAIL ID': userList.email,
+        //         'CONTACT NUMBER': userList.number,
+        //         'DATE OF BIRTH': userList.dob,
+        //         'ADDRESS': userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode,
+        //         'COURSE ID': data.crsId,
+        //         'COURSE TITLE': data.title,
+        //         'STATUS': data.status,
+        //         'VALIDITY': data.validity,
+        //         'SHARED WITH EMPLOYER': data.sharedEmp,
+        //         'EXTERNAL DOCUMENT': data.extDoc,
+        //         'TRAINING DURATION': data.trainDuration
+        //     }
+        //     arrayOfData.push(mapForCourses);
+        // })};
         setFinalList(arrayOfData);
         console.log('////// ', arrayOfData);
 
@@ -147,10 +186,23 @@ function UserAuditReport() {
             <br></br>
             <Container style={{minHeight:'20pc'}}>
             <Row>
+           
             <Col>
           
+            <h3 className='text-center' style={{color:'#0f6fc5'}}>User Report</h3>
+                <br></br>
+                <br></br>
+                <br></br>
                     <Row>
-                    <Col></Col>
+                    <Col>
+                    <div className='text-left'>
+                    <h5><b>User ID :</b> {userList.user_id}</h5>
+                    <h5><b>Username : </b>{userList.fullName}</h5>
+                    <h5><b>Contact : </b>{userList.number}</h5>
+                    <h5><b>Email ID : </b>{userList.email}</h5>
+                    <h5><b>Address : </b>{userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode}</h5>
+                    </div>
+                    </Col>
                     <Col>
                         <Form>
                             <Form.Group id="formGridCheckbox">
@@ -160,16 +212,16 @@ function UserAuditReport() {
                                     <option>Xlsx</option>
                                     <option>Pdf</option>
                                 </Form.Select>
-                                <hr></hr>
+                               <br></br>
+                               <br></br>
                                 <Form.Check type="checkbox" label="Verify and send all data to Employer" />
                                 <hr></hr>
                                 <div className='text-center'>
-                                <Button variant="primary" onClick={printAuditReport}>Submit</Button>
+                                <Button variant="primary" onClick={printAuditReport}>Generate Report</Button>
                                 </div>
                             </Form.Group>
                         </Form>
                     </Col>
-                    <Col></Col>
                     </Row>
                    
             </Col>
@@ -177,15 +229,7 @@ function UserAuditReport() {
             <br></br>
             <br></br>
             <Row>
-                <h3 className='text-center' style={{color:'#0f6fc5'}}>User Report</h3>
-              
-                <div className='text-center' style={{color:'#0f6fc5'}}>
-                <h5><b>User ID :</b> {userList.userId}</h5>
-                <h5><b>Username : </b>{userList.fullName}</h5>
-                <h5><b>Contact : </b>{userList.number}</h5>
-                <h5><b>Email ID : </b>{userList.email}</h5>
-               <h5><b>Address : </b>{userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode}</h5>
-                </div>
+               
                 <hr></hr>
                     <Table striped bordered hover>
                         <thead>
@@ -200,7 +244,7 @@ function UserAuditReport() {
                             <th>Training Duration</th>
                             </tr>
                         </thead>
-                        {completedCourses?.map((data, id) => { 
+                        {finalList?.map((data, id) => { 
                     return <tbody key={id}>
                                 <tr>
                                     <td>{userList.fullName}</td>
@@ -214,7 +258,7 @@ function UserAuditReport() {
                                 </tr>
                             </tbody>
                         })}
-                        {pendingCourses?.map((data, id) => {
+                        {/* {pendingCourses?.map((data, id) => {
                     return <tbody key={id}>
                         <tr >
                             <td>{userList.fullName}</td>
@@ -227,7 +271,7 @@ function UserAuditReport() {
                             <td>{data.trainDuration}</td>
                         </tr>
                         </tbody>
-                    })}
+                    })} */}
                     </Table>
                    
             </Row>
@@ -240,10 +284,7 @@ function UserAuditReport() {
                     <br></br>
                     <br>
                     </br>
-                    <br></br>
-                    <br>
-                    </br>
-                    <br></br>
+                   
         </div>
     )
 }

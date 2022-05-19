@@ -1,10 +1,9 @@
 import React, {useState,useEffect, useRef} from 'react'
 import { Form, Row, Col, Button, Container, Table, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import { useParams, Link } from "react-router-dom";
-import Popover from 'react-bootstrap/Popover';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { BASE_API_URL } from '../Url-config';
 
 
 var today = new Date();
@@ -35,10 +34,10 @@ function UserCourses() {
   
    
 
-    const BASE_URL_GET_All_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getAllHomes";
-    const BASE_URL_GET_ROLELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getRoleByHomeId/";
-    const BASE_URL_GET_COURSELIST = "https://lcpt-webportal-backend.herokuapp.com/course/fetchCourseDetails";
-    const BASE_URL_GET_USER_HOME_ROLE = "https://lcpt-webportal-backend.herokuapp.com/user/fetchUHRdetails/";
+    const BASE_URL_GET_All_HOMELIST = BASE_API_URL+"orgnization/getAllHomes";
+    const BASE_URL_GET_ROLELIST = BASE_API_URL+"orgnization/getRoleByHomeId/";
+    const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
+    const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
 
     useEffect(() => {
        // fetchData();
@@ -85,9 +84,7 @@ function UserCourses() {
                     (s) => {
                         console.log(c.home_id,"   ",s.home_id);
                         if(c.home_id === s.home_id){
-                            
-                    
-                        return (s);
+                            return (s);
                         }
                     });
                 
@@ -166,12 +163,12 @@ const getRoleList = async(passRoleId) => {
     }
 };
 //
-  const fetchCourseDetails = async e => {
+  const fetchCourseDetails = () => {
     try {
         const body = JSON.stringify({ userId: userId, orgId: orgId, roleId: roleId, homeId: homeId });
         console.log(body);
         var resJson = [];
-        const res = await axios.post(BASE_URL_GET_COURSELIST, body, {
+        axios.post(BASE_URL_GET_COURSELIST, body, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -201,14 +198,14 @@ const getRoleList = async(passRoleId) => {
 
   const lastMethodCall = (passresJson) => {
     try {
-        setCourseList(passresJson);
+        setCourseList(passresJson.allCourseList);
+        setCompletedCourses(passresJson.completedCourses);
+        setPendingCourses(passresJson.pendingCourses);
         console.log("Course list : "+courseList);
-        console.log("Pending Courses : "+courseList.pendingCourses);
-        console.log("CompletedCourses : "+courseList.completedCourses);
+        console.log("Pending Courses : "+pendingCourses);
+        console.log("CompletedCourses : "+completedCourses);
         console.log("Course list All in system : "+courseList.allCourseList);
 
-        setCompletedCourses(courseList.completedCourses);
-        setPendingCourses(courseList.pendingCourses);
         //lastMethodCall(resJson);
     }catch (error) {
         console.log(error);
@@ -219,11 +216,13 @@ const getRoleList = async(passRoleId) => {
     const handleShow = () => {
         setshow(true)
     };
-    const func2 = (userId,roleId,roleName,trainDuration,validity,crsId,title) => {
-        var val = userId+","+roleId+","+roleName+","+trainDuration+","+validity+","+crsId+","+title;
+    const func2 = (userId,roleId,roleName,trainDuration,validity,crsId,title,reqFrom) => {
+        var val = userId+","+roleId+","+roleName+","+trainDuration+","+validity+","+crsId+","+title+","+reqFrom;
         setmodalInfo(val);
     }
   const ModalContent = () =>{
+    var field = (modalInfo.split(",")[7] === 'pending')?<tr><td className="text-center"><b>Upload URL</b></td><td className="text-left"><Form.Control type="text" name="badgeUrl" placeholder="Please enter your course badge URL" /></td></tr>:'';
+    var button = (modalInfo.split(",")[7] === 'pending')?<Button variant="success" onClick={handleClose}>Save</Button>:'';
       return (<Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
         <Modal.Title style={{color:'#0f6fc5'}}>Course Details</Modal.Title>
@@ -239,12 +238,14 @@ const getRoleList = async(passRoleId) => {
                     <tr><td className='text-center'><b>Designation</b></td><td className='text-left'><Form.Label>{modalInfo.split(",")[2]} </Form.Label></td></tr>
                     <tr><td className='text-center'><b>Training Duration</b></td><td className='text-left'><Form.Label>{modalInfo.split(",")[3]} </Form.Label></td></tr>
                     <tr><td className='text-center'><b>Course Validity</b></td><td className='text-left'><Form.Label>{modalInfo.split(",")[4]} </Form.Label></td></tr>
+                    {field}
                     </tbody>
                 </table>
                        
            </Row>
         </Modal.Body>
         <Modal.Footer>
+            {button}
         <Button variant="secondary" style={{backgroundColor :'#0f6fc5'}} onClick={handleClose}>
             Close
         </Button>
@@ -341,7 +342,7 @@ const getRoleList = async(passRoleId) => {
                                     <Button variant="success">...</Button>
                                 </OverlayTrigger> */}
                                 <Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
-                                    data.trainDuration,data.validity, data.crsId, data.title);}}>
+                                    data.trainDuration,data.validity, data.crsId, data.title,'completed');}}>
                                         Details
                                     </Button></td>
                                     
@@ -387,7 +388,7 @@ const getRoleList = async(passRoleId) => {
                             <td>{data.sharedEmp}</td>
                             <td>{data.status}</td>
                             <td><Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
-                                    data.trainDuration,data.validity, data.crsId, data.title);}}>
+                                    data.trainDuration,data.validity, data.crsId, data.title, 'pending');}}>
                                         Details
                                     </Button></td>
                         </tr>
@@ -400,7 +401,7 @@ const getRoleList = async(passRoleId) => {
                     <div>
                         <br></br>
                         <br></br>
-                    <h4>Print all courses with details</h4> <Button variant="primary" onClick={printContent2}>Print</Button>
+                    <h4>Print all courses with details</h4> <Button variant="primary" >Print</Button>
                     {/* <UserProfile ref={componentRef} />
       <button onClick={handlePrint}>Print this out!</button> */}
                     </div>
