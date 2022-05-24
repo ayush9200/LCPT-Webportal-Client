@@ -34,8 +34,8 @@ export default function HomeCheckListComponent() {
     ];
     useEffect(() => {
         getInitialData()
-     
-          
+
+
     }, [])
     function getInitialData(){
         const getCoursesUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getCourseList/"
@@ -52,23 +52,23 @@ export default function HomeCheckListComponent() {
             .then(res => {
                 console.log(res.data)
                 setRoleDetails(res.data)
-               
+
                 console.log(roleDetails);
-               
-        
+
+
             })
             .catch(err => {
                 console.log(err);
             })
     }
 
-    function handleCheckOnChange(event,courseDetail,roleDetail,id){
-        console.log(event.target.checked,courseDetail,roleDetail,id)
+    function handleCheckOnChange(event, courseDetail, roleDetail, id) {
+        console.log(event.target.checked, courseDetail, roleDetail, id)
         var tempArray = roleDetails;
-        if(event.target.checked)
-        tempArray[id].course_details.push({"id":courseDetail.courseID,"details":courseDetail.title})
+        if (event.target.checked)
+            tempArray[id].course_details.push({ "id": courseDetail.courseID, "details": courseDetail.title })
         else
-        tempArray[id].course_details = tempArray[id].course_details.filter(function(el) { return el.id != courseDetail.courseID; }); 
+            tempArray[id].course_details = tempArray[id].course_details.filter(function (el) { return el.id != courseDetail.courseID; });
         setRoleDetails(tempArray)
         console.log(roleDetails)
         const editCourseDetails = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editCourseDetails/" 
@@ -87,7 +87,7 @@ export default function HomeCheckListComponent() {
         })
 
     }
-    function createRole(event,roleDetailObj){
+    function createRole(event, roleDetailObj) {
         console.log(roleDetailObj)
         setGlobalRole(roleDetailObj)
         handleShowOption()
@@ -105,7 +105,7 @@ export default function HomeCheckListComponent() {
         console.log("id: ", id, " ", event.target.value)
     }
     function getMicrodetails(event, val) {
-       // console.log(roleDetails[id].course_details[_id])
+        // console.log(roleDetails[id].course_details[_id])
         setDispMicroCred(val);
         handleshowMicroCred()
 
@@ -125,7 +125,7 @@ export default function HomeCheckListComponent() {
                 console.log(err);
             })
     }
-    function getNewRole(event,data){
+    function getNewRole(event, data) {
 
         handleCloseOption()
         console.log(globalRole)
@@ -134,20 +134,20 @@ export default function HomeCheckListComponent() {
             .then(res => {
                 // console.log(res.data)
                 // setRoleDetails(res.data)
-               
+
                 // console.log(roleDetails);
-               getInitialData()
-        
+                getInitialData()
+
             })
             .catch(err => {
                 console.log(err);
             })
 
     }
-    function addRoleText(event,id){
+    function addRoleText(event, id) {
         var tempObj = globalRole;
         tempObj.role_name = event.target.value;
-        tempObj.role_id = String(roleDetails.length+3);
+        tempObj.role_id = String(roleDetails.length + 1);
         delete tempObj._id;
 
         setGlobalRole(tempObj)
@@ -157,184 +157,123 @@ export default function HomeCheckListComponent() {
     return (
         <div style={{ marginTop: "10vh" }}>
             <h1>Home CheckList Component Details</h1>
-            <Table striped bordered hover>
-                <thead>
-                    <th></th>
-                    {roleDetails.map((data, id) => {
-                        return <th key={id}>
-                            
-                            <Button variant="warning" style={{marginTop:"2%"}} onClick={(e) => {
-                                            createRole(e, data);
-                                        }}>Create Role</Button>
-                                        <Modal show={showOption} onHide={handleCloseOption}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Enter Role Name</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
-                            <Form.Label>Enter the Role Name</Form.Label>
-                            <Form.Control type="text"
-                                onChange={(e) => {
-                                    addRoleText(e, 'hm1');
-                                }}
-                            />
-                            
-                        </Form.Group>
+            <div style={{ overflow: "auto",
+display: "block",
+tableLayout: "auto" }}>
 
-                    </Form>
 
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseOption} >
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={getNewRole} >
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-                            {/* <Button variant="warning" style={{marginTop:"2%"}} onClick={(e) => {
-                                            getMoreOptions(e, data);
-                                        }}>More Options</Button> */}
-                            <Button variant="warning"><Link to={`/roleTemplate/${data.home_id}/${data.role_id}`}>View Role</Link></Button>
-                            <p><Form>
+                <Table striped bordered hover >
+                    <thead>
+                        <th></th>
+                        {roleDetails.map((data, id) => {
+                            return <th key={id}>
+
+                                <Button variant="warning" style={{ marginTop: "2%" }} onClick={(e) => {
+                                    createRole(e, data);
+                                }}>Create Role</Button>
+                                <Modal show={showOption} onHide={handleCloseOption}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Enter Role Name</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <Form>
+                                            <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                                                <Form.Label>Enter the Role Name</Form.Label>
+                                                <Form.Control type="text"
+                                                    onChange={(e) => {
+                                                        addRoleText(e, 'hm1');
+                                                    }}
+                                                />
+
+                                            </Form.Group>
+
+                                        </Form>
+
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="secondary" onClick={handleCloseOption} >
+                                            Close
+                                        </Button>
+                                        <Button variant="primary" onClick={getNewRole} >
+                                            Save Changes
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal>
+
+                                <Button variant="warning"><Link to={`/roleTemplate/${data.home_id}/${data.role_id}`}>View Role</Link></Button>
+                                <p><Form>
                                     <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
-                                    <Form.Label>Role Archive Status</Form.Label>
-                                    {/* <p>Role Archive Status</p> */}
-                                        <Form.Select aria-label="Default select example" defaultValue={data.archived} onChange={(e) => {
-                                            changeArchiveStatus(e, data.role_id);
-                                        }}>
-                                            <option value="True" >True</option> 
-                                            <option value="False"> False</option>
-                                        </Form.Select>
-                                       
-                                    </Form.Group>
-                                </Form></p>
-                                <p><b>{data.role_name}</b></p>
-                            
-                                
-                        </th>
-                    })
-                    }
-
-
-                </thead>
-
-                {courseList.map((courses, id) => {
-                    return <tr key={id}>
-                        <td><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
-                                    getMicrodetails(e, courses.title);
-                                }} >View MicroCred Details</Button>
-                                    <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
-                                        <Modal.Header closeButton>
-                                            <Modal.Title>View MicroCred Details</Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body>
-                                            This will contain MicroCred Details for {dispMicroCred}
-
-                                        </Modal.Body>
-                                        <Modal.Footer>
-                                            <Button variant="secondary" >
-                                                Close
-                                            </Button>
-                                            <Button variant="primary" >
-                                                Save Changes
-                                            </Button>
-                                        </Modal.Footer>
-                                    </Modal>
-                                </div></td>
-                        {roleDetails.map((data, _id) => {
-                            return <td key={_id}>
-                                <input
-                                    type="checkbox" style={{transform: "scale(2)",marginLeft:"20%"}}
-                                  
-                                defaultChecked={(roleDetails[_id].course_details.find(item=>
-                                    item.id == courseList[id].courseID
-                                )!=undefined)}
-                                onChange={(e) => {
-                                    handleCheckOnChange(e, courses,data,_id);
-                                }}
-                                  
-                                />
-
-                                
-                            </td>
-
-
-                        })
-                        }
-                    </tr>
-                })}
-
-                {/* </thead> */}
-
-                {/* <thead>
-                    <tr>
-                        <th>S.R.</th>
-                        <th>Position Title</th>
-                        <th>Archive Status</th>
-                        <th>Role Template</th>
-                        <th>Courses Mandatory</th>
-                        <th>Action</th>
-                        
-
-                    </tr>
-                </thead>
-
-
-
-                {roleDetails.map((data, id) => {
-                    return <tbody key={id}>
-                        <tr >
-                            <td>{id + 1}</td>
-                            <td>{data.role_name}</td>
-                            <td>
-                               
-                                <Form>
-                                    <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                                        <Form.Label>Role Archive Status</Form.Label>
+                                        {/* <p>Role Archive Status</p> */}
                                         <Form.Select aria-label="Default select example" defaultValue={data.archived} onChange={(e) => {
                                             changeArchiveStatus(e, data.role_id);
                                         }}>
                                             <option value="True" >True</option>
                                             <option value="False"> False</option>
                                         </Form.Select>
+
                                     </Form.Group>
-                                </Form>
-                            </td>
-                            <td><Link to={`/roleTemplate/${data.home_id}/${data.role_id}`}><Button style={{ marginBottom: "5px" }} variant="warning" >View Template</Button></Link></td>
+                                </Form></p>
+                                <p><b>{data.role_name}</b></p>
 
 
-                            <td>{data.course_details.map((courseData, _id) => { return <li style={{ marginBottom: "15px", marginTop: "10px" }} >{courseData.details}</li> })}</td>
-                            <td>{data.course_details.map((courseData, _id) => {
-                                return <div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
-                                    getMicrodetails(e, courseData, _id, id);
-                                }} >View MicroCred Details</Button>
-                                    <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
-                                        <Modal.Header closeButton>
-                                            <Modal.Title>View MicroCred Details</Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body>
-                                            This will contain MicroCred Details for {dispMicroCred.details}
+                            </th>
+                        })
+                        }
 
-                                        </Modal.Body>
-                                        <Modal.Footer>
-                                            <Button variant="secondary" >
-                                                Close
-                                            </Button>
-                                            <Button variant="primary" >
-                                                Save Changes
-                                            </Button>
-                                        </Modal.Footer>
-                                    </Modal>
-                                </div>
-                            })}</td>
 
+                    </thead>
+
+                    {courseList.map((courses, id) => {
+                        return <tr key={id}>
+                            <td><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
+                                getMicrodetails(e, courses.title);
+                            }} >View MicroCred Details</Button>
+                                <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>View MicroCred Details</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        This will contain MicroCred Details for {dispMicroCred}
+
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="secondary" >
+                                            Close
+                                        </Button>
+                                        <Button variant="primary" >
+                                            Save Changes
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal>
+                            </div></td>
+                            {roleDetails.map((data, _id) => {
+                                return <td key={_id}>
+                                    <input
+                                        type="checkbox" style={{ transform: "scale(2)", marginLeft: "20%" }}
+
+                                        defaultChecked={(roleDetails[_id].course_details.find(item =>
+                                            item.id == courseList[id].courseID
+                                        ) != undefined)}
+                                        onChange={(e) => {
+                                            handleCheckOnChange(e, courses, data, _id);
+                                        }}
+
+                                    />
+
+
+                                </td>
+
+
+                            })
+                            }
                         </tr>
-                    </tbody>
-                })} */}
+                    })}
 
-            </Table>
+
+
+                </Table>
+            </div>
             {/* )} */}
         </div>);
 }

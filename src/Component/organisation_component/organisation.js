@@ -29,7 +29,7 @@ export default function Organisation(props) {
     useEffect(() => {
         // toggleshowSpinner()
         setshowSpinner(true)
-        const gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getOrganisationDetails/" + id
+        const gethomeDetailsUrl = "http://localhost:5000/orgnization/getOrganisationDetails/" + id
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data[0]);
@@ -68,7 +68,7 @@ export default function Organisation(props) {
         console.log("In saveText")
         console.log(homeDetails)
         toggleshowSpinner()
-        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/editOrgDetails", homeDetails)
+        axios.put("http://localhost:5000/orgnization/editOrgDetails", homeDetails)
             .then(res => {
                 console.log(res);
                 setshowSpinner(false)
