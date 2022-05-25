@@ -42,14 +42,18 @@ export default function StaffComponent() {
     }, [])
 
     function getStaffData() {
+        // <<<<<<< HEAD
         console.log(params)
         const staffListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getStaffList/" + params
+        // =======
+        //         const staffListUrl = "http://localhost:5000/orgnization/getStaffList/" + params
+        // >>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
         axios.get(staffListUrl)
             .then(res => {
                 console.log(res);
                 setStaffList(res.data)
                 sethomeId(res.data[0].home_id)
-                setorgId(res.data[0].org_id)
+                //  setorgId(res.data[0].org_id)
                 setuserId(String(res.data.length + 1))
             })
             .catch(err => {
@@ -136,7 +140,7 @@ export default function StaffComponent() {
     function saveStaffDetail() {
 
         console.log("staff details:", staffDetail)
-        const staffListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewStaff"
+        const staffListUrl = "http://localhost:5000/orgnization/addNewStaff"
         axios.post(staffListUrl, staffDetail)
             .then(res => {
                 console.log(res);
@@ -153,7 +157,7 @@ export default function StaffComponent() {
 
     function changeEmpStatus(event, id) {
         //console.log(event.target.value," for ",id)
-        const staffStatusUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editStaffStatus"
+        const staffStatusUrl = "http://localhost:5000/orgnization/editStaffStatus"
         //var status = ""+event.target.value
         axios.put(staffStatusUrl, { "id": id, "emp_status": String(event.target.value) })
             .then(res => {
@@ -173,15 +177,22 @@ export default function StaffComponent() {
         newAssignRoleObj.user_id = user_id
 
         newAssignRoleObj.role_arr = staffList[staffId].role_arr
+<<<<<<< HEAD
         var temp_role_id = roleDetails[event.target.value].role_id
         var temp_role_name = roleDetails[event.target.value].role_name
         newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
+=======
+        console.log(newAssignRoleObj.role_arr)
+         var temp_role_id = roleDetails[event.target.value].role_id
+         var temp_role_name = roleDetails[event.target.value].role_name
 
-        // role_arr.push(event.target.value)
-        // newAssignRoleObj.role_arr = role_arr
-        // console.log(newAssignRoleObj)
+        if(newAssignRoleObj.role_arr.findIndex((item) => item.role_id === temp_role_id)===-1){
+            newAssignRoleObj.role_arr.push({"role_id":temp_role_id,"role_name":temp_role_name})
+        }
+        var temp_roleArray = newAssignRoleObj.role_arr
+        temp_roleArray.filter((v,i,a)=>a.findIndex(v2=>(v2.role_name===v.role_name))===i)
+>>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
 
-        //setAssignRoleDetail(newAssignRoleObj)
         saveAssignRoleDetail(newAssignRoleObj)
 
     }
