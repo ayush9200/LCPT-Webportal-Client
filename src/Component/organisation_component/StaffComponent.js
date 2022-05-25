@@ -42,6 +42,7 @@ export default function StaffComponent() {
     }, [])
 
     function getStaffData() {
+        console.log(params)
         const staffListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getStaffList/" + params
         axios.get(staffListUrl)
             .then(res => {
@@ -165,16 +166,16 @@ export default function StaffComponent() {
                 console.log(err);
             })
     }
-    function addAssignRoleText(event,user_id,home_id,staffId) {
+    function addAssignRoleText(event, user_id, home_id, staffId) {
         //console.log(event.target.value,id)
-         var newAssignRoleObj = {};
-         newAssignRoleObj.home_id = home_id
-         newAssignRoleObj.user_id = user_id
+        var newAssignRoleObj = {};
+        newAssignRoleObj.home_id = home_id
+        newAssignRoleObj.user_id = user_id
 
         newAssignRoleObj.role_arr = staffList[staffId].role_arr
-         var temp_role_id = roleDetails[event.target.value].role_id
-         var temp_role_name = roleDetails[event.target.value].role_name
-         newAssignRoleObj.role_arr.push({"role_id":temp_role_id,"role_name":temp_role_name})
+        var temp_role_id = roleDetails[event.target.value].role_id
+        var temp_role_name = roleDetails[event.target.value].role_name
+        newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
 
         // role_arr.push(event.target.value)
         // newAssignRoleObj.role_arr = role_arr
@@ -369,7 +370,7 @@ export default function StaffComponent() {
 
 
                                     <Form.Select aria-label="Default select example" onChange={(e) => {
-                                        addAssignRoleText(e,data.user_id,data.home_id,id);
+                                        addAssignRoleText(e, data.user_id, data.home_id, id);
                                     }} >
                                         {roleDetails.map((item, _id) => {
                                             return <option value={_id}>

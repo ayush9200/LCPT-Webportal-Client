@@ -27,8 +27,9 @@ function App() {
         <Route exact path="/home/:id" element={<HomeDetailComponent/>}/>
         <Route exact path="/checkList/:id" element={<HomeCheckListComponent/>}/>
         <Route exact path="/showStaff/:id" element={<StaffComponent/>}/>
-        <Route exact path="/user/:id" element={<UserHomePage/>}/>
         <Route exact path="/roleTemplate/:homeId/:roleId" element={<RoleTemplate/>}/>
+        
+        <Route exact path="/user/:id" element={<UserHomePage/>}/>
         <Route exact path="/userRegistration" element={<UserRegistration/>}/>
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Routes>
