@@ -7,7 +7,7 @@ import LoginForm from './Component/login/LoginForm';
 import Organisation from './Component/organisation_component/organisation'
 import UserHomePage from './Component/user/UserHomePage';
 import UserRegistration from './Component/user_registration/UserRegistration';
-
+import LoginPage from './Component/Login';
 import StaffComponent from './Component/organisation_component/StaffComponent';
 import HomeDetailComponent from './Component/organisation_component/HomeDetailComponent';
 import HomeCheckListComponent from './Component/organisation_component/HomeCheckListComponent';
@@ -22,6 +22,7 @@ function App() {
         <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh", 'minHeight':'40pc' }}>Home Page</h1>} />
         <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh" }}>Home Page</h1>} />
         <Route exact path="/login" element={<LoginForm />} />
+
         <Route exact path="/admin_home" element={<Admin_Home />} />
         <Route exact path="/organisation/:id" element={<Organisation/>}/>
         <Route exact path="/home/:id" element={<HomeDetailComponent/>}/>

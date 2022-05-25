@@ -177,21 +177,21 @@ export default function StaffComponent() {
         newAssignRoleObj.user_id = user_id
 
         newAssignRoleObj.role_arr = staffList[staffId].role_arr
-<<<<<<< HEAD
+        // <<<<<<< HEAD
+        //         var temp_role_id = roleDetails[event.target.value].role_id
+        //         var temp_role_name = roleDetails[event.target.value].role_name
+        //         newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
+        // =======
+        console.log(newAssignRoleObj.role_arr)
         var temp_role_id = roleDetails[event.target.value].role_id
         var temp_role_name = roleDetails[event.target.value].role_name
-        newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
-=======
-        console.log(newAssignRoleObj.role_arr)
-         var temp_role_id = roleDetails[event.target.value].role_id
-         var temp_role_name = roleDetails[event.target.value].role_name
 
-        if(newAssignRoleObj.role_arr.findIndex((item) => item.role_id === temp_role_id)===-1){
-            newAssignRoleObj.role_arr.push({"role_id":temp_role_id,"role_name":temp_role_name})
+        if (newAssignRoleObj.role_arr.findIndex((item) => item.role_id === temp_role_id) === -1) {
+            newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
         }
         var temp_roleArray = newAssignRoleObj.role_arr
-        temp_roleArray.filter((v,i,a)=>a.findIndex(v2=>(v2.role_name===v.role_name))===i)
->>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
+        temp_roleArray.filter((v, i, a) => a.findIndex(v2 => (v2.role_name === v.role_name)) === i)
+        // >>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
 
         saveAssignRoleDetail(newAssignRoleObj)
 
