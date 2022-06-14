@@ -3,15 +3,23 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
 import Config from '../config.json'
-
+import { useParams } from "react-router-dom";
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function AdminHomeCourse() {
     const [adminHomeCrsData, setadminHomeCrsData] = useState([]);
     var backendPortUrl = Config.back_end_port + '/';
+    const params = useParams().id;
 
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='admin')
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
         // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
-        var getAdmHmCrsURL = backendPortUrl + "admin-data/home-crs-role";
+        var getAdmHmCrsURL = BASE_API_URL + "admin-data/home-crs-role";
         axios.get(getAdmHmCrsURL)
             .then(res => {
                 console.log(res.data);

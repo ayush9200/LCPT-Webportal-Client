@@ -12,10 +12,13 @@ import MicroCredsDashboard from './MicroCredsDashboard';
 import Organisation from '../organisation_component/organisation';
 import HomeDetailComponent from '../organisation_component/HomeDetailComponent';
 import AdminUserEditor from './AdminUserEditor';
+import { useParams } from "react-router-dom";
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function Admin_Home() {
     console.log(Config)
     var backendPortUrl = Config.back_end_port + '/';
-
+    const params = useParams().id;
     const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
     const [homeIdForAdmin, setomeIdForAdmin] = useState("1");
     const [homeDetails, setHomeDetails] = useState([]);
@@ -23,9 +26,15 @@ function Admin_Home() {
     const [showOrg, setOrgShow] = useState(false);
     const handleCloseOrg = () => setOrgShow(false);
     const handleShowOrg = () => setOrgShow(true);
+    
     useEffect(() => {
-        var organizationID = "1";
-        var gethomeDetailsUrl = backendPortUrl + "orgnization/getHomesList/" + organizationID;
+        if( sessionStorage.getItem("userType")!='admin')
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
+        var organizationID = params;
+        var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + organizationID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
 
@@ -82,7 +91,7 @@ function Admin_Home() {
     }
     function saveNewOrgText() {
         console.log(OrgDetails)
-        const saveOrgUrl = "http://localhost:5000/orgnization/addNewOrg"
+        const saveOrgUrl = BASE_API_URL+"/orgnization/addNewOrg"
         axios.post(saveOrgUrl, OrgDetails)
             .then(res => {
                 console.log(res);

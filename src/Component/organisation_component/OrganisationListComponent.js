@@ -8,7 +8,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 export default function OrganisationListComponent(props) {
     const handleCloseHome = () => setHomeShow(false);
     const handleShowHome = () => setHomeShow(true);
@@ -16,20 +17,32 @@ export default function OrganisationListComponent(props) {
     const [newHomeId, setNewHomeId] = useState('');
     const [HomeDetails, setHomeDetails] = useState({});
     const [homeListArray, setHomeListArray] = useState([]);
+    const [errors, setErrors] = useState(false)
+
     // const params = useParams().id;
     const params = props.id;
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
         getHomeData();
 
     }, [])
     function getHomeData() {
-        const homeListUrl = "http://localhost:5000/orgnization/getHomesList/" + params
+        const homeListUrl = BASE_API_URL+"orgnization/getHomesList/" + params
         axios.get(homeListUrl)
             .then(res => {
-                console.log(res);
-                setHomeListArray(res.data)
-                setNewHomeId(String(res.data.length + 1))
+                if(res != 'Something went wrong!'||res != 'No Home Found!'){
+                    setHomeListArray(res.data)
+                    setNewHomeId(String(res.data.length + 1))
+                }
+                else{
+                    setHomeListArray([])
+                    setNewHomeId(String(1))
+                }
             })
             .catch(err => {
                 console.log(err);
@@ -63,20 +76,26 @@ export default function OrganisationListComponent(props) {
 
     }
     function saveNewHomeText() {
-        console.log(HomeDetails)
-        const saveHomeUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewHome"
-        axios.post(saveHomeUrl, HomeDetails)
-            .then(res => {
-                console.log(res);
-                //setStaffList(res.data)
-                handleCloseHome()
-                getHomeData()
-
-                //  setNotificationText("New Staff Member was added");
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        if(HomeDetails.name && HomeDetails.address && HomeDetails.contact_firstName && HomeDetails.contact_lastName && HomeDetails.phone_no && HomeDetails.email_id){
+            console.log(HomeDetails)
+            setErrors(false);
+            const saveHomeUrl = BASE_API_URL+"orgnization/addNewHome"
+            axios.post(saveHomeUrl, HomeDetails)
+                .then(res => {
+                    console.log(res);
+                    handleCloseHome()
+                    getHomeData()
+    
+                    //  setNotificationText("New Staff Member was added");
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+        else{
+            setErrors(true);
+        }
+       
     }
 
     return (
@@ -129,7 +148,15 @@ export default function OrganisationListComponent(props) {
                                 }}
                             />
                         </Form.Group>
+                        <div>
+                        {errors ? (
+                            <p className="text-danger">*All fields are mandatory</p>
 
+                        ) : (
+                            <p className="text-danger"></p>
+
+                        )}
+                    </div>
                     </Form>
 
                 </Modal.Body>

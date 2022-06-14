@@ -6,7 +6,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import { Link } from 'react-router-dom'
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 export default function HomeDetailComponent(props) {
     // const params = useParams().id;
     var paramId = useParams().id
@@ -20,11 +21,16 @@ export default function HomeDetailComponent(props) {
 
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='home' && sessionStorage.getItem("homeId")!=params)
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
 
-        const gethomeDetailsUrl = "http://localhost:5000/orgnization/getHomeDetails/" + params
+        const gethomeDetailsUrl = BASE_API_URL+"orgnization/getHomeDetails/" + params
         axios.get(gethomeDetailsUrl)
             .then(res => {
-                if (res.data == "" || res.data.length == 0)
+                if (res == 'Something went wrong!'||res == 'No Home Found!')
                     console.log("No data")
                 else {
                     console.log(res.data[0]);
@@ -62,7 +68,7 @@ export default function HomeDetailComponent(props) {
     function saveHomeText() {
         console.log("In saveText")
         console.log(homeDetails)
-        axios.put("http://localhost:5000/orgnization/editHomeDetails", { homeDetails })
+        axios.put(BASE_API_URL+"orgnization/editHomeDetails", { homeDetails })
             .then(res => {
                 console.log(res);
 

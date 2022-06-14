@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import BootstrapTable from 'react-bootstrap-table-next';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useParams } from "react-router-dom";
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 import axios from 'axios'
 function OrganizationSummaryComponent(props) {
     // const org_id = useParams().id;
@@ -32,7 +33,7 @@ function OrganizationSummaryComponent(props) {
 
     useEffect(() => {
         // toggleshowSpinner()
-        const gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/org-summary/" + org_id
+        const gethomeDetailsUrl = BASE_API_URL+"audit-report/org-summary/" + org_id
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);

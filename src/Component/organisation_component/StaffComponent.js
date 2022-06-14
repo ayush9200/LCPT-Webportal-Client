@@ -11,6 +11,8 @@ import Toast from 'react-bootstrap/Toast'
 import ToastHeader from 'react-bootstrap/ToastHeader'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import ToastBody from 'react-bootstrap/ToastBody'
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 export default function StaffComponent() {
 
     const params = useParams().id;
@@ -36,15 +38,19 @@ export default function StaffComponent() {
     var [notificationText, setNotificationText] = useState("");
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
         getStaffData();
         getRoleDetailByHome();
 
     }, [])
 
     function getStaffData() {
-        // <<<<<<< HEAD
         console.log(params)
-        const staffListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getStaffList/" + params
+        const staffListUrl = BASE_API_URL+"orgnization/getStaffList/" + params
         // =======
         //         const staffListUrl = "http://localhost:5000/orgnization/getStaffList/" + params
         // >>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
@@ -61,10 +67,10 @@ export default function StaffComponent() {
             })
     }
     function getRoleDetailByHome() {
-        const getCheckListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/showHomeCheckList/" + params
+        const getCheckListUrl = BASE_API_URL+"orgnization/showHomeCheckList/" + params
         axios.get(getCheckListUrl)
             .then(res => {
-                console.log(res.data)
+                if(res != 'Something went wrong!'||res != 'No Role Found!')
                 setRoleDetails(res.data)
                 console.log(roleDetails);
             })
@@ -93,7 +99,7 @@ export default function StaffComponent() {
     function savePositionDetail() {
 
         console.log("position details:", positionDetail)
-        const savePositionUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addNewPosition"
+        const savePositionUrl = BASE_API_URL+"orgnization/addNewPosition"
         axios.post(savePositionUrl, positionDetail)
             .then(res => {
                 console.log(res);
@@ -109,9 +115,7 @@ export default function StaffComponent() {
     }
 
     function addStaffText(event, id) {
-        console.log("hi")
-        console.log(id)
-
+    
         var newStaffDetailObj = {} //= {user_id:"",role_id:[],home_id:[],emp_status:"",dob:""};
         //newStaffDetailObj = { ...staffDetail };
 
@@ -138,26 +142,26 @@ export default function StaffComponent() {
 
     }
     function saveStaffDetail() {
-
-        console.log("staff details:", staffDetail)
-        const staffListUrl = "http://localhost:5000/orgnization/addNewStaff"
-        axios.post(staffListUrl, staffDetail)
-            .then(res => {
-                console.log(res);
-                //setStaffList(res.data)
-                handleClosePosition()
-                getStaffData()
-
-                setNotificationText("New Staff Member was added");
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        //if(newStaffDetailObj.user_id && newStaffDetailObj.role_id && newStaffDetailObj.dob && newStaffDetailObj.role_name && newStaffDetailObj.user_name){
+            const staffListUrl = BASE_API_URL+"orgnization/addNewStaff"
+            axios.post(staffListUrl, staffDetail)
+                .then(res => {
+                    console.log(res);
+                    //setStaffList(res.data)
+                    handleClosePosition()
+                    getStaffData()
+    
+                    setNotificationText("New Staff Member was added");
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+    
     }
 
     function changeEmpStatus(event, id) {
         //console.log(event.target.value," for ",id)
-        const staffStatusUrl = "http://localhost:5000/orgnization/editStaffStatus"
+        const staffStatusUrl = BASE_API_URL+"orgnization/editStaffStatus"
         //var status = ""+event.target.value
         axios.put(staffStatusUrl, { "id": id, "emp_status": String(event.target.value) })
             .then(res => {
@@ -170,18 +174,12 @@ export default function StaffComponent() {
                 console.log(err);
             })
     }
-    function addAssignRoleText(event, user_id, home_id, staffId) {
-        //console.log(event.target.value,id)
+    function addAssignRoleText(event,user_id,home_id,staffId) { 
         var newAssignRoleObj = {};
         newAssignRoleObj.home_id = home_id
         newAssignRoleObj.user_id = user_id
 
         newAssignRoleObj.role_arr = staffList[staffId].role_arr
-        // <<<<<<< HEAD
-        //         var temp_role_id = roleDetails[event.target.value].role_id
-        //         var temp_role_name = roleDetails[event.target.value].role_name
-        //         newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
-        // =======
         console.log(newAssignRoleObj.role_arr)
         var temp_role_id = roleDetails[event.target.value].role_id
         var temp_role_name = roleDetails[event.target.value].role_name
@@ -191,14 +189,13 @@ export default function StaffComponent() {
         }
         var temp_roleArray = newAssignRoleObj.role_arr
         temp_roleArray.filter((v, i, a) => a.findIndex(v2 => (v2.role_name === v.role_name)) === i)
-        // >>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
 
         saveAssignRoleDetail(newAssignRoleObj)
 
     }
     function saveAssignRoleDetail(newAssignRoleObj) {
         console.log(assignRoleDetail)
-        axios.put("https://lcpt-webportal-backend.herokuapp.com/orgnization/addAssignRoleText", newAssignRoleObj)
+        axios.put(BASE_API_URL+"orgnization/addAssignRoleText", newAssignRoleObj)
             .then(res => {
                 console.log(res);
                 getStaffData();

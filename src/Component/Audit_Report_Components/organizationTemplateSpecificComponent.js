@@ -3,7 +3,8 @@ import { Tabs, Tab } from 'react-bootstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function OrganizationTemplateSpecificComponent(props) {
     const [orgStaffSummData, setOrgStaffSummData] = useState([]);
 
@@ -11,7 +12,7 @@ function OrganizationTemplateSpecificComponent(props) {
     useEffect(() => {
         // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
         var orgId = props.org_id;
-        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/" + orgId;
+        var gethomeDetailsUrl = BASE_API_URL+"audit-report/org-template-specific/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);

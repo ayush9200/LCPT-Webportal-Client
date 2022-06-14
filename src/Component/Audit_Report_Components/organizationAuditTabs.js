@@ -9,6 +9,8 @@ import axios from 'axios'
 import Form from 'react-bootstrap/Form'
 import OrganizationStaffSummary from './organizationStaffSummary'
 // import { Row } from 'react-bootstrap'
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function OrganizationAuditTabs(props) {
     const [homeDetails, setHomeDetails] = useState(null);
     const [userCourseHomeDetails, setUserCourseHomeDetails] = useState([]);
@@ -18,7 +20,7 @@ function OrganizationAuditTabs(props) {
     const organizationID = props.organizationID;
 
     useEffect(() => {
-        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomesList/" + organizationID;
+        var gethomeDetailsUrl = BASE_API_URL+"orgnization/getHomesList/" + organizationID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
 

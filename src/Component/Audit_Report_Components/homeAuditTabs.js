@@ -3,7 +3,8 @@ import { Tabs, Tab, Form } from 'react-bootstrap'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function HomeAuditTabs(props) {
     const [staffRoleID, setStaffRoleID] = useState("");
     const [homeSummData, setHomeSummData] = useState(null);
@@ -15,7 +16,7 @@ function HomeAuditTabs(props) {
 
     useEffect(() => {
         // /audit-report/home-summary/1
-        var gethomeDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/home-summary/" + homeID;
+        var gethomeDetailsUrl = BASE_API_URL+"audit-report/home-summary/" + homeID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);
@@ -26,7 +27,7 @@ function HomeAuditTabs(props) {
                 console.log(err);
             })
         // /audit-report/home-staff-summary/1
-        var gethomeStaffDetailsUrl = "https://lcpt-webportal-backend.herokuapp.com/audit-report/home-staff-summary/" + homeID;
+        var gethomeStaffDetailsUrl = BASE_API_URL+"audit-report/home-staff-summary/" + homeID;
         axios.get(gethomeStaffDetailsUrl)
             .then(res => {
                 console.log(res.data);

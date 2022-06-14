@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Button } from 'react-bootstrap';
+import { BASE_API_URL } from '../Url-config';
+
 function ViewCourseTable() {
 
     const [allCourses, setAllCourses] = useState([]);
@@ -30,7 +32,7 @@ function ViewCourseTable() {
 
     ]
     useEffect(() => {
-        axios.get("https://lcpt-webportal-backend.herokuapp.com/course/view-all-courses")
+        axios.get(BASE_API_URL+"course/view-all-courses")
             .then(res => {
                 // console.log(res.data[0]);
                 setAllCourses(res.data);

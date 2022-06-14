@@ -91,6 +91,11 @@ function UserProfile() {
     
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
+    {
+        return window.location.href = "http://localhost:3000";  
+    
+    }
         const getUserData = BASE_URL_USER + params
         axios.get(getUserData)
             .then(res => {
