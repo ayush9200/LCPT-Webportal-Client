@@ -36,6 +36,7 @@ export default function StaffComponent() {
     const [showNotification, setshowNotification] = useState(false);
     const toggleshowNotification = () => setshowNotification(!showNotification);
     var [notificationText, setNotificationText] = useState("");
+    const [newStaffRole, setNewStaffRole] = useState("");
 
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
@@ -51,9 +52,7 @@ export default function StaffComponent() {
     function getStaffData() {
         console.log(params)
         const staffListUrl = BASE_API_URL+"orgnization/getStaffList/" + params
-        // =======
-        //         const staffListUrl = "http://localhost:5000/orgnization/getStaffList/" + params
-        // >>>>>>> 6e9ad26c3674289ed332a532e856717b9a52bcc7
+       
         axios.get(staffListUrl)
             .then(res => {
                 console.log(res);
@@ -87,9 +86,6 @@ export default function StaffComponent() {
         else if (id === 'pos2')
             newPositionDetailObj.role_id = event.target.value;
         newPositionDetailObj.home_id = homeId;
-        // setPositionDetail(positionDetail => ({
-        //     ...positionDetail, ...newPositionDetailObj
-        // }));
 
         setPositionDetail(newPositionDetailObj);
         console.log("position details:", positionDetail)
@@ -116,19 +112,16 @@ export default function StaffComponent() {
 
     function addStaffText(event, id) {
     
-        var newStaffDetailObj = {} //= {user_id:"",role_id:[],home_id:[],emp_status:"",dob:""};
-        //newStaffDetailObj = { ...staffDetail };
-
+        var newStaffDetailObj = {} 
         if (id === 'st1')
             newStaffDetailObj.user_id = event.target.value;
         else if (id === 'st2')
-            newStaffDetailObj.role_id = (event.target.value)
+            newStaffDetailObj.user_name = (event.target.value)
         else if (id === 'st3')
             newStaffDetailObj.dob = event.target.value;
         else if (id === 'st4')
             newStaffDetailObj.role_name = event.target.value;
-        else
-            newStaffDetailObj.user_name = event.target.value;
+       
 
         newStaffDetailObj.emp_status = 'Active'
         newStaffDetailObj.home_id = (String(params));
@@ -142,8 +135,10 @@ export default function StaffComponent() {
 
     }
     function saveStaffDetail() {
-        //if(newStaffDetailObj.user_id && newStaffDetailObj.role_id && newStaffDetailObj.dob && newStaffDetailObj.role_name && newStaffDetailObj.user_name){
+        console.log(staffDetail)
+        if(staffDetail.user_id && staffDetail.role_name && staffDetail.dob && staffDetail.user_name){
             const staffListUrl = BASE_API_URL+"orgnization/addNewStaff"
+            console.log(staffDetail)
             axios.post(staffListUrl, staffDetail)
                 .then(res => {
                     console.log(res);
@@ -156,7 +151,7 @@ export default function StaffComponent() {
                 .catch(err => {
                     console.log(err);
                 })
-    
+            }
     }
 
     function changeEmpStatus(event, id) {
@@ -207,6 +202,12 @@ export default function StaffComponent() {
                 console.log(err);
             })
     }
+    function assignUserRole(event){
+        console.log(event.target.value)
+        setNewStaffRole(state=>{
+            return event.target.value
+        })
+    }
 
     return (
         <div className='org-container'>
@@ -228,7 +229,7 @@ export default function StaffComponent() {
             </div>
 
             <h1>Staff Members for Home : {params}</h1>
-            <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShowPosition}>Add Position</Button>
+            {/* <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShowPosition}>Add Position</Button> */}
 
             <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShowStaff}>Add Staff</Button>
             <Modal show={showPosition} onHide={handleClosePosition}>
@@ -281,22 +282,34 @@ export default function StaffComponent() {
                             <Form.Label>Enter the User Name</Form.Label>
                             <Form.Control type="text"
                                 onChange={(e) => {
-                                    addStaffText(e, 'st5');
+                                    addStaffText(e, 'st2');
                                 }}
                             />
-                            <Form.Label>Enter the Employee Role ID</Form.Label>
+                                <Form.Label>Select the Role for User</Form.Label>
+                                    <Form.Select style={{width:"85%"}} aria-label="Default select example" onChange={(e) => {
+                                        addStaffText(e, 'st4');
+                                    }} >
+                                        <option value={""}>Select a Role</option>
+                                        {roleDetails.map((item, _id) => {
+                                            return <option value={item.role_name}>
+                                                {item.role_name}
+                                            </option>
+                                        })}
+                                    </Form.Select>
+                              
+                            {/* <Form.Label>Enter the Employee Role ID</Form.Label>
                             <Form.Control type="text"
                                 onChange={(e) => {
                                     addStaffText(e, 'st2');
                                 }}
-                            />
-                            <Form.Label>Enter the Employee Role Name</Form.Label>
+                            /> */}
+                            {/* <Form.Label>Enter the Employee Role Name</Form.Label>
                             <Form.Control type="text"
                                 onChange={(e) => {
                                     addStaffText(e, 'st4');
                                 }}
-                            />
-                            <Form.Label>Enter the Date of Birth</Form.Label>
+                            /> */}
+                            <Form.Label>Enter the Date of Birth(YYYY-MM-DD)</Form.Label>
                             <Form.Control type="text"
                                 onChange={(e) => {
                                     addStaffText(e, 'st3');
