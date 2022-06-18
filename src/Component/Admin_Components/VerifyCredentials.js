@@ -26,7 +26,7 @@ function VerifyCredentials(props) {
     }
     // userCrsRowData.validityDate
     return (
-        <div>
+        <div id='crsValidEditForm'>
             <Container>
                 <Form>
                     <Row>
@@ -51,16 +51,16 @@ function VerifyCredentials(props) {
                         </Form.Group>
                     </Row>
 
-                    <Row>
+                    <Row >
                         <Form.Group as={Col} controlId="userCrsValDate">
                             <Form.Label>Validity Date</Form.Label>
                             <Form.Control type='date' onChange={handleInputChange}
-                                value={validityDate || ''} />
+                                defaultValue={validityDate || ''} />
                         </Form.Group>
                         <Form.Group as={Col} controlId="userCrsIsURLValid">
                             <Form.Label>Is URL Valid?</Form.Label>
                             <Form.Select aria-label="Default select example" onChange={handleInputChange}
-                                value={userCrsRowData.status || ''} >
+                                defaultValue={userCrsRowData.status || ''} >
                                 <option value='false'>NOT VALID</option>
                                 <option value='true' >IS VALID</option>
                             </Form.Select>
@@ -81,7 +81,7 @@ function VerifyCredentials(props) {
 
                 <br></br>
             </Container>
-        </div >
+        </div>
     )
 }
 

@@ -87,7 +87,6 @@ function LoginPage() {
                 //dispatch(setData(data))
                 setIsLoggedIn(true);
                 document.getElementById("errorH4").style.display = "block"
-                console.log(err);
             })
             .catch(err => {
                 console.log(err);
