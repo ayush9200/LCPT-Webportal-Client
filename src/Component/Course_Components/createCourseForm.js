@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Form, Row, Col, Button } from 'react-bootstrap'
 import axios from 'axios';
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function CreateCourseForm() {
     // const [courseFormDetails, setCourseFormDetails] = useState({});
     var mainDivStyling = {
@@ -29,7 +30,7 @@ function CreateCourseForm() {
                 "validity_duration": vlDurText.value
             }
 
-            axios.post("https://lcpt-webportal-backend.herokuapp.com/course/create-course", { courseFormDetails })
+            axios.post(BASE_API_URL+"course/create-course", { courseFormDetails })
                 .then(res => {
                     console.log(res.data);
 

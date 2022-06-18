@@ -3,8 +3,8 @@ import "./login.css"
 import $ from 'jquery';
 import { Navigate } from 'react-router-dom';
 
-import { setData } from '../Redux/DataSlice';
-import { useDispatch } from 'react-redux';
+// import { setData } from '../Redux/DataSlice';
+// import { useDispatch } from 'react-redux';
 
 
 
@@ -36,7 +36,7 @@ var passwordFieldChanged = (event) => {
 function LoginPage() {
     const [state, setState] = useState({ username: "", password: "" });
     const [isloggedIn, setIsLoggedIn] = useState(false);
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
 
 
 
@@ -76,17 +76,16 @@ function LoginPage() {
 
         formData.append('loginId', document.getElementById("username").value);
         formData.append('password', document.getElementById("password").value);
-        await fetch('http://localhost:5000/auth', {
+
+        await fetch('http://localhost:5000/login', {
             method: 'POST',
             body: formData
         }).then(response => response.json())
             .then(data => {
                 console.log(data);
-                dispatch(setData(data))
-                if (data) {
-                    setIsLoggedIn(true);
-                }
-            }).catch(err => {
+
+                //dispatch(setData(data))
+                setIsLoggedIn(true);
                 document.getElementById("errorH4").style.display = "block"
                 console.log(err);
             })

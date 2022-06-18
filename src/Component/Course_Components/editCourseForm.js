@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
 import Config from '../config.json'
+import { BASE_API_URL } from '../Url-config';
+
 function EditCourseForm() {
     const [allCourses, setAllCourses] = useState([]);
     const [selectedCourseIndx, setSelectedCourseIndx] = useState(0);
 
     useEffect(() => {
         console.log(Config)
-        axios.get("https://lcpt-webportal-backend.herokuapp.com/course/view-all-courses")
+        axios.get(BASE_API_URL+"course/view-all-courses")
             .then(res => {
                 console.log(res.data);
                 setAllCourses(res.data);
@@ -67,7 +69,7 @@ function EditCourseForm() {
             }
             var crsId = formGridCourseSelect.value;
 
-            axios.put("https://lcpt-webportal-backend.herokuapp.com/course/update-course", { courseFormDetails, crsId })
+            axios.put(BASE_API_URL+"course/update-course", { courseFormDetails, crsId })
                 .then(res => {
                     console.log(res.data);
 

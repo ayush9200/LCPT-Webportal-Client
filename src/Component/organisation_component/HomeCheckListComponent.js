@@ -9,7 +9,9 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import ToggleButton from 'react-bootstrap/ToggleButton'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
-
+import Spinner from 'react-bootstrap/Spinner'
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 export default function HomeCheckListComponent() {
     const [MicroCredShow, setMicroCredShow] = useState(false);
     const handleCloseMicroCred = () => setMicroCredShow(false);
@@ -26,6 +28,8 @@ export default function HomeCheckListComponent() {
     const [counter, setCounter] = useState(0);
     const [globalRole, setGlobalRole] = useState({});
     const [loading, setLoading] = useState(false);
+    const [showSpinner, setshowSpinner] = useState(false);
+    const toggleshowSpinner = () => setshowSpinner(!showSpinner);
 
     const radios = [
         { name: 'True', value: '1' },
@@ -33,25 +37,47 @@ export default function HomeCheckListComponent() {
 
     ];
     useEffect(() => {
-        getInitialData()
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='home' && sessionStorage.getItem("homeId")!=params)
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
+        else{
+            getInitialData()
+        }
 
 
     }, [])
-    function getInitialData(){
-        const getCoursesUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getCourseList/"
+    function getInitialData() {
+        setshowSpinner(true)
+        const getCoursesUrl = BASE_API_URL+"orgnization/getCourseList/"
         axios.get(getCoursesUrl)
             .then(res => {
-                setCourseList(res.data)
-                console.log(courseList);
+                if(res!='Something went wrong!'||res!='No Course Found!'){
+                    setshowSpinner(false)
+                    setCourseList(res.data)
+                    console.log(courseList);
+                }
+               
             })
             .catch(err => {
                 console.log(err);
             })
-        const getCheckListUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/showHomeCheckList/" + params
+        const getCheckListUrl = BASE_API_URL+"orgnization/showHomeCheckList/" + params
         axios.get(getCheckListUrl)
             .then(res => {
+                
                 console.log(res.data)
-                setRoleDetails(res.data)
+                if(res!='Something went wrong!'||res!='No Role Found!'){
+                    setRoleDetails(res.data)
+                    setshowSpinner(false)
+
+                    // var tableElement = document.getElementById('table-id');
+                    // if(res.data.length>3){
+                        
+                    // }
+
+                }
 
                 console.log(roleDetails);
 
@@ -71,20 +97,20 @@ export default function HomeCheckListComponent() {
             tempArray[id].course_details = tempArray[id].course_details.filter(function (el) { return el.id != courseDetail.courseID; });
         setRoleDetails(tempArray)
         console.log(roleDetails)
-        const editCourseDetails = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editCourseDetails/" 
+        const editCourseDetails = BASE_API_URL+"orgnization/editCourseDetails/"
 
-        axios.put(editCourseDetails,roleDetail)
-        .then(res => {
-             console.log(res.data)
-            // setRoleDetails(res.data)
-           
-            // console.log(roleDetails);
-           getInitialData()
-    
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        axios.put(editCourseDetails, roleDetail)
+            .then(res => {
+                console.log(res.data)
+                // setRoleDetails(res.data)
+
+                // console.log(roleDetails);
+                getInitialData()
+
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
     }
     function createRole(event, roleDetailObj) {
@@ -112,7 +138,7 @@ export default function HomeCheckListComponent() {
     }
     function changeArchiveStatus(event, role_id) {
         console.log(role_id, " roleid")
-        const archiveStatusUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/editRoleArchiveStatus"
+        const archiveStatusUrl = BASE_API_URL+"orgnization/editRoleArchiveStatus"
         //var status = ""+event.target.value
         axios.put(archiveStatusUrl, { "role_id": String(role_id), "archived": String(event.target.value), "home_id": String(params) })
             .then(res => {
@@ -129,8 +155,8 @@ export default function HomeCheckListComponent() {
 
         handleCloseOption()
         console.log(globalRole)
-        const addNewRoleUrl = "https://lcpt-webportal-backend.herokuapp.com/orgnization/addCheckListRole/" 
-        axios.put(addNewRoleUrl,globalRole)
+        const addNewRoleUrl = BASE_API_URL+"orgnization/addCheckListRole/"
+        axios.put(addNewRoleUrl, globalRole)
             .then(res => {
                 // console.log(res.data)
                 // setRoleDetails(res.data)
@@ -157,20 +183,22 @@ export default function HomeCheckListComponent() {
     return (
         <div style={{ marginTop: "10vh" }}>
             <h1>Home CheckList Component Details</h1>
-            <div style={{ overflow: "auto",
-display: "block",
-tableLayout: "auto" }}>
+            <div style={{overflowX:"scroll"}}>
+            {showSpinner ? <div style={{ paddingLeft: "50%", paddingTop: "10%", position: "absolute" }}>
+                            <Spinner show={showSpinner} animation="border" size="lg" variant='primary' />
+
+                        </div> : <div></div>}
 
 
-                <Table striped bordered hover >
-                    <thead>
-                        <th></th>
+                <Table striped bordered hover style={{width:"300vh",height:"80vh",tableLayout:"fixed"}} id="table-id" className='table-responsive'>
+                    <thead >
+                        <th style={{width:"25vh"}}></th>
                         {roleDetails.map((data, id) => {
-                            return <th key={id}>
+                            return <th key={id} style={{width:"25vh"}}>
 
-                                <Button variant="warning" style={{ marginTop: "2%" }} onClick={(e) => {
+                                <Button variant="warning" onClick={(e) => {
                                     createRole(e, data);
-                                }}>Create Role</Button>
+                                }} style={{ marginTop: "2%", marginRight:"3%",marginLeft:"3%", backgroundColor:"#ffc107" }} >Create Role</Button>
                                 <Modal show={showOption} onHide={handleCloseOption}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Enter Role Name</Modal.Title>
@@ -200,7 +228,7 @@ tableLayout: "auto" }}>
                                     </Modal.Footer>
                                 </Modal>
 
-                                <Button variant="warning"><Link to={`/roleTemplate/${data.home_id}/${data.role_id}`}>View Role</Link></Button>
+                                <Link  to={`/roleTemplate/${data.home_id}/${data.role_id}`}><Button style={{marginTop:"2%"}} variant="warning">View Role</Button></Link>
                                 <p><Form>
                                     <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
                                         <Form.Label>Role Archive Status</Form.Label>
@@ -214,7 +242,7 @@ tableLayout: "auto" }}>
 
                                     </Form.Group>
                                 </Form></p>
-                                <p><b>{data.role_name}</b></p>
+                                <p style={{textAlign:"center"}}><b>{data.role_name}</b></p>
 
 
                             </th>
@@ -225,8 +253,8 @@ tableLayout: "auto" }}>
                     </thead>
 
                     {courseList.map((courses, id) => {
-                        return <tr key={id}>
-                            <td><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
+                        return <tr key={id} >
+                            <td style={{width:"25vh"}}><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
                                 getMicrodetails(e, courses.title);
                             }} >View MicroCred Details</Button>
                                 <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
@@ -248,9 +276,9 @@ tableLayout: "auto" }}>
                                 </Modal>
                             </div></td>
                             {roleDetails.map((data, _id) => {
-                                return <td key={_id}>
+                                return <td key={_id} style={{borderRight: "1px solid #000",borderLeft: "1px solid #000",width:"25vh"}}>
                                     <input
-                                        type="checkbox" style={{ transform: "scale(2)", marginLeft: "20%" }}
+                                        type="checkbox" style={{ transform: "scale(2)", marginLeft: "50%" }}
 
                                         defaultChecked={(roleDetails[_id].course_details.find(item =>
                                             item.id == courseList[id].courseID
@@ -261,19 +289,12 @@ tableLayout: "auto" }}>
 
                                     />
 
-
                                 </td>
-
-
                             })
                             }
                         </tr>
                     })}
-
-
-
                 </Table>
             </div>
-            {/* )} */}
         </div>);
 }

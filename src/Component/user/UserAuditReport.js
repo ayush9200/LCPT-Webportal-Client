@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useParams, Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { BASE_API_URL } from '../Url-config';
-
+import { BASE_URL_FRONTEND } from '../Url-config';
 function UserAuditReport() {
 
     const params = useParams().id;
@@ -14,7 +14,7 @@ function UserAuditReport() {
     const [userList, setUserList] = useState([]);
     const [finalList, setFinalList] = useState([]);
     const [mappingData, setMappingData] = useState([{'':''}]);
-  
+    
    
     // https://lcpt-webportal.herokuapp.com/
     const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
@@ -22,6 +22,11 @@ function UserAuditReport() {
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
+    {
+        return window.location.href = BASE_URL_FRONTEND;  
+    
+    }
         //fetchData();
         const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;
         const res = axios.get(getUserHomeRoleData, {

@@ -1,7 +1,9 @@
 import React, {useState,useEffect, useRef} from 'react';
 import axios from 'axios';
 import { Form, Row, Col, Button, Container, Table, ButtonGroup, ListGroup, Modal } from 'react-bootstrap';
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
+//BASE_API_URL+"user/";
 
 function UserCoursesCheck() {
 
@@ -21,6 +23,11 @@ function UserCoursesCheck() {
 
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
+    {
+        return window.location.href = BASE_URL_FRONTEND;  
+    
+    }
         fetchData();
     },[]);
 

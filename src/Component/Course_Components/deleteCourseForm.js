@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
+import { BASE_API_URL } from '../Url-config';
 
 function DeleteCourseForm() {
     const [allCourses, setAllCourses] = useState([]);
 
     useEffect(() => {
-        axios.get("https://lcpt-webportal-backend.herokuapp.com/course/view-all-courses")
+        axios.get(BASE_API_URL+"/course/view-all-courses")
             .then(res => {
                 console.log(res.data);
                 setAllCourses(res.data);

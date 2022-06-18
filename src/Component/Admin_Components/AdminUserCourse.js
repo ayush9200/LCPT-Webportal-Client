@@ -2,13 +2,19 @@ import React, { useEffect, useState } from 'react'
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 function AdminUserCourse() {
     const [adminUserCrsData, setadminUserCrsData] = useState([]);
 
 
     useEffect(() => {
-        var getAdmUsrCrsURL = "https://lcpt-webportal-backend.herokuapp.com/admin-data/user-crs";
+        if( sessionStorage.getItem("userType")!='admin')
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
+        var getAdmUsrCrsURL = BASE_API_URL+"admin-data/user-crs";
         axios.get(getAdmUsrCrsURL)
             .then(res => {
                 console.log(res.data);

@@ -12,8 +12,10 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Spinner from 'react-bootstrap/Spinner'
 import OrganizationAuditTabs from '../Audit_Report_Components/organizationAuditTabs';
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 export default function Organisation(props) {
+    const [errors, setErrors] = useState(false)
     var paramId = useParams().id
     var propsId = props.orgIdForAdmin
     var id = propsId;
@@ -28,18 +30,27 @@ export default function Organisation(props) {
 
     useEffect(() => {
         // toggleshowSpinner()
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
+{
+    return window.location.href = BASE_URL_FRONTEND;  
+
+}
+else{
         setshowSpinner(true)
-        const gethomeDetailsUrl = "http://localhost:5000/orgnization/getOrganisationDetails/" + id
+        const gethomeDetailsUrl = BASE_API_URL+"orgnization/getOrganisationDetails/" + id
         axios.get(gethomeDetailsUrl)
             .then(res => {
-                console.log(res.data[0]);
+                //console.log(res.data[0]);
+                if(res != 'Something went wrong!'||res != 'No Home Found!')
                 setHomeDetails(res.data[0])
+                else
+                setHomeDetails([])
                 setshowSpinner(false)
                 // toggleshowSpinner()
             })
             .catch(err => {
                 console.log(err);
-            })
+            })}
     }, [])
 
 
@@ -67,15 +78,22 @@ export default function Organisation(props) {
     function saveOrgText(event, id) {
         console.log("In saveText")
         console.log(homeDetails)
-        toggleshowSpinner()
-        axios.put("http://localhost:5000/orgnization/editOrgDetails", homeDetails)
-            .then(res => {
-                console.log(res);
-                setshowSpinner(false)
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        if (homeDetails.org_name && homeDetails.contact_firstName && homeDetails.contact_lastName && homeDetails.phone_no && homeDetails.email_id) {
+            toggleshowSpinner()
+            setErrors(false)
+            axios.put(BASE_API_URL+"orgnization/editOrgDetails", homeDetails)
+                .then(res => {
+                    console.log(res);
+                    setshowSpinner(false)
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+        else {
+            setErrors(true);
+        }
+
     }
 
 
@@ -127,6 +145,15 @@ export default function Organisation(props) {
                                     changeOrgText(e, 'det5');
                                 }} />
                             </Form.Group>
+                            <div>
+                        {errors ? (
+                            <p className="text-danger">*All fields are mandatory</p>
+
+                        ) : (
+                            <p className="text-danger"></p>
+
+                        )}
+                    </div>
                             <Button onClick={(e) => {
                                 saveOrgText(e, 'det1');
                             }} variant="warning" >
@@ -134,6 +161,8 @@ export default function Organisation(props) {
                             </Button>
                         </Form>
                     </div>
+                    
+
                 </Tab>
                 <Tab eventKey="trainStandard" title="Training Standard">
                     <TrainStandardComponent id={id} />

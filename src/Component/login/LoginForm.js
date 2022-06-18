@@ -8,21 +8,24 @@ import {
 } from "react-bootstrap";
 import axios from 'axios';
 import "./login.css";
-
-
+//import { setData } from '../Redux/DataSlice';
+//import { useDispatch } from 'react-redux';
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 
 function LoginForm(){
 
     const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/";
     //const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
     const BASE_URL_USER_FRONT_END = "https://lcpt-webportal.herokuapp.com/user/";
-    const [username, setUsername] = useState('amail@gmail.com');
-	const [password, setPassword] = useState('abcD@1234');
+    const [username, setUsername] = useState('org1');
+	const [password, setPassword] = useState('12345');
     //const [data, setData] = useState('');
     //const [moveToForm, setMoveToForm] = useState(false);
 
     //useEffect(() => {}, email, password);
 	const handleOnChange = e => {
+      //  console.log(e)
 		const { name, value } = e.target;
 
 		switch (name) {
@@ -40,23 +43,39 @@ function LoginForm(){
 	};
 
 	const handleOnSubmit = async e => {
+        console.log(e)
 		e.preventDefault();
 		if (!username || !password) {
 			return alert("Fill up all the form!");
 		}
-        try {
-            const json = JSON.stringify({ email: username, password: password });
-            const res = await axios.post(BASE_URL_USER+'validateUser', json, {
-                headers: {
+        try {//BASE_URL_USER
+            const json = JSON.stringify({ login_id: username, password: password });
+
+            const res = await axios.post(BASE_API_URL+'login/', json, {
+            headers: {
                     'Content-Type': 'application/json'
                 }
             });
             //console.log(res);
-            //console.log(res.data.data);
-            const resJson = res.data.data;
-              if(resJson!==undefined){
-                  //alert(resJson.userId);
-                return window.location.href = BASE_URL_USER_FRONT_END+resJson.user_id;
+            console.log(res);
+            //const resJson = res.data.data;
+              if(res!=='No User Found!'){
+                  sessionStorage.setItem("userType",res.data.type);
+                  if(res.data.home_id){
+                    sessionStorage.setItem("homeId",res.data.home_id);
+                  }
+                  if(res.data.org_id){
+                    sessionStorage.setItem("orgId",res.data.org_id);
+                  }
+                  if(res.data.type=== "user"){
+                    return window.location.href = BASE_URL_FRONTEND+"user/validateUser";  
+                  }
+                  else if(res.data.type === "organization")
+                  return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.org_id;
+                  else if(res.data.type === "home")
+                  return window.location.href = BASE_URL_FRONTEND+"home/"+res.data.home_id;
+                  else if(res.data.type === "admin")
+                  return window.location.href = BASE_URL_FRONTEND+"admin_home/";
               }else{
                 return alert("Invalid Credentials. Please try again.");
               }

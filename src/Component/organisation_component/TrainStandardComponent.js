@@ -7,12 +7,14 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
-
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 export default function TrainStandardComponent(props) {
 
     const [trainStandards, setTrainStandards] = useState([]);
     const [show, setShow] = useState(false);
     const [newStandard, setNewStandard] = useState('');
+    const [errors, setErrors] = useState(false)
 
 
     const handleClose = () => setShow(false);
@@ -21,15 +23,21 @@ export default function TrainStandardComponent(props) {
     const params = props.id;
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
+        {
+            return window.location.href = BASE_URL_FRONTEND;  
+        
+        }
         getTrainingData();
 
     }, [])
 
     function getTrainingData() {
-        const trainStandardsUrl = "http://localhost:5000/orgnization/getOrganisationDetails/" + params
+        const trainStandardsUrl = BASE_API_URL+"orgnization/getOrganisationDetails/" + params
         axios.get(trainStandardsUrl)
             .then(res => {
                 console.log(res);
+                if(res!='Something went wrong!' || res!='No Standards Found!');
                 setTrainStandards(res.data[0].train_standards)
             })
             .catch(err => {
@@ -37,14 +45,22 @@ export default function TrainStandardComponent(props) {
             })
     }
     function changeText(event, id) {
-        trainStandards[id] = event.target.value
-        console.log(event.target.value)
-        console.log(trainStandards[id])
-        trainStandards[id] = event.target.value
-        let newtrainStandards = [...trainStandards];
-        newtrainStandards[id] = event.target.value;
-        console.log(newtrainStandards)
-        setTrainStandards(newtrainStandards);
+        
+            trainStandards[id] = event.target.value
+            console.log(event.target.value)
+            console.log(trainStandards[id])
+            trainStandards[id] = event.target.value
+            if(event.target.value){
+                setErrors(false)
+            let newtrainStandards = [...trainStandards];
+            newtrainStandards[id] = event.target.value;
+            console.log(newtrainStandards)
+            setTrainStandards(newtrainStandards);
+        }
+        else{
+            setErrors(true)
+        }
+        
     }
 
     function addTrainingText(event, id) {
@@ -53,34 +69,43 @@ export default function TrainStandardComponent(props) {
 
     function saveNewStandard() {
         console.log(newStandard);
-        if (newStandard != '') {
+        if (newStandard) {
+           // setErrors(false);
             handleClose();
             let newtrainStandards = [...trainStandards];
             newtrainStandards.push(newStandard);
             console.log(newtrainStandards)
             setTrainStandards(newtrainStandards);
-            let trainStandardsUrl = "http://localhost:5000/orgnization/addNewStandard/"
+            let trainStandardsUrl = BASE_API_URL+"orgnization/addNewStandard/"
             axios.post(trainStandardsUrl, { id: params, trainStandards: newtrainStandards })
                 .then(res => {
                     console.log(res);
+                    if(res)
                     setTrainStandards(res.data[0].train_standards)
                 })
                 .catch(err => {
                     console.log(err);
                 })
         }
+        // else{
+        //     setErrors(true);
+
+        // }
 
     }
     function saveText(event) {
-        console.log("saveText")
-        axios.put("http://localhost:5000/orgnization/editTrainingStandards", { id: params, trainStandards: trainStandards })
-            .then(res => {
-                console.log(res);
-
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        if(!errors){
+            console.log("saveText")
+            axios.put(BASE_API_URL+"orgnization/editTrainingStandards", { id: params, trainStandards: trainStandards })
+                .then(res => {
+                    console.log(res);
+    
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+      
     }
     function removeStandard(event, id) {
 
@@ -88,7 +113,7 @@ export default function TrainStandardComponent(props) {
 
         newtrainStandards.splice(id, 1);
         console.log(newtrainStandards)
-        axios.put("http://localhost:5000/orgnization/editTrainingStandards", { id: params, trainStandards: newtrainStandards })
+        axios.put(BASE_API_URL+"orgnization/editTrainingStandards", { id: params, trainStandards: newtrainStandards })
             .then(res => {
                 getTrainingData();
             })
@@ -160,5 +185,14 @@ export default function TrainStandardComponent(props) {
                 })}
 
             </Table>
+            <div>
+                        {errors ? (
+                            <p className="text-danger">*Field Cannot be empty</p>
+
+                        ) : (
+                            <p className="text-danger"></p>
+
+                        )}
+                    </div>
         </div>);
 }

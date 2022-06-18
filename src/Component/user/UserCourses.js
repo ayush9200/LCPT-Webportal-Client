@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 
 
 var today = new Date();
@@ -40,6 +41,11 @@ function UserCourses() {
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
 
     useEffect(() => {
+        if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
+    {
+        return window.location.href = BASE_URL_FRONTEND;  
+    
+    }
        // fetchData();
        console.log('User ID: ', params);
         const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;

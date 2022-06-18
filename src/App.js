@@ -21,19 +21,15 @@ function App() {
     <Layout>
       <Routes >
 
-        <Route exact path="/" element={<Provider store={store}> // Set context
-          <LoginPage />
-        </Provider>} />
-        {/* <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh" }}>Home Page</h1>} /> */}
+        <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh", 'minHeight': '40pc' }}>Home Page</h1>} />
+        <Route exact path="/" element={<h1 style={{ textAlign: "center", "marginTop": "20vh" }}>Home Page</h1>} />
         <Route exact path="/login" element={<LoginForm />} />
-
         <Route exact path="/admin_home" element={<Admin_Home />} />
         <Route exact path="/organisation/:id" element={<Organisation />} />
         <Route exact path="/home/:id" element={<HomeDetailComponent />} />
         <Route exact path="/checkList/:id" element={<HomeCheckListComponent />} />
         <Route exact path="/showStaff/:id" element={<StaffComponent />} />
         <Route exact path="/roleTemplate/:homeId/:roleId" element={<RoleTemplate />} />
-
         <Route exact path="/user/:id" element={<UserHomePage />} />
         <Route exact path="/userRegistration" element={<UserRegistration />} />
         <Route path="*" component={() => "404 NOT FOUND"} />
