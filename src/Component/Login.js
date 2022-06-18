@@ -70,20 +70,22 @@ function LoginPage() {
             }
 
         }
-      
+
 
         let formData = new FormData();
 
         formData.append('loginId', document.getElementById("username").value);
         formData.append('password', document.getElementById("password").value);
-        await fetch('http://localhost:8090/login', {
+        await fetch('http://localhost:5000/auth', {
             method: 'POST',
             body: formData
         }).then(response => response.json())
             .then(data => {
                 console.log(data);
                 dispatch(setData(data))
-                setIsLoggedIn(true);
+                if (data) {
+                    setIsLoggedIn(true);
+                }
             }).catch(err => {
                 document.getElementById("errorH4").style.display = "block"
                 console.log(err);
@@ -92,12 +94,12 @@ function LoginPage() {
                 console.log(err);
             })
 
-    
+
 
     }
 
 
-    
+
 
     useEffect(() => {
         $(document).ready(function () {
@@ -120,10 +122,10 @@ function LoginPage() {
         document.body.appendChild(script2);
 
 
-     
+
 
     });
- 
+
 
 
 
