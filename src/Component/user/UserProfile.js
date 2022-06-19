@@ -2,10 +2,14 @@ import React, {useState,useEffect} from 'react'
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
+
 
 
 const intialState = {
     fullName:'',
+    userName:'',
     password:'',
     confirmPassword:'',
     dob:'',
@@ -74,9 +78,9 @@ const data = {
 
 
 function UserProfile() {
-    const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
-    const BASE_URL_USER_UPDATE = "https://lcpt-webportal-backend.herokuapp.com/user/update/";
-    const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
+    const BASE_URL_USER = BASE_API_URL+"user/getUser/";
+    const BASE_URL_USER_UPDATE = BASE_API_URL+"user/update/";
+    const BASE_URL_USER_FRONT_END = BASE_URL_FRONTEND+"user/";
     const [newUser, setNewUser] = useState(intialState)
     const [selectedCountry, setSelectedCountry] = React.useState();
     const [selectedState, setSelectedState] = React.useState(); 
@@ -91,11 +95,12 @@ function UserProfile() {
     
 
     useEffect(() => {
+        
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
-    {
-        return window.location.href = "http://localhost:3000";  
-    
-    }
+        {
+            console.log("========== Session ======= ", sessionStorage.getItem("userType"));
+            return window.location.href = BASE_URL_FRONTEND;  
+        }
         const getUserData = BASE_URL_USER + params
         axios.get(getUserData)
             .then(res => {
@@ -155,10 +160,16 @@ function UserProfile() {
             <Container>
                 <Row>
                     <Form onSubmit={handleOnSubmit}>
-                            <Form.Group as={Col} controlId="formGridName">
+                            <Row className="mb-3">
+                            <Form.Group  as={Col} controlId="formGridName">
                                 <Form.Label>Full Name</Form.Label>
                                 <Form.Control type="text" name="fullName" onChange={handleOnChange} value={newUser.fullName} placeholder="Enter your name" />
                             </Form.Group>
+                            <Form.Group  as={Col} controlId="formUserName">
+                                <Form.Label>Username</Form.Label>
+                                <Form.Control type="text" name="userName" onChange={handleOnChange} value={newUser.userName} placeholder="Enter your username" />
+                            </Form.Group>
+                            </Row>
                             <br></br>
                             <Form.Group as={Col} controlId="formGridDOB">
                                 <Form.Label>Date of Birth</Form.Label>

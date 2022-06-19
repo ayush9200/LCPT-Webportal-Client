@@ -68,7 +68,7 @@ function LoginForm(){
                     sessionStorage.setItem("orgId",res.data.org_id);
                   }
                   if(res.data.type=== "user"){
-                    return window.location.href = BASE_URL_FRONTEND+"user/validateUser";  
+                    return window.location.href = BASE_URL_FRONTEND+"user/"+res.data.user_id;  
                   }
                   else if(res.data.type === "organization")
                   return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.org_id;

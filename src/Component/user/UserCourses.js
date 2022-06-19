@@ -30,6 +30,7 @@ function UserCourses() {
     const [show, setshow] = useState(false);
 
     const [dateTime, setDateTime] = useState(date);
+    //const [badgeUrl, setBadgeUrl] = setBadgeUrl('');
    
 
   
@@ -172,7 +173,7 @@ const getRoleList = async(passRoleId) => {
   const fetchCourseDetails = () => {
     try {
         const body = JSON.stringify({ userId: userId, orgId: orgId, roleId: roleId, homeId: homeId });
-        console.log(body);
+        console.log("Body to send => ",body);
         var resJson = [];
         axios.post(BASE_URL_GET_COURSELIST, body, {
             headers: {
@@ -217,6 +218,18 @@ const getRoleList = async(passRoleId) => {
         console.log(error);
      }
   }
+  
+  
+  const setBadgeUrlMethod  = e => {
+    // const{name, value} = e.target
+        //setBadgeUrl(value);
+    };
+
+    const submitBadgeUrl = () => {
+       // alert(badgeUrl);
+        setshow(false);
+
+    };
 
     const handleClose = () => setshow(false);
     const handleShow = () => {
@@ -227,8 +240,8 @@ const getRoleList = async(passRoleId) => {
         setmodalInfo(val);
     }
   const ModalContent = () =>{
-    var field = (modalInfo.split(",")[7] === 'pending')?<tr><td className="text-center"><b>Upload URL</b></td><td className="text-left"><Form.Control type="text" name="badgeUrl" placeholder="Please enter your course badge URL" /></td></tr>:'';
-    var button = (modalInfo.split(",")[7] === 'pending')?<Button variant="success" onClick={handleClose}>Save</Button>:'';
+    var field = (modalInfo.split(",")[7] === 'pending')?<tr><td className="text-center"><b>Upload Badge URL</b></td><td className="text-left"><Form.Control type="text"  onBlur={setBadgeUrlMethod} name="badgeUrl" placeholder="Please enter your course badge URL" /></td></tr>:'';
+    var button = (modalInfo.split(",")[7] === 'pending')?<Button variant="success" onClick={submitBadgeUrl}>Save</Button>:'';
       return (<Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
         <Modal.Title style={{color:'#0f6fc5'}}>Course Details</Modal.Title>
