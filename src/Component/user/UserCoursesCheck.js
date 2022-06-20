@@ -1,6 +1,6 @@
 import React, {useState,useEffect, useRef} from 'react';
 import axios from 'axios';
-import { Form, Row, Col, Button, Container, Table, ButtonGroup, ListGroup, Modal } from 'react-bootstrap';
+import { Form, Row, Col, Button, Container, Table, ListGroup, Modal } from 'react-bootstrap';
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
 //BASE_API_URL+"user/";
@@ -17,9 +17,9 @@ function UserCoursesCheck() {
     const [show, setshow] = useState(false);
    
 
-    const BASE_URL_GET_ALL_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getAllHomes";
-    const BASE_URL_GET_HOME_ROLE_CRS_LIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHomeInfo/";
-    const BASE_URL_GET_HRC_LIST = "https://lcpt-webportal-backend.herokuapp.com/orgnization/getHRCInfo/";
+    const BASE_URL_GET_ALL_HOMELIST = BASE_API_URL+"orgnization/getAllHomes";
+    const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL+"orgnization/getHomeInfo/";
+    const BASE_URL_GET_HRC_LIST = BASE_API_URL+"orgnization/getHRCInfo/";
 
 
     useEffect(() => {

@@ -2,9 +2,12 @@ import React, {useState,useEffect} from 'react';
 import { Form, Row, Col, Button, Container, FormText } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
 
 const intialState = {
     fullName:'',
+    userName: '',
     password:'',
     confirmPassword:'',
     dob:'',
@@ -80,10 +83,10 @@ const data = {
 };
 
 function UserRegistration() {
-    const BASE_URL_USER_SAVE = "https://lcpt-webportal-backend.herokuapp.com/user/save/";
-    const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
+    const BASE_URL_USER_SAVE = BASE_API_URL+"user/save/";
+   // const BASE_URL_USER = BASE_API_URL+"user/getUser/";
     //const BASE_URL_USER_FRONT_END = "http://localhost:3000/user/";
-    const BASE_URL_USER_FRONT_END = "https://lcpt-webportal.herokuapp.com/user/";
+    const BASE_URL_USER_FRONT_END = BASE_URL_FRONTEND+"user/";
     
    // const BASE_URL_GET_HOMELIST = "https://lcpt-webportal-backend.herokuapp.com/user/orgnization/getHomesList/";
     ///getHomesList/:id
@@ -97,7 +100,7 @@ function UserRegistration() {
     const availableCities = availableState?.states?.find(
         (s) => s.name === selectedState
     );
-    const params = useParams().id;
+    //const params = useParams().id;
 
     useEffect(() => {
         // const getUserData = BASE_URL_USER + params
@@ -160,6 +163,7 @@ function UserRegistration() {
             });
             const resJson = res.data.data;
               if(resJson!==undefined){
+                sessionStorage.setItem("userType",'user');
                 return window.location.href = BASE_URL_USER_FRONT_END+resJson.user_id;
               }else{
                 return alert("Something went wrong! Please try again.");
@@ -184,10 +188,16 @@ function UserRegistration() {
                 <Row>
                <h3 className='text-center' style={{color:"#0f6fc5"}}>Please fill out details</h3>
                 <Form onSubmit={handleOnSubmit}>
-                    <Form.Group controlId="formGridName">
+                    <Row>
+                    <Form.Group as={Col} controlId="formGridName">
                         <Form.Label>Full Name</Form.Label>
                         <Form.Control type="text" name="fullName" onChange={handleOnChange} value={newUser.fullName} placeholder="Enter your name" />
                     </Form.Group>
+                    <Form.Group as={Col} controlId="formUserName">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control type="text" name="userName" onChange={handleOnChange} value={newUser.userName} placeholder="Enter your username" />
+                    </Form.Group>
+                    </Row>
                     <br></br>
                     <Row>
                         <Form.Group as={Col} controlId="formGridPassword">
