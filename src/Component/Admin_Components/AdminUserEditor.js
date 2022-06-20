@@ -26,12 +26,11 @@ function AdminUserEditor() {
     }
 
     useEffect(() => {
-        if( sessionStorage.getItem("userType")!='admin')
-        {
-            return window.location.href = BASE_URL_FRONTEND;  
-        
+        if (sessionStorage.getItem("userType") != 'admin') {
+            return window.location.href = BASE_URL_FRONTEND;
+
         }
-        var getAdmUsrCrsURL = BASE_API_URL+"admin-data/user-crs";
+        var getAdmUsrCrsURL = BASE_API_URL + "admin-data/user-crs";
         axios.get(getAdmUsrCrsURL)
             .then(res => {
                 console.log(res.data);
@@ -41,7 +40,7 @@ function AdminUserEditor() {
                 console.log(err);
             })
 
-    }, [])
+    }, [userCrsRow])
     var adminUserEditorCols = [{
         dataField: 'user_id',
         text: 'User ID'

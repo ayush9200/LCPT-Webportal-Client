@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
+import $ from 'jquery';
 
 function VerifyCredentials(props) {
     console.log(props)
@@ -19,11 +20,27 @@ function VerifyCredentials(props) {
 
     console.log(userCrsRowData.status)
     var editUsrCrsForm = (e) => {
+        var userID = userCrsRowData.userId;
+        var crsID = userCrsRowData.courseId;
+        var validityDate = $("#validityDateUsrCrs").val();
+        var isUrlValid = $("#isUrlValid").val();
+
+
 
     }
     var handleInputChange = function (e) {
-        this.setState({ value: e.target.value });
+        // this.setState({ value: e.target.value });
     }
+
+
+    // const [first, setfirst] = useState(second);
+    useEffect(() => {
+        document.getElementById("validityDateUsrCrs").value = validityDate;
+        console.log(userCrsRowData.status)
+        document.getElementById("isUrlValid").value = userCrsRowData.status;
+
+    }, [userCrsRowData])
+
     // userCrsRowData.validityDate
     return (
         <div id='crsValidEditForm'>
@@ -54,13 +71,13 @@ function VerifyCredentials(props) {
                     <Row >
                         <Form.Group as={Col} controlId="userCrsValDate">
                             <Form.Label>Validity Date</Form.Label>
-                            <Form.Control type='date' onChange={handleInputChange}
-                                defaultValue={validityDate || ''} />
+                            <Form.Control type='date' id='validityDateUsrCrs' onChange={handleInputChange}
+                            />
                         </Form.Group>
                         <Form.Group as={Col} controlId="userCrsIsURLValid">
                             <Form.Label>Is URL Valid?</Form.Label>
-                            <Form.Select aria-label="Default select example" onChange={handleInputChange}
-                                defaultValue={userCrsRowData.status || ''} >
+                            <Form.Select id='isUrlValid' onChange={handleInputChange} >
+
                                 <option value='false'>NOT VALID</option>
                                 <option value='true' >IS VALID</option>
                             </Form.Select>
