@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Row, Col, Button, Container } from 'react-bootstrap'
 import $ from 'jquery';
+import { BASE_API_URL } from '../Url-config';
+import { BASE_URL_FRONTEND } from '../Url-config';
+import axios from 'axios'
 
 function VerifyCredentials(props) {
     console.log(props)
@@ -24,6 +27,30 @@ function VerifyCredentials(props) {
         var crsID = userCrsRowData.courseId;
         var validityDate = $("#validityDateUsrCrs").val();
         var isUrlValid = $("#isUrlValid").val();
+
+
+        var getAdmUsrCrsURL = BASE_API_URL + "admin-data/verify-credentials";
+
+
+        axios({
+            method: 'post',
+            url: getAdmUsrCrsURL,
+            headers: {},
+            data: {
+
+                "userId": userID,
+                "courseId": crsID,
+                "validityDate": validityDate,
+                "isURLValid": isUrlValid
+
+            }
+        }).then(res => {
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+        })
+
+
 
 
 
