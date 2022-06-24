@@ -17,6 +17,7 @@ import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
 function Admin_Home() {
     console.log(Config)
+   
     var backendPortUrl = Config.back_end_port + '/';
     const params = useParams().id;
     const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
@@ -26,27 +27,36 @@ function Admin_Home() {
     const [showOrg, setOrgShow] = useState(false);
     const handleCloseOrg = () => setOrgShow(false);
     const handleShowOrg = () => setOrgShow(true);
-    
+   
+    function returnBack(){
+        return window.location.href = BASE_URL_FRONTEND;  
+
+    }
     useEffect(() => {
         if( sessionStorage.getItem("userType")!='admin')
         {
-            return window.location.href = BASE_URL_FRONTEND;  
+            alert("Sorry.Access Not Permitted")
+             return window.location.href = BASE_URL_FRONTEND; 
+            // setTimeout(returnBack(), 3000);
         
         }
-        var organizationID = params;
-        var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + organizationID;
-        axios.get(gethomeDetailsUrl)
-            .then(res => {
-
-                console.log(res.data);
-                setHomeDetails(res.data)
-                // toggleshowSpinner()
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
-
+         else{
+            var organizationID = params;
+            var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + organizationID;
+            axios.get(gethomeDetailsUrl)
+                .then(res => {
+    
+                    console.log(res.data);
+                    setHomeDetails(res.data)
+                    // toggleshowSpinner()
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+    
+    
+        }
+       
 
     }, [])
 

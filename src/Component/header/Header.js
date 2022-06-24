@@ -1,10 +1,31 @@
 import React from 'react';
 import { Button, Navbar, Container, Nav } from 'react-bootstrap';
+// import{ useState, useEffect } from "react";
 
+// const [headerShow, setHeaderShow] = useState(false)
+
+// useEffect(() => {
+// if(window.location.href.includes("login")||(window.location.href.includes("userRegistration"))){
+//   setHeaderShow(false)
+// }
+// else{
+//   setHeaderShow(true)
+// }
+
+// }, [])
 function Header() {
   var loginPgCall = () => {
+    if(sessionStorage.getItem("orgId"))
+    sessionStorage.removeItem("orgId")
+    if(sessionStorage.getItem("userType"))
+    sessionStorage.removeItem("userType")
+    if(sessionStorage.getItem("OtherHomeId"))
+    sessionStorage.removeItem("OtherHomeId")
+    if(sessionStorage.getItem("OtherOrgId"))
+    sessionStorage.removeItem("OtherOrgId")
+    if(sessionStorage.getItem("homeId"))
+    sessionStorage.removeItem("homeID")
     window.location = ("/login")
-
 
   }
 
@@ -25,8 +46,8 @@ function Header() {
           <Nav pullright="true">
             <Nav.Link href="">About Us</Nav.Link>
             <Nav.Link href="">Contact Us</Nav.Link>
-            <Nav.Link href="/organisation/1">Organization</Nav.Link>
-            <Nav.Link href="/admin_home">Administrator</Nav.Link>
+            {/* <Nav.Link href="/organisation/1">Organization</Nav.Link>
+            <Nav.Link href="/admin_home">Administrator</Nav.Link> */}
             {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
@@ -34,7 +55,13 @@ function Header() {
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
             </NavDropdown> */}
-            <Button bsStyle="primary" onClick={loginPgCall}>Login</Button>
+            {/* <div>
+      {headerShow===false ? (
+        <div></div>
+      ) : ( */}
+            <Button bsStyle="primary" onClick={loginPgCall}>Log Out</Button>
+            {/* )}
+            </div> */}
           </Nav>
         </Navbar.Collapse>
       </Container>

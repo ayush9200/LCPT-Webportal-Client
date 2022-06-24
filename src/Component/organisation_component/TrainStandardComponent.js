@@ -25,9 +25,14 @@ export default function TrainStandardComponent(props) {
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
         {
+           // alert("Sorry.Access Not Permitted")
             return window.location.href = BASE_URL_FRONTEND;  
-        
         }
+        // if(sessionStorage.getItem("userType")==='organization'){
+        //   if(JSON.parse(sessionStorage.getItem("OtherOrgId")).findIndex(String(params))==-1){
+        //     return window.location.href = BASE_URL_FRONTEND;  
+        //   }
+        // }
         getTrainingData();
 
     }, [])
@@ -62,31 +67,59 @@ export default function TrainStandardComponent(props) {
         }
         
     }
-
+    var trainObj = {}
     function addTrainingText(event, id) {
-        setNewStandard(event.target.value)
+        
+        if(id=='tran1'){
+            trainObj.role_name = event.target.value
+
+        }
+        else{
+            trainObj.role_details = event.target.value
+        }
+        //setNewStandard(trainObj)
+        //trainObj = {}
     }
 
     function saveNewStandard() {
         console.log(newStandard);
-        if (newStandard) {
-           // setErrors(false);
-            handleClose();
-            let newtrainStandards = [...trainStandards];
-            newtrainStandards.push(newStandard);
-            console.log(newtrainStandards)
-            setTrainStandards(newtrainStandards);
-            let trainStandardsUrl = BASE_API_URL+"orgnization/addNewStandard/"
-            axios.post(trainStandardsUrl, { id: params, trainStandards: newtrainStandards })
-                .then(res => {
-                    console.log(res);
-                    if(res)
-                    setTrainStandards(res.data[0].train_standards)
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        }
+        var tempStandard = {};
+        // tempStandard.role_name = newStandard.role_name
+        // tempStandard.role_details = newStandard.role_details
+        tempStandard.role_name = trainObj.role_name
+        tempStandard.role_details = trainObj.role_details
+        axios.get(BASE_API_URL+"orgnization/getRoleLength/")
+        .then(res => {
+          //  console.log(res);
+            if(res){
+                tempStandard.role_id = String(res.data+1);
+                setNewStandard(...newStandard,tempStandard)
+                if (tempStandard.role_name && tempStandard.role_details && tempStandard.role_id) {
+                    // setErrors(false);
+                     handleClose();
+                     let newtrainStandards = [...trainStandards];
+                     newtrainStandards.push(tempStandard);
+                     console.log(newtrainStandards)
+                     setTrainStandards(newtrainStandards);
+                     let trainStandardsUrl = BASE_API_URL+"orgnization/addNewStandard/"
+                     axios.post(trainStandardsUrl, { id: params, trainStandards: newtrainStandards,newStandard:tempStandard })
+                         .then(res => {
+                             console.log(res);
+                             if(res)
+                             getTrainingData();
+                             //setTrainStandards(res.data[0].train_standards)
+                         })
+                         .catch(err => {
+                             console.log(err);
+                         })
+                 }
+                trainObj = {}
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
+        
         // else{
         //     setErrors(true);
 
@@ -135,10 +168,16 @@ export default function TrainStandardComponent(props) {
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
-                            <Form.Label>Enter the Training Standard</Form.Label>
+                            <Form.Label>Enter the Role Name</Form.Label>
                             <Form.Control type="text"
                                 defaultValue={newStandard} onChange={(e) => {
                                     addTrainingText(e, 'tran1');
+                                }}
+                            />
+                            <Form.Label>Enter the Role Details</Form.Label>
+                            <Form.Control type="text"
+                                defaultValue={newStandard} onChange={(e) => {
+                                    addTrainingText(e, 'tran2');
                                 }}
                             />
                         </Form.Group>
@@ -172,9 +211,12 @@ export default function TrainStandardComponent(props) {
                     return <tbody key={id}>
                         <tr >
                             <td>{id + 1}</td>
-                            <td><div style={{ width: "100%", display: "flex" }}> <input style={{ flex: 1 }} value={data} onChange={(e) => {
+                            {/* <td><div style={{ width: "100%", display: "flex" }}> <input style={{ flex: 1 }} value={data} onChange={(e) => {
                                 changeText(e, id);
                             }}></input></div>
+                            </td> */}
+                            <td><div style={{ width: "100%", display: "flex" }}><b>{data.role_name}</b></div>
+                            <div style={{ width: "100%", display: "flex" }}>{data.role_details}</div>
                             </td>
                             <td>
                                 <Button variant="link" onClick={(e) => {

@@ -25,6 +25,8 @@ function UserCoursesCheck() {
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
     {
+        alert("Sorry.Access Not Permitted")
+
         return window.location.href = BASE_URL_FRONTEND;  
     
     }

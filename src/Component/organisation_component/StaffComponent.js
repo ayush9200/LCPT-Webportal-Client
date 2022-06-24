@@ -7,8 +7,8 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
-import Toast from 'react-bootstrap/Toast'
 import ToastHeader from 'react-bootstrap/ToastHeader'
+import Toast from 'react-bootstrap/Toast'
 import ToastContainer from 'react-bootstrap/ToastContainer'
 import ToastBody from 'react-bootstrap/ToastBody'
 import { BASE_API_URL } from '../Url-config';
@@ -41,9 +41,31 @@ export default function StaffComponent() {
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
         {
+            //setNotificationText("Sorry.Access Not Permitted")
+            alert("Sorry.Access Not Permitted")
             return window.location.href = BASE_URL_FRONTEND;  
-        
+         
         }
+        console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+        if(sessionStorage.getItem("userType")==='organization'){
+           
+            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+             var flag=false;
+             for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
+                 if(String(params)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                     flag=true;
+                     break;
+                 }
+             }
+             if(!flag){
+                 return window.location.href = BASE_URL_FRONTEND;
+             }
+           }
+        // if(sessionStorage.getItem("userType")==='organization'){
+        //     if(JSON.parse(sessionStorage.getItem("OtherOrgId")).findIndex(String(params))==-1){
+        //       return window.location.href = BASE_URL_FRONTEND;  
+        //     }
+        //   }
         getStaffData();
         getRoleDetailByHome();
 
@@ -119,8 +141,11 @@ export default function StaffComponent() {
             newStaffDetailObj.user_name = (event.target.value)
         else if (id === 'st3')
             newStaffDetailObj.dob = event.target.value;
-        else if (id === 'st4')
+        else if (id === 'st4'){
+             newStaffDetailObj.role_id = (roleDetails.find(item => item.role_name === event.target.value)).role_id;
             newStaffDetailObj.role_name = event.target.value;
+
+        }
        
 
         newStaffDetailObj.emp_status = 'Active'
@@ -143,7 +168,7 @@ export default function StaffComponent() {
                 .then(res => {
                     console.log(res);
                     //setStaffList(res.data)
-                    handleClosePosition()
+                    handleCloseStaff()
                     getStaffData()
     
                     setNotificationText("New Staff Member was added");
@@ -203,6 +228,7 @@ export default function StaffComponent() {
             })
     }
     function assignUserRole(event){
+
         console.log(event.target.value)
         setNewStaffRole(state=>{
             return event.target.value
@@ -310,7 +336,7 @@ export default function StaffComponent() {
                                 }}
                             /> */}
                             <Form.Label>Enter the Date of Birth(YYYY-MM-DD)</Form.Label>
-                            <Form.Control type="text"
+                            <Form.Control type="date"
                                 onChange={(e) => {
                                     addStaffText(e, 'st3');
                                 }}

@@ -13,23 +13,26 @@ function AdminHomeCourse() {
 
 
     useEffect(() => {
-        if(sessionStorage.getItem("userType")!='admin')
-        {
-            return window.location.href = BASE_URL_FRONTEND;  
+        // if(sessionStorage.getItem("userType")!='admin')
+        // {
+        //     alert("Sorry.Access Not Permitted")
+        //     return window.location.href = BASE_URL_FRONTEND;  
         
-        }
+        // }
         // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
-        var getAdmHmCrsURL = BASE_API_URL + "admin-data/home-crs-role";
-        axios.get(getAdmHmCrsURL)
-            .then(res => {
-                console.log(res.data);
-                setadminHomeCrsData(res.data)
-                // toggleshowSpinner()
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
+        //else{
+            var getAdmHmCrsURL = BASE_API_URL + "admin-data/home-crs-role";
+            axios.get(getAdmHmCrsURL)
+                .then(res => {
+                    console.log(res.data);
+                    setadminHomeCrsData(res.data)
+                    // toggleshowSpinner()
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        //}
+        
     }, [])
     var adminHomeCrsCols = [{
         dataField: 'home_id',

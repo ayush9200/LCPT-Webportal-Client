@@ -15,9 +15,15 @@ export default function HomeDetailComponent() {
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='home' && sessionStorage.getItem("homeId")!=params)
         {
+            alert("Sorry.Access Not Permitted")
             return window.location.href = BASE_URL_FRONTEND;  
         
         }
+        // if(sessionStorage.getItem("userType")==='organization'){
+        //     if(JSON.parse(sessionStorage.getItem("OtherOrgId")).find(item=>{ item!=(String(params))){
+        //       return window.location.href = BASE_URL_FRONTEND;  
+        //     }
+        //   }
         const params = homeId + "/" + roleId
 
         const getRoleTemplateUrl = BASE_API_URL+"orgnization/getRoleTemplateDetails/" + params

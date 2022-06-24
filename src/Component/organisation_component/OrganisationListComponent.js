@@ -26,7 +26,7 @@ export default function OrganisationListComponent(props) {
         if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
         {
             return window.location.href = BASE_URL_FRONTEND;  
-        
+            //alert("Sorry.Access Not Permitted")
         }
         getHomeData();
 
@@ -35,13 +35,18 @@ export default function OrganisationListComponent(props) {
         const homeListUrl = BASE_API_URL+"orgnization/getHomesList/" + params
         axios.get(homeListUrl)
             .then(res => {
-                if(res != 'Something went wrong!'||res != 'No Home Found!'){
+                axios.get(BASE_API_URL+"orgnization/getAllHomesCount/").then(newRes=>{
+                    setNewHomeId(String(newRes.data + 1))
+                })
+                console.log(res.data)
+                if(res.data != 'Something went wrong!'&& res.data != 'No Home Found!'){
                     setHomeListArray(res.data)
-                    setNewHomeId(String(res.data.length + 1))
+                   
                 }
                 else{
+                    
                     setHomeListArray([])
-                    setNewHomeId(String(1))
+                   // setNewHomeId(String(1))
                 }
             })
             .catch(err => {
@@ -187,11 +192,9 @@ export default function OrganisationListComponent(props) {
                         <tr >
                             <td>{data.home_id}</td>
                             <td>{data.name}</td>
-                            <td> <Button variant="warning"><Link to={`/home/${data.home_id}`}>View Home Details</Link></Button></td>
-                            <td><Button variant="warning"
-                            ><Link to={`/showStaff/${data.home_id}`}>View Staff Members</Link></Button></td>
-                            <td><Button variant="warning"
-                            ><Link to={`/checkList/${data.home_id}`}>View CheckList Component</Link></Button></td>
+                            <td> <Link to={`/home/${data.home_id}`}><Button variant="warning">View Home Details</Button></Link></td>
+                            <td><Link to={`/showStaff/${data.home_id}`}><Button variant="warning">View Staff Members</Button></Link></td>
+                            <td><Link to={`/checkList/${data.home_id}`}><Button variant="warning">View CheckList Component</Button></Link></td>
                         </tr>
 
                     </tbody>

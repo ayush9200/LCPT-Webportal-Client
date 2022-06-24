@@ -56,33 +56,65 @@ function LoginForm(){
                     'Content-Type': 'application/json'
                 }
             });
-            //console.log(res);
-            console.log(res);
-            //const resJson = res.data.data;
+            console.log("Res")
               if(res!=='No User Found!'){
-                  sessionStorage.setItem("userType",res.data.type);
-                  if(res.data.home_id){
-                    sessionStorage.setItem("homeId",res.data.home_id);
+                  sessionStorage.setItem("userType",res.data.res[0].type);
+
+                  if( res.data.res[0].home_id){
+                    sessionStorage.setItem("homeId",res.data.res[0].home_id);
+                    var homeArray = []
+                    for(var i=0;i<res.data.res.length;i++){
+                        homeArray.push((res.data.res[i].home_id))
+                    }
+                    sessionStorage.setItem("OtherHomeId",JSON.stringify(homeArray));
                   }
-                  if(res.data.org_id){
-                    sessionStorage.setItem("orgId",res.data.org_id);
+                  if(res.data.res[0].org_id){
+                    sessionStorage.setItem("orgId",res.data.res[0].org_id);
+                    var orgArray = []
+                    for(var i=0;i<res.data.res.length;i++){
+                        orgArray.push(res.data.res[i].org_id)
+                    }
+                    sessionStorage.setItem("OtherOrgId",JSON.stringify(orgArray));
+                    const homeListUrl = BASE_API_URL+"orgnization/getHomesList/" + res.data.res[0].org_id
+                    axios.get(homeListUrl)
+                        .then(new_res => {
+                            console.log("newRes",new_res)
+                            if(new_res != 'Something went wrong!'||new_res != 'No Home Found!'){
+                                var homeArray = []
+                                for(var i=0;i<new_res.data.length;i++){
+                                    homeArray.push((new_res.data[i].home_id))
+                                }
+                                sessionStorage.setItem("OtherHomeId",JSON.stringify(homeArray)); 
+                                return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.res[0].org_id;
+                            }
+                            else{
+                                return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.res[0].org_id;
+                            }
+
+                        })
                   }
-                  if(res.data.type=== "user"){
-                    return window.location.href = BASE_URL_FRONTEND+"user/"+res.data.user_id;  
+                  if(res.data.res[0].type=== "user"){
+                    return window.location.href = BASE_URL_FRONTEND+"user/validateUser";  
                   }
-                  else if(res.data.type === "organization")
-                  return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.org_id;
-                  else if(res.data.type === "home")
-                  return window.location.href = BASE_URL_FRONTEND+"home/"+res.data.home_id;
-                  else if(res.data.type === "admin")
+                //   else if(res.data.res[0].type === "organization"){
+                //     return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.res[0].org_id;
+
+                //   }
+                  else if(res.data.res[0].type === "home"){
+                    return window.location.href = BASE_URL_FRONTEND+"home/"+res.data.res[0].home_id;
+
+                  }
+                  else if(res.data.res[0].type === "admin")
                   return window.location.href = BASE_URL_FRONTEND+"admin_home/";
-              }else{
+               }
+            else{
                 return alert("Invalid Credentials. Please try again.");
               }
 
         }catch (error) {
             console.log(error);
-           //userRegistration
+            return alert("Invalid Credentials. Please try again.");
+
         }
 	};
     return(

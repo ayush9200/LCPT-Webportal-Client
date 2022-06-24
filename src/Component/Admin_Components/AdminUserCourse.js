@@ -9,20 +9,24 @@ function AdminUserCourse() {
 
 
     useEffect(() => {
-        if( sessionStorage.getItem("userType")!='admin')
-        {
-            return window.location.href = BASE_URL_FRONTEND;  
+        // if( sessionStorage.getItem("userType")!='admin')
+        // {
+        //     alert("Sorry.Access Not Permitted")
+        //     return window.location.href = BASE_URL_FRONTEND;  
         
-        }
-        var getAdmUsrCrsURL = BASE_API_URL+"admin-data/user-crs";
-        axios.get(getAdmUsrCrsURL)
-            .then(res => {
-                console.log(res.data);
-                setadminUserCrsData(res.data)
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        // }
+        //else{
+            var getAdmUsrCrsURL = BASE_API_URL+"admin-data/user-crs";
+            axios.get(getAdmUsrCrsURL)
+                .then(res => {
+                    console.log(res.data);
+                    setadminUserCrsData(res.data)
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+      //  }
+        
 
     }, [])
     var adminUserCrsCols = [{

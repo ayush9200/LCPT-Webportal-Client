@@ -24,8 +24,9 @@ function UserAuditReport() {
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
     {
+        alert("Sorry.Access Not Permitted")
         return window.location.href = BASE_URL_FRONTEND;  
-    
+
     }
         //fetchData();
         const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;

@@ -39,12 +39,27 @@ export default function HomeCheckListComponent() {
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='home' && sessionStorage.getItem("homeId")!=params)
         {
+            alert("Sorry.Access Not Permitted")
             return window.location.href = BASE_URL_FRONTEND;  
         
         }
-        else{
+        if(sessionStorage.getItem("userType")==='organization'){
+           
+            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+             var flag=false;
+             for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
+                 if(String(params)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                     flag=true;
+                     break;
+                 }
+             }
+             if(!flag){
+                 return window.location.href = BASE_URL_FRONTEND;
+             }
+           }
+        
             getInitialData()
-        }
+        
 
 
     }, [])

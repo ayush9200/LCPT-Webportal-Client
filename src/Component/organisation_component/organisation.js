@@ -14,8 +14,12 @@ import Spinner from 'react-bootstrap/Spinner'
 import OrganizationAuditTabs from '../Audit_Report_Components/organizationAuditTabs';
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+import Toast from 'react-bootstrap/Toast'
+import ToastContainer from 'react-bootstrap/ToastContainer'
 export default function Organisation(props) {
     const [errors, setErrors] = useState(false)
+    const [orgList, setOrgList] = useState([])
+
     var paramId = useParams().id
     var propsId = props.orgIdForAdmin
     var id = propsId;
@@ -30,27 +34,57 @@ export default function Organisation(props) {
 
     useEffect(() => {
         // toggleshowSpinner()
-        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
-{
-    return window.location.href = BASE_URL_FRONTEND;  
+        // if(sessionStorage.getItem("userType")==='organization'){
+        //     if(JSON.parse(sessionStorage.getItem("OtherOrgId")).findIndex(String(paramId))==-1){
+        //       return window.location.href = BASE_URL_FRONTEND;  
+        //     }
+        //   }
+        if (sessionStorage.getItem("userType") != 'organization' && sessionStorage.getItem("userType") != 'admin') {
+            alert("Sorry.Access Not Permitted")
+            return window.location.href = BASE_URL_FRONTEND;
 
-}
-else{
-        setshowSpinner(true)
-        const gethomeDetailsUrl = BASE_API_URL+"orgnization/getOrganisationDetails/" + id
-        axios.get(gethomeDetailsUrl)
-            .then(res => {
-                //console.log(res.data[0]);
-                if(res != 'Something went wrong!'||res != 'No Home Found!')
-                setHomeDetails(res.data[0])
-                else
-                setHomeDetails([])
-                setshowSpinner(false)
-                // toggleshowSpinner()
-            })
-            .catch(err => {
-                console.log(err);
-            })}
+        }
+        
+        else {
+            if(sessionStorage.getItem("userType")==='organization'){
+                let tempArr = (JSON.parse(sessionStorage.getItem("OtherOrgId")))
+                let flag=0
+                for(var i =0;i< tempArr.length;i++){
+                    if(tempArr[i]==String(paramId)){
+                        flag=1
+                        break
+                    }
+
+                }
+                if(flag==0)
+                return window.location.href = BASE_URL_FRONTEND;
+                 
+                  }
+            console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+
+            if(sessionStorage.getItem("userType") === 'admin'){
+                setOrgList(["admin"],...orgList)
+            }
+            else{
+                setOrgList(JSON.parse(sessionStorage.getItem("OtherOrgId")),...orgList)
+            }
+            console.log(orgList)
+            setshowSpinner(true)
+            const gethomeDetailsUrl = BASE_API_URL + "orgnization/getOrganisationDetails/" + id
+            axios.get(gethomeDetailsUrl)
+                .then(res => {
+                    //console.log(res.data[0]);
+                    if (res != 'Something went wrong!' || res != 'No Home Found!')
+                        setHomeDetails(res.data[0])
+                    else
+                        setHomeDetails([])
+                    setshowSpinner(false)
+                    // toggleshowSpinner()
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
     }, [])
 
 
@@ -81,7 +115,7 @@ else{
         if (homeDetails.org_name && homeDetails.contact_firstName && homeDetails.contact_lastName && homeDetails.phone_no && homeDetails.email_id) {
             toggleshowSpinner()
             setErrors(false)
-            axios.put(BASE_API_URL+"orgnization/editOrgDetails", homeDetails)
+            axios.put(BASE_API_URL + "orgnization/editOrgDetails", homeDetails)
                 .then(res => {
                     console.log(res);
                     setshowSpinner(false)
@@ -96,10 +130,38 @@ else{
 
     }
 
+    function changeOrganisation(event) {
+        console.log(event.target.value)
+        return window.location.href = BASE_URL_FRONTEND+"organisation/"+String(event.target.value);
+    }
+
 
     return (
 
-        <div style={{ marginTop: "8vh" }} >
+        <div style={{ marginTop: "10vh" }} >
+            <div>
+      {orgList[0]==='admin' ? (
+        <div></div>
+      ) : (
+        <Form>
+        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+            <Form.Label>Select an Organisation</Form.Label>
+            <Form.Select style={{ width: "25%" }} aria-label="Default select example" onChange={(e) => {
+                changeOrganisation(e);
+            }} >
+                <option>Select</option>
+                {orgList.map((item, _id) => {
+                    return <option value={item}>
+                        {item}
+                    </option>
+                })}
+            </Form.Select>
+        </Form.Group>
+    </Form>
+      )}
+    </div>
+          
+
             {/* <h1>Organisation : {id} </h1> */}
             <Tabs defaultActiveKey="OrgDetails" id="uncontrolled-tab-example" className="mb-3" fill>
                 <Tab eventKey="OrgDetails" title="Organisation Details">
@@ -146,14 +208,14 @@ else{
                                 }} />
                             </Form.Group>
                             <div>
-                        {errors ? (
-                            <p className="text-danger">*All fields are mandatory</p>
+                                {errors ? (
+                                    <p className="text-danger">*All fields are mandatory</p>
 
-                        ) : (
-                            <p className="text-danger"></p>
+                                ) : (
+                                    <p className="text-danger"></p>
 
-                        )}
-                    </div>
+                                )}
+                            </div>
                             <Button onClick={(e) => {
                                 saveOrgText(e, 'det1');
                             }} variant="warning" >
@@ -161,7 +223,7 @@ else{
                             </Button>
                         </Form>
                     </div>
-                    
+
 
                 </Tab>
                 <Tab eventKey="trainStandard" title="Training Standard">
