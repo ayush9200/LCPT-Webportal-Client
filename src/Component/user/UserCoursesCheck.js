@@ -56,7 +56,11 @@ function UserCoursesCheck() {
             const getUserData = BASE_URL_GET_HOME_ROLE_CRS_LIST+value
                 axios.get(getUserData).then(function (response) {
                     console.log("=====> Res +++ ===> ", response);
-                        setroleList(response.data);
+                    console.log("=====> Res DATA +++ ===> ", response.data.result);
+                        setroleList(response.data.result);
+                        if(response.data.result.length === 0){
+                            alert("There is no role mapped with selected Home.");
+                        }
                     
             })
             .catch(function (error) {
@@ -74,6 +78,9 @@ function UserCoursesCheck() {
                 axios.get(getUserData).then(function (response) {
                     console.log("+*+*+*+*+ Res  *+*+*+* ", response);
                     setroleCourseMap(response.data);
+                    if(response.data.length === 0){
+                        alert("No courses mapped with this role.");
+                    }
             })
             .catch(function (error) {
                 console.log(error);
@@ -134,7 +141,7 @@ function UserCoursesCheck() {
                                     <Col sm={9}>
                                         <Form.Select defaultValue="Choose..." onChange={handleChange}>
                                         <option value={0} key='0'> -- Please select -- </option>
-                                        {homeList.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))}
+                                        {homeList?.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))}
                                         </Form.Select>
                                     </Col>
                                 </Form.Group>
@@ -150,7 +157,7 @@ function UserCoursesCheck() {
                             <Col xs={6} md={12}>
                                 <ListGroup vertical='true'>
                                     {/* {roleList.map((data, id) => (<Button style={{margin:'2%'}} id={data.role_id} onClick={fetchAllCourses(4)} className={this.state.condition? "class" : "anotherClass"} variant="outline-primary">{data.role_name}</Button>))} */}
-                                    {roleList.map((data, id) => (<ListGroup.Item action value={data.role_id} onClick={fetchAllCourses}>{data.role_name}</ListGroup.Item>))}
+                                    {roleList?.map((data, id) => (<ListGroup.Item action value={data.role_id} onClick={fetchAllCourses}>{data.role_name}</ListGroup.Item>))}
                                 </ListGroup>
                             </Col>
                         </div>

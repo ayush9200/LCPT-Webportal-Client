@@ -94,7 +94,7 @@ function LoginForm(){
                         })
                   }
                   if(res.data.res[0].type=== "user"){
-                    return window.location.href = BASE_URL_FRONTEND+"user/validateUser";  
+                    return window.location.href = BASE_URL_FRONTEND+"user/"+res.data.res[0].user_id;  
                   }
                 //   else if(res.data.res[0].type === "organization"){
                 //     return window.location.href = BASE_URL_FRONTEND+"organisation/"+res.data.res[0].org_id;

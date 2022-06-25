@@ -187,7 +187,13 @@ const getRoleList = async(passRoleId) => {
                     setCompletedCourses(courseList.completedCourses);
                     setPendingCourses(courseList.pendingCourses);
                     lastMethodCall(resJson);
-                    console.log(resJson);
+                    if(resJson.completedCourses.length === 0
+                        && resJson.pendingCourses.length === 0){
+                        alert("Not able to fetch courses.\nNiether user has completed any course nor any course is registered with selected role. \n\nPlease contact your LCPT support team.");
+                    }else if(resJson.completedCourses.length === 0
+                        && resJson.pendingCourses.length > 0){
+                            alert("All courses are pending.");
+                    }
                   }else{
                     return alert("Selected role don't have courses specified yet. Please contact admin and try again");
                   }
