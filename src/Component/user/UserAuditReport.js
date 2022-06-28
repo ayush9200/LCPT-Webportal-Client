@@ -1,16 +1,30 @@
 import React, {useState,useEffect} from 'react'
 import { Form, Row, Col, Button, Container, Table } from 'react-bootstrap'
 import axios from 'axios';
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+//import { PDFDownloadLink } from '@react-pdf/renderer';
+//import PdfAuditReport from './PdfAuditReport';
+import { jsPDF } from 'jspdf';
+//import PDF, { Text, AddPage, Line, Image, Html } from 'jspdf-react';
+
+
+const styleH1 = {
+    fontSize: '15px',
+    textAlign: 'center',
+    color: 'red'
+  };
+   
+  const invisibleStyle = {
+    display: 'none',
+  };
+
+
 function UserAuditReport() {
 
     const params = useParams().id;
-    const [courseList, setCourseList] = useState([]); 
-    const [completedCourses, setCompletedCourses] = useState([]);
-    const [pendingCourses, setPendingCourses] = useState([]);
     const [userList, setUserList] = useState([]);
     const [finalList, setFinalList] = useState([]);
     const [mappingData, setMappingData] = useState([{'':''}]);
@@ -20,6 +34,7 @@ function UserAuditReport() {
     const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
     const BASE_URL_USER = BASE_API_URL+"user/getUser/";
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
+    const BASE_URL_GET_APPLIED_CRS = BASE_API_URL+"course/fetchPendingCourses/";
 
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
@@ -35,7 +50,7 @@ function UserAuditReport() {
              'Content-Type': 'application/json'
          }
          }).then(response =>{
-             console.log(" ========== > ", response);
+            // console.log(" ========== > ", response);
              setMappingData(response.data);
              fetchCourseDetails(response.data);
              fetchData();
@@ -54,49 +69,44 @@ function UserAuditReport() {
    
     const fetchCourseDetails = (response) => {
        try {
-           //setUserList(response[0]);
-           console.log("> Get Audit  userlist: ",userList);
-           console.log("> Get Audit  Response: ",response);
-          
         var responseArray = [];
-           //const inner = response.role_arr.find(
+        var appliedCrsArr = '';
             const userMappedHome = response.map((c)=>{  
-                const inner = c.role_arr.find(
-                (s) => {
-                var b = { 'userId': c.user_id, 'roleId': s.role_id, 'homeId': c.home_id };
-                console.log("Audit request body : ",b);
-                axios.post(BASE_URL_GET_COURSELIST, b, {
+                    const inner = c.role_arr.find(
+                    (s) => {
+                    var b = { 'userId': c.user_id, 'roleId': s.role_id, 'homeId': c.home_id };
+                    axios.post(BASE_URL_GET_COURSELIST, b, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => {
+                            var resJson = res.data;
+                            responseArray.push(resJson);
+                            if(resJson === undefined){
+                                return alert("Invalid Credentials. Please try again.");
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                    return (responseArray);
+                });
+                axios.get(BASE_URL_GET_APPLIED_CRS+ c.user_id, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 }).then(res => {
-                        console.log('+++++++++++ Audit Report => ',res);
-                        var resJson = res.data;
-                        responseArray.push(resJson);
-                        if(resJson === undefined){
-                            return alert("Invalid Credentials. Please try again.");
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
-                   return (responseArray);
-            });
+                    appliedCrsArr = res.data;
+                });
             return (inner);
             });
-            //console.log("In the middle => ", inner);
-            console.log("In the middle json => ", responseArray);
-            console.log("In the middle Audit => ", userMappedHome);
-
-            setTimeout(() => lastMethodCall(responseArray), 3000);
-               
-    
-       }catch (error) {
+            setTimeout(() => lastMethodCall(responseArray, appliedCrsArr), 3000);
+        }catch (error) {
            console.log(error);
         }
      }
    
-     const lastMethodCall = (passresJson) => {
+     const lastMethodCall = (passresJson, appliedCrsArr) => {
        try {
            var list = [];
            var courseIds = [];
@@ -117,27 +127,29 @@ function UserAuditReport() {
                         }
                         
                     });
+                    const inner3 = appliedCrsArr.find(
+                        (s) => {
+                            if(!courseIds.includes(s.crsId)){
+                                courseIds.push(s.crsId);
+                                list.push(s)
+                            }
+                            
+                        });
             return list;
         });
-           //setCourseList(passresJson);
-           console.log("> Mapped Home list : "+list);
-           //setCompletedCourses(passresJson.completedCourses);
-           //setPendingCourses(passresJson.pendingCourses);
             setFinalList(list);
-             // className='text-center' style={{justifyContent:'center', maxWidth: '450px'}}
        }catch (error) {
            console.log(error);
         }
      }
 
+     //Excel
      const printAuditReport = async e =>{
          var arrayOfData = [];
       // arrayOfData.push(mapForUserData);
       var courseIds = [];
         {finalList?.map((data, id) => { 
-            console.log(" >><<< ", data)
-           
-            
+            //console.log(" >><<< ", data)
             var mapForCourses = {
                 'USER NAME': userList.fullName,
                 'USER ID': userList.user_id,
@@ -155,35 +167,23 @@ function UserAuditReport() {
             }
             arrayOfData.push(mapForCourses);
            })};
-         
-        // {pendingCourses?.map((data, id) => { 
-        // console.log(" >><<< ", data)
-        //     var mapForCourses = {
-        //         'USER NAME': userList.fullName,
-        //         'USER ID': userList.userId,
-        //         'EMAIL ID': userList.email,
-        //         'CONTACT NUMBER': userList.number,
-        //         'DATE OF BIRTH': userList.dob,
-        //         'ADDRESS': userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode,
-        //         'COURSE ID': data.crsId,
-        //         'COURSE TITLE': data.title,
-        //         'STATUS': data.status,
-        //         'VALIDITY': data.validity,
-        //         'SHARED WITH EMPLOYER': data.sharedEmp,
-        //         'EXTERNAL DOCUMENT': data.extDoc,
-        //         'TRAINING DURATION': data.trainDuration
-        //     }
-        //     arrayOfData.push(mapForCourses);
-        // })};
-        setFinalList(arrayOfData);
-        console.log('////// ', arrayOfData);
 
         const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
         let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
         XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-        XLSX.writeFile(workbook, "DataSheet.xlsx");
+        XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
+     }
+
+     //pdf
+     const printPdfReport = () => {
+        var doc = new jsPDF("p","pt","a4");
+        doc.html(document.querySelector("#content"),{
+            callback: function(pdf){
+                pdf.save("mypdf.pdf");
+            }
+        });
      }
 
 
@@ -223,7 +223,10 @@ function UserAuditReport() {
                                 <Form.Check type="checkbox" label="Verify and send all data to Employer" />
                                 <hr></hr>
                                 <div className='text-center'>
-                                <Button variant="primary" onClick={printAuditReport}>Generate Report</Button>
+                                <Button variant="primary" onClick={printAuditReport}>Excel Report</Button>
+                                </div>
+                                <div className='text-center'>
+                                <Button variant="primary" onClick={printPdfReport}>Pdf Report</Button>
                                 </div>
                             </Form.Group>
                         </Form>
@@ -237,6 +240,7 @@ function UserAuditReport() {
             <Row>
                
                 <hr></hr>
+                <div id="content">
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -279,6 +283,7 @@ function UserAuditReport() {
                         </tbody>
                     })} */}
                     </Table>
+                    </div>
                    
             </Row>
             </Container>

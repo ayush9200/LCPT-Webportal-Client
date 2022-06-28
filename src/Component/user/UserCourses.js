@@ -30,7 +30,8 @@ function UserCourses() {
     const [show, setshow] = useState(false);
 
     const [dateTime, setDateTime] = useState(date);
-    //const [badgeUrl, setBadgeUrl] = setBadgeUrl('');
+    const [courseBadgeUrl, setCourseBadgeUrl] = useState('');
+    const [selectedCourseId, setSelectedCourseId] = useState('');
    
 
   
@@ -40,6 +41,7 @@ function UserCourses() {
     const BASE_URL_GET_ROLELIST = BASE_API_URL+"orgnization/getRoleByHomeId/";
     const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
+    const BASE_URL_SAVE_BADGE_URL = BASE_API_URL+"user/saveBadgeUrl/";
 
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
@@ -117,7 +119,7 @@ function UserCourses() {
         const{name, value} = e.target
         console.log(" Value ", value);
         const roleHomeMapping = mappingData.map((c)=>{  
-            sethomeId(c.home_id);
+            sethomeId(value);
             setuserId(c.user_id);
             //setroleList([{'':''}]);
             console.log('Value ',value,' Select Home ', c.home_id);
@@ -128,49 +130,15 @@ function UserCourses() {
                 return (c.role_arr);
                 }
             }
-            //return val;
-        }); 
-        // const finalMap = roleHomeMapping.map((fm)=> { if(fm != undefined){return (fm)} });
-        // console.log("=== Final Map === ", finalMap)
-        //setroleList(roleHomeMapping);
-        //console.log('==== Only Required Roles map === ',roleHomeMapping);
-        console.log('==== Only Required Roles === ',roleList);
-        //sethomelist(userMappedHome);
-
-        
+        });    
     }
 
     const setRoleValue = e => {
         const{name, value} = e.target
-        console.log(" Role ID ", value);
         setroleId(value);
-        //console.log('==== Selected Roles === ',roleId);    
     }
 
-const getRoleList = async(passRoleId) => {
-    try {
-       const res = await axios.get(BASE_URL_GET_ROLELIST+passRoleId, {
-           headers: {
-               'Content-Type': 'application/json'
-           }
-       }).then(response =>{
-        console.log(" ========== > ", response);
-        setroleList(response.data);
-        });
-    //    const resJson = res.data;
-    //      if(resJson!==undefined){
-    //        setroleList(res.data);
-           console.log("Role list : "+roleList);
-    //      }else{
-    //        return alert("Invalid Credentials. Please try again.");
-    //      }
-
-   }catch (error) {
-       console.log(error);
-    }
-};
-//
-  const fetchCourseDetails = () => {
+    const fetchCourseDetails = () => {
     try {
         const body = JSON.stringify({ userId: userId, orgId: orgId, roleId: roleId, homeId: homeId });
         console.log("Body to send => ",body);
@@ -201,10 +169,7 @@ const getRoleList = async(passRoleId) => {
             .catch(err => {
                 console.log(err);
             })
-        //const resJson = res.data;
-          
- 
-    }catch (error) {
+     }catch (error) {
         console.log(error);
      }
   }
@@ -218,8 +183,6 @@ const getRoleList = async(passRoleId) => {
         console.log("Pending Courses : "+pendingCourses);
         console.log("CompletedCourses : "+completedCourses);
         console.log("Course list All in system : "+courseList.allCourseList);
-
-        //lastMethodCall(resJson);
     }catch (error) {
         console.log(error);
      }
@@ -227,14 +190,27 @@ const getRoleList = async(passRoleId) => {
   
   
   const setBadgeUrlMethod  = e => {
-    // const{name, value} = e.target
-        //setBadgeUrl(value);
+     const{name, value} = e.target
+     setCourseBadgeUrl(value);
     };
 
     const submitBadgeUrl = () => {
        // alert(badgeUrl);
         setshow(false);
-
+    //const [selectedCourseId, setSelectedCourseId] = useState('');
+        try {
+            const body = JSON.stringify({ userId: userId, courseId: selectedCourseId, badgeUrl: courseBadgeUrl });
+            axios.post(BASE_URL_SAVE_BADGE_URL, body, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => {
+                    console.log(res);
+                   
+                });
+         }catch (error) {
+            console.log(error);
+         }
     };
 
     const handleClose = () => setshow(false);
@@ -243,6 +219,7 @@ const getRoleList = async(passRoleId) => {
     };
     const func2 = (userId,roleId,roleName,trainDuration,validity,crsId,title,reqFrom) => {
         var val = userId+","+roleId+","+roleName+","+trainDuration+","+validity+","+crsId+","+title+","+reqFrom;
+        setSelectedCourseId(crsId);
         setmodalInfo(val);
     }
   const ModalContent = () =>{

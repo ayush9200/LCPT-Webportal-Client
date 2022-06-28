@@ -12,14 +12,18 @@ function UserCoursesCheck() {
     const [homeList, setHomeList] = useState([{'home_id':'0'}]); 
     const [roleCourseMap, setroleCourseMap] = useState([{'':''}]); 
     const [condition, setcondition] = useState(false);
-
+   
     const [modalInfo, setmodalInfo] = useState('');
     const [show, setshow] = useState(false);
+
+    const [courseBadgeUrl, setCourseBadgeUrl] = useState('');
+    const [selectedCourseId, setSelectedCourseId] = useState('');
    
 
     const BASE_URL_GET_ALL_HOMELIST = BASE_API_URL+"orgnization/getAllHomes";
     const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL+"orgnization/getHomeInfo/";
     const BASE_URL_GET_HRC_LIST = BASE_API_URL+"orgnization/getHRCInfo/";
+    const BASE_URL_SAVE_BADGE_URL = BASE_API_URL+"user/saveBadgeUrl";
 
 
     useEffect(() => {
@@ -89,12 +93,38 @@ function UserCoursesCheck() {
        
     }
 
+    const setBadgeUrlMethod  = e => {
+        const{name, value} = e.target
+        setCourseBadgeUrl(value);
+       };
+   
+    const submitBadgeUrl = () => {
+        setshow(false);
+        var url = window.location.href;
+        url = url.split("/");
+        var userId = url[url.length-1];
+        try {
+            const body = JSON.stringify({ userId: userId, courseId: selectedCourseId, badgeUrl: courseBadgeUrl });
+            axios.post(BASE_URL_SAVE_BADGE_URL, body, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => {
+                    console.log(res);
+                    
+                });
+        }catch (error) {
+            console.log(error);
+        }
+    };
+    
     const handleClose = () => setshow(false);
     const handleShow = () => {
         setshow(true)
     };
     const func2 = (courseId,title,description,trainDuration,validity) => {
         var val = courseId+","+title+","+description+","+trainDuration+","+validity;
+        setSelectedCourseId(courseId);
         setmodalInfo(val);
     }
   const ModalContent = () =>{
@@ -111,14 +141,14 @@ function UserCoursesCheck() {
                     <tr><td className='text-center'><b>Description</b></td><td className='text-left'><Form.Label>{modalInfo.split(",")[2]} </Form.Label></td></tr>
                     <tr><td className='text-center'><b>Training Duration</b></td><td className='text-left'><Form.Label>{modalInfo.split(",")[3]} </Form.Label></td></tr>
                     <tr><td className='text-center'><b>Course Validity</b></td><td className='text-left'><Form.Label>{modalInfo.split(",")[4]} </Form.Label></td></tr>
-                    <tr><td className='text-center'><b>Upload URL</b></td><td className='text-left'><Form.Control type="text" name="badgeUrl" placeholder="Please enter your course badge URL" /></td></tr>
+                    <tr><td className='text-center'><b>Upload URL</b></td><td className='text-left'><Form.Control type="text" name="badgeUrl" onBlur={setBadgeUrlMethod} placeholder="Please enter your course badge URL" /></td></tr>
                     </tbody>
                 </table>
                        
            </Row>
         </Modal.Body>
         <Modal.Footer>
-        <Button variant="success" onClick={handleClose}>
+        <Button variant="success" onClick={submitBadgeUrl}>
             Save
         </Button>
         <Button variant="primary" style={{backgroundColor :'#0f6fc5'}} onClick={handleClose}>
