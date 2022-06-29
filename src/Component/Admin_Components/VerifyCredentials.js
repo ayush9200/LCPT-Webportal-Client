@@ -23,6 +23,7 @@ function VerifyCredentials(props) {
 
     console.log(userCrsRowData.status)
     var editUsrCrsForm = (e) => {
+        e.preventDefault();
         var userID = userCrsRowData.userId;
         var crsID = userCrsRowData.courseId;
         var validityDate = $("#validityDateUsrCrs").val();
@@ -46,8 +47,11 @@ function VerifyCredentials(props) {
             }
         }).then(res => {
             console.log(res);
+            alert("User data updated!")
+
         }).catch(err => {
             console.log(err);
+            alert("Error while Updating User data!")
         })
 
 

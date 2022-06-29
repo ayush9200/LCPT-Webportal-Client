@@ -16,7 +16,7 @@ function HomeAuditTabs(props) {
 
     useEffect(() => {
         // /audit-report/home-summary/1
-        var gethomeDetailsUrl = BASE_API_URL+"audit-report/home-summary/" + homeID;
+        var gethomeDetailsUrl = BASE_API_URL + "audit-report/home-summary/" + homeID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);
@@ -27,7 +27,7 @@ function HomeAuditTabs(props) {
                 console.log(err);
             })
         // /audit-report/home-staff-summary/1
-        var gethomeStaffDetailsUrl = BASE_API_URL+"audit-report/home-staff-summary/" + homeID;
+        var gethomeStaffDetailsUrl = BASE_API_URL + "audit-report/home-staff-summary/" + homeID;
         axios.get(gethomeStaffDetailsUrl)
             .then(res => {
                 console.log(res.data);
@@ -46,11 +46,11 @@ function HomeAuditTabs(props) {
 
 
     var homeSummCols = [{
-        dataField: 'home_id',
-        text: 'Home ID'
-    }, {
         dataField: 'role_id',
         text: 'Role ID'
+    }, {
+        dataField: 'role_name',
+        text: 'Role Name'
     }
         , {
         dataField: 'total_staff',
@@ -66,15 +66,18 @@ function HomeAuditTabs(props) {
     }
     ];
     var homeStaffCols = [{
-        dataField: 'home_id',
-        text: 'Home ID'
-    }, {
         dataField: 'role_id',
         text: 'Role ID'
+    }, {
+        dataField: 'role_name',
+        text: 'Role Name'
     }
         , {
         dataField: 'user_id',
         text: 'User ID'
+    }, {
+        dataField: 'user_name',
+        text: 'User Name'
     }
         , {
         dataField: 'status',
@@ -97,7 +100,7 @@ function HomeAuditTabs(props) {
         }
         return items;
     }
- 
+
     var filteredHomeStaffData = [];
     if (homeStaffDataFinal != null) {
         filteredHomeStaffData = homeStaffDataFinal.filter((val) => {

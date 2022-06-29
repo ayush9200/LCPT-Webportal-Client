@@ -12,7 +12,7 @@ function OrganizationTemplateSpecificComponent(props) {
     useEffect(() => {
         // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
         var orgId = props.org_id;
-        var gethomeDetailsUrl = BASE_API_URL+"audit-report/org-template-specific/" + orgId;
+        var gethomeDetailsUrl = BASE_API_URL + "audit-report/org-template-specific/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);
@@ -41,7 +41,7 @@ function OrganizationTemplateSpecificComponent(props) {
         text: 'Status'
     }
         , {
-            dataField: 'validity_date',
+        dataField: 'validity_date',
         text: 'Validity'
     }
     ];

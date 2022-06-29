@@ -10,6 +10,7 @@ import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
 export default function HomeDetailComponent(props) {
     // const params = useParams().id;
+    var propsOrgId = props.orgId;
     var paramId = useParams().id
     var propsId = props.homeIdFprAdmin
     var params = propsId;
@@ -28,27 +29,27 @@ export default function HomeDetailComponent(props) {
             //alert("Sorry.Access Not Permitted")
 
         }
-        if(sessionStorage.getItem("userType")==='organization'){
-           
-           // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
-            var flag=false;
-            for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
-                if(String(paramId)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
-                    flag=true;
+        if (sessionStorage.getItem("userType") === 'organization') {
+
+            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+            var flag = false;
+            for (var i = 0; i < JSON.parse(sessionStorage.getItem("OtherHomeId")).length; i++) {
+                if (String(paramId) == JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]) {
+                    flag = true;
                     break;
                 }
             }
-            if(!flag){
+            if (!flag) {
                 return window.location.href = BASE_URL_FRONTEND;
             }
-          }
-        if(sessionStorage.getItem("userType") === 'admin'){
-            setHomeList(["admin"],...homeList)
         }
-        else{
+        if (sessionStorage.getItem("userType") === 'admin') {
+            setHomeList(["admin"], ...homeList)
+        }
+        else {
             setHomeList(JSON.parse(sessionStorage.getItem("OtherHomeId")), ...homeList)
         }
-        console.log("home list",homeList)
+        console.log("home list", homeList)
 
         const gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomeDetails/" + params
         axios.get(gethomeDetailsUrl)
@@ -94,19 +95,19 @@ export default function HomeDetailComponent(props) {
         console.log(homeDetails)
         if (homeDetails.name && homeDetails.contact_firstName && homeDetails.contact_lastName && homeDetails.phone_no && homeDetails.email_id) {
 
-        axios.put(BASE_API_URL + "orgnization/editHomeDetails", { homeDetails })
-            .then(res => {
-                console.log(res);
+            axios.put(BASE_API_URL + "orgnization/editHomeDetails", { homeDetails })
+                .then(res => {
+                    console.log(res);
 
-            })
-            .catch(err => {
-                console.log(err);
-            })
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+        else {
+            setErrors(true);
+        }
     }
-    else {
-        setErrors(true);
-    }
-}
     function changeHome(event) {
         console.log(event.target.value)
         return window.location.href = BASE_URL_FRONTEND + "home/" + String(event.target.value);
@@ -117,26 +118,26 @@ export default function HomeDetailComponent(props) {
         <div style={{ marginTop: "10vh" }} >
             {/* <h1>Home : {params} </h1> */}
             <div>
-      {homeList[0]==='admin' ? (
-        <div></div>
-      ) : (
-            <Form>
-                <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
-                    <Form.Label>Select a Home</Form.Label>
-                    <Form.Select style={{ width: "25%" }} aria-label="Default select example" onChange={(e) => {
-                        changeHome(e);
-                    }} >
-                        <option>Select</option>
-                        {homeList.map((item, _id) => {
-                            return <option value={item}>
-                                {item}
-                            </option>
-                        })}
-                    </Form.Select>
-                </Form.Group>
-            </Form>
-      )}
-      </div>
+                {homeList[0] === 'admin' ? (
+                    <div></div>
+                ) : (
+                    <Form>
+                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Select a Home</Form.Label>
+                            <Form.Select style={{ width: "25%" }} aria-label="Default select example" onChange={(e) => {
+                                changeHome(e);
+                            }} >
+                                <option>Select</option>
+                                {homeList.map((item, _id) => {
+                                    return <option value={item}>
+                                        {item}
+                                    </option>
+                                })}
+                            </Form.Select>
+                        </Form.Group>
+                    </Form>
+                )}
+            </div>
 
             <div style={{ textAlign: "center", marginRight: "5%" }}>
                 <Link style={{ marginRight: "1%" }} to={`/showStaff/${params}`}><Button variant="warning">View Staff Members</Button></Link>
@@ -191,14 +192,14 @@ export default function HomeDetailComponent(props) {
                         />
                     </Form.Group>
                     <div>
-                                {errors ? (
-                                    <p className="text-danger">*All fields are mandatory</p>
+                        {errors ? (
+                            <p className="text-danger">*All fields are mandatory</p>
 
-                                ) : (
-                                    <p className="text-danger"></p>
+                        ) : (
+                            <p className="text-danger"></p>
 
-                                )}
-                            </div>
+                        )}
+                    </div>
                     <Button
                         onClick={saveHomeText}
                         variant="warning"  >
