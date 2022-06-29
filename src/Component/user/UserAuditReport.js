@@ -5,9 +5,11 @@ import { useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+import { FaFileExcel, FaFilePdf , FaUserCheck} from 'react-icons/fa';
 //import { PDFDownloadLink } from '@react-pdf/renderer';
 //import PdfAuditReport from './PdfAuditReport';
 import { jsPDF } from 'jspdf';
+
 //import PDF, { Text, AddPage, Line, Image, Html } from 'jspdf-react';
 
 
@@ -151,7 +153,7 @@ function UserAuditReport() {
         {finalList?.map((data, id) => { 
             //console.log(" >><<< ", data)
             var mapForCourses = {
-                'USER NAME': userList.fullName,
+                'USER NAME': userList.userName,
                 'USER ID': userList.user_id,
                 'EMAIL ID': userList.email,
                 'CONTACT NUMBER': userList.number,
@@ -195,7 +197,7 @@ function UserAuditReport() {
            
             <Col>
           
-            <h3 className='text-center' style={{color:'#0f6fc5'}}>User Report</h3>
+            <h3 className='text-center' style={{color:'#0f6fc5'}}> <FaUserCheck/> User Report</h3>
                 <br></br>
                 <br></br>
                 <br></br>
@@ -203,7 +205,7 @@ function UserAuditReport() {
                     <Col>
                     <div className='text-left'>
                     <h5><b>User ID :</b> {userList.user_id}</h5>
-                    <h5><b>Username : </b>{userList.fullName}</h5>
+                    <h5><b>Username : </b>{userList.userName}</h5>
                     <h5><b>Contact : </b>{userList.number}</h5>
                     <h5><b>Email ID : </b>{userList.email}</h5>
                     <h5><b>Address : </b>{userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode}</h5>
@@ -213,21 +215,19 @@ function UserAuditReport() {
                         <Form>
                             <Form.Group id="formGridCheckbox">
                                 <Form.Label>Please select format to download Audit Report</Form.Label>
-                                <Form.Select defaultValue="Choose...">
-                                    <option>Choose...</option>
-                                    <option>Xlsx</option>
-                                    <option>Pdf</option>
-                                </Form.Select>
-                               <br></br>
+                                    <Row>
+                                        <Form.Group as={Col} controlId="formGridName">
+                                            <Button variant="primary" onClick={printAuditReport}><FaFileExcel/> Excel Report</Button>
+                                        </Form.Group>
+                                        <Form.Group  as={Col} controlId="formGridName">
+                                            <Button variant="primary" onClick={printPdfReport}><FaFilePdf/> Pdf Report</Button>
+                                        </Form.Group>
+                                    </Row>
+                                <br></br>
                                <br></br>
                                 <Form.Check type="checkbox" label="Verify and send all data to Employer" />
                                 <hr></hr>
-                                <div className='text-center'>
-                                <Button variant="primary" onClick={printAuditReport}>Excel Report</Button>
-                                </div>
-                                <div className='text-center'>
-                                <Button variant="primary" onClick={printPdfReport}>Pdf Report</Button>
-                                </div>
+                               
                             </Form.Group>
                         </Form>
                     </Col>
@@ -257,7 +257,7 @@ function UserAuditReport() {
                         {finalList?.map((data, id) => { 
                     return <tbody key={id}>
                                 <tr>
-                                    <td>{userList.fullName}</td>
+                                    <td>{userList.userName}</td>
                                     <td>{data.crsId}</td>
                                     <td>{data.title}</td>
                                     <td>{data.status}</td>

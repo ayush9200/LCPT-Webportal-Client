@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Navbar, Container, Nav } from 'react-bootstrap';
+
 // import{ useState, useEffect } from "react";
 
 // const [headerShow, setHeaderShow] = useState(false)
@@ -59,7 +60,7 @@ function Header() {
       {headerShow===false ? (
         <div></div>
       ) : ( */}
-            <Button bsStyle="primary" onClick={loginPgCall}>Log Out</Button>
+            <Button bsStyle="primary" onClick={loginPgCall}>Log In</Button>
             {/* )}
             </div> */}
           </Nav>

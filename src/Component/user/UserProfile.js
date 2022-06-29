@@ -8,7 +8,8 @@ import { BASE_URL_FRONTEND } from '../Url-config';
 
 
 const intialState = {
-    fullName:'',
+    firstName:'',
+    lastName:'',
     userName:'',
     password:'',
     confirmPassword:'',
@@ -161,11 +162,18 @@ function UserProfile() {
                 <Row>
                     <Form onSubmit={handleOnSubmit}>
                             <Row className="mb-3">
-                            <Form.Group  as={Col} controlId="formGridName">
-                                <Form.Label>Full Name</Form.Label>
-                                <Form.Control type="text" name="fullName" onChange={handleOnChange} value={newUser.fullName} placeholder="Enter your name" />
+                            <Form.Group as={Col} controlId="formGridName">
+                                <Form.Label>First Name</Form.Label>
+                                <Form.Control type="text" name="firstName" onChange={handleOnChange} value={newUser.firstName} placeholder="Enter your given name" />
                             </Form.Group>
-                            <Form.Group  as={Col} controlId="formUserName">
+                            <Form.Group  as={Col} controlId="formGridName">
+                                    <Form.Label>Last Name</Form.Label>
+                                    <Form.Control type="text" name="lastName" onChange={handleOnChange} value={newUser.lastName} placeholder="Enter your last name" />
+                            </Form.Group>
+                            </Row>
+                            <br></br>
+                            <Row>
+                            <Form.Group as={Col} controlId="formUserName">
                                 <Form.Label>Username</Form.Label>
                                 <Form.Control type="text" name="userName" onChange={handleOnChange} value={newUser.userName} placeholder="Enter your username" />
                             </Form.Group>
