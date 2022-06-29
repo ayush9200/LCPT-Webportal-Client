@@ -17,35 +17,35 @@ import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
 function Admin_Home() {
     console.log(Config)
-   
+
     var backendPortUrl = Config.back_end_port + '/';
     const params = useParams().id;
     const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
     const [homeIdForAdmin, setomeIdForAdmin] = useState("1");
     const [homeDetails, setHomeDetails] = useState([]);
+    const [orgDet4DrpDwn, setOrgDet4DrpDwn] = useState([]);
     const [OrgDetails, setOrgDetails] = useState({});
     const [showOrg, setOrgShow] = useState(false);
     const handleCloseOrg = () => setOrgShow(false);
     const handleShowOrg = () => setOrgShow(true);
-   
-    function returnBack(){
-        return window.location.href = BASE_URL_FRONTEND;  
+
+    function returnBack() {
+        return window.location.href = BASE_URL_FRONTEND;
 
     }
     useEffect(() => {
-        if( sessionStorage.getItem("userType")!='admin')
-        {
+        if (sessionStorage.getItem("userType") != 'admin') {
             alert("Sorry.Access Not Permitted")
-             return window.location.href = BASE_URL_FRONTEND; 
+            return window.location.href = BASE_URL_FRONTEND;
             // setTimeout(returnBack(), 3000);
-        
+
         }
-         else{
-            var organizationID = params;
-            var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + organizationID;
+        else {
+            // var organizationID = params;
+            var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + orgIdForAdmin;
             axios.get(gethomeDetailsUrl)
                 .then(res => {
-    
+
                     console.log(res.data);
                     setHomeDetails(res.data)
                     // toggleshowSpinner()
@@ -53,15 +53,34 @@ function Admin_Home() {
                 .catch(err => {
                     console.log(err);
                 })
-    
-    
+
+
+            var getOrganizationUrl = BASE_API_URL + "orgnization/getOrganizationList";
+            axios.get(getOrganizationUrl)
+                .then(res => {
+
+                    console.log(res.data);
+                    setOrgDet4DrpDwn(res.data)
+                    // toggleshowSpinner()
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+
+
         }
-       
+
 
     }, [])
 
     var createOrganizationIdList = () => {
+        let items = [];
+        // items.push(<option value="">All</option>)
 
+        for (var i in orgDet4DrpDwn) {
+            items.push(<option value={orgDet4DrpDwn[i].org_id}> {homeDetails[i].org_id} </option>);
+        }
+        return items;
     }
     var createHomeIDSelectItems = () => {
         let items = [];
@@ -89,7 +108,7 @@ function Admin_Home() {
             newOrgDetailObj.email_id = event.target.value;
         newOrgDetailObj.org_id = "2";
         newOrgDetailObj.train_standards = [];
-       // newOrgDetailObj.Org_id = newOrgId;
+        // newOrgDetailObj.Org_id = newOrgId;
         setOrgDetails(OrgDetails => ({
             ...OrgDetails, ...newOrgDetailObj
         }));
@@ -101,12 +120,12 @@ function Admin_Home() {
     }
     function saveNewOrgText() {
         console.log(OrgDetails)
-        const saveOrgUrl = BASE_API_URL+"/orgnization/addNewOrg"
+        const saveOrgUrl = BASE_API_URL + "/orgnization/addNewOrg"
         axios.post(saveOrgUrl, OrgDetails)
             .then(res => {
                 console.log(res);
                 handleCloseOrg()
-               // getOrgData()
+                // getOrgData()
             })
             .catch(err => {
                 console.log(err);
@@ -152,61 +171,61 @@ function Admin_Home() {
 
 
                     </Row>
-                <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShowOrg} >Add New Organisation</Button>
-            <Modal show={showOrg} onHide={handleCloseOrg}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Organisation</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
-                            <Form.Label>Enter the Organisation Name</Form.Label>
-                            <Form.Control type="text"
-                                onChange={(e) => {
-                                    addOrgText(e, 'org1');
-                                }}
-                            />
-                            
-                            <Form.Label>Enter the Contact First Name</Form.Label>
-                            <Form.Control type="text"
-                                onChange={(e) => {
-                                    addOrgText(e, 'org2');
-                                }}
-                            />
-                            <Form.Label>Enter the Contact Last Name</Form.Label>
-                            <Form.Control type="text"
-                                onChange={(e) => {
-                                    addOrgText(e, 'org3');
-                                }}
-                            />
-                            <Form.Label>Enter the Phone Number</Form.Label>
+                    <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShowOrg} >Add New Organisation</Button>
+                    <Modal show={showOrg} onHide={handleCloseOrg}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Add New Organisation</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form>
+                                <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                                    <Form.Label>Enter the Organisation Name</Form.Label>
+                                    <Form.Control type="text"
+                                        onChange={(e) => {
+                                            addOrgText(e, 'org1');
+                                        }}
+                                    />
 
-                            <Form.Control type="text"
-                                onChange={(e) => {
-                                    addOrgText(e, 'org4');
-                                }}
-                            />
-                            <Form.Label>Enter the Email ID</Form.Label>
+                                    <Form.Label>Enter the Contact First Name</Form.Label>
+                                    <Form.Control type="text"
+                                        onChange={(e) => {
+                                            addOrgText(e, 'org2');
+                                        }}
+                                    />
+                                    <Form.Label>Enter the Contact Last Name</Form.Label>
+                                    <Form.Control type="text"
+                                        onChange={(e) => {
+                                            addOrgText(e, 'org3');
+                                        }}
+                                    />
+                                    <Form.Label>Enter the Phone Number</Form.Label>
 
-                            <Form.Control type="text"
-                                onChange={(e) => {
-                                    addOrgText(e, 'org5');
-                                }}
-                            />
-                        </Form.Group>
+                                    <Form.Control type="text"
+                                        onChange={(e) => {
+                                            addOrgText(e, 'org4');
+                                        }}
+                                    />
+                                    <Form.Label>Enter the Email ID</Form.Label>
 
-                    </Form>
+                                    <Form.Control type="text"
+                                        onChange={(e) => {
+                                            addOrgText(e, 'org5');
+                                        }}
+                                    />
+                                </Form.Group>
 
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" >
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={saveNewOrgText} >
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                            </Form>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" >
+                                Close
+                            </Button>
+                            <Button variant="primary" onClick={saveNewOrgText} >
+                                Save Changes
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
                     <Organisation orgIdForAdmin={orgIdForAdmin} />
                     {/* <EnterOrganizationForm /> */}
                 </Tab>
@@ -220,8 +239,7 @@ function Admin_Home() {
                             console.log(homeID);
 
                         }}>
-                            <option value="1">1</option>
-
+                            {createOrganizationIdList}
                         </Form.Select>
                         <h2>HOME ID:  </h2>
                         <Form.Select size="lg" style={{ width: "30%" }} onChange={(e) => {
