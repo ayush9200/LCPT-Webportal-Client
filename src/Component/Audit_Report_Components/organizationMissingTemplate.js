@@ -11,7 +11,7 @@ function OrganizationMissingTemplate(props) {
 
     useEffect(() => {
         var orgId = props.org_id;
-        var gethomeDetailsUrl = BASE_API_URL+"audit-report/org-missing-courses/" + orgId;
+        var gethomeDetailsUrl = BASE_API_URL + "audit-report/org-missing-courses/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);
@@ -26,12 +26,19 @@ function OrganizationMissingTemplate(props) {
     var orgStaffTemplateCols = [{
         dataField: 'user_id',
         text: 'User ID'
+    },
+    {
+        dataField: 'user_name',
+        text: 'User Name'
     }, {
         dataField: 'role_id',
         text: 'Role ID'
-    }
-
-        , {
+    },
+    {
+        dataField: 'role_name',
+        text: 'Role Name'
+    },
+    {
         dataField: 'home_id',
         text: 'Home ID'
     }
