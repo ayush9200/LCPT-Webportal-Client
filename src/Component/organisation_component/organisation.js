@@ -44,29 +44,29 @@ export default function Organisation(props) {
             return window.location.href = BASE_URL_FRONTEND;
 
         }
-        
+
         else {
-            if(sessionStorage.getItem("userType")==='organization'){
+            if (sessionStorage.getItem("userType") === 'organization') {
                 let tempArr = (JSON.parse(sessionStorage.getItem("OtherOrgId")))
-                let flag=0
-                for(var i =0;i< tempArr.length;i++){
-                    if(tempArr[i]==String(paramId)){
-                        flag=1
+                let flag = 0
+                for (var i = 0; i < tempArr.length; i++) {
+                    if (tempArr[i] == String(paramId)) {
+                        flag = 1
                         break
                     }
 
                 }
-                if(flag==0)
-                return window.location.href = BASE_URL_FRONTEND;
-                 
-                  }
+                if (flag == 0)
+                    return window.location.href = BASE_URL_FRONTEND;
+
+            }
             console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
 
-            if(sessionStorage.getItem("userType") === 'admin'){
-                setOrgList(["admin"],...orgList)
+            if (sessionStorage.getItem("userType") === 'admin') {
+                setOrgList(["admin"], ...orgList)
             }
-            else{
-                setOrgList(JSON.parse(sessionStorage.getItem("OtherOrgId")),...orgList)
+            else {
+                setOrgList(JSON.parse(sessionStorage.getItem("OtherOrgId")), ...orgList)
             }
             console.log(orgList)
             setshowSpinner(true)
@@ -85,7 +85,7 @@ export default function Organisation(props) {
                     console.log(err);
                 })
         }
-    }, [])
+    }, [id])
 
 
     function changeOrgText(event, id) {
@@ -132,7 +132,7 @@ export default function Organisation(props) {
 
     function changeOrganisation(event) {
         console.log(event.target.value)
-        return window.location.href = BASE_URL_FRONTEND+"organisation/"+String(event.target.value);
+        return window.location.href = BASE_URL_FRONTEND + "organisation/" + String(event.target.value);
     }
 
 
@@ -140,27 +140,27 @@ export default function Organisation(props) {
 
         <div style={{ marginTop: "10vh" }} >
             <div>
-      {orgList[0]==='admin' ? (
-        <div></div>
-      ) : (
-        <Form>
-        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
-            <Form.Label>Select an Organisation</Form.Label>
-            <Form.Select style={{ width: "25%" }} aria-label="Default select example" onChange={(e) => {
-                changeOrganisation(e);
-            }} >
-                <option>Select</option>
-                {orgList.map((item, _id) => {
-                    return <option value={item}>
-                        {item}
-                    </option>
-                })}
-            </Form.Select>
-        </Form.Group>
-    </Form>
-      )}
-    </div>
-          
+                {orgList[0] === 'admin' ? (
+                    <div></div>
+                ) : (
+                    <Form>
+                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Select an Organisation</Form.Label>
+                            <Form.Select style={{ width: "25%" }} aria-label="Default select example" onChange={(e) => {
+                                changeOrganisation(e);
+                            }} >
+                                <option>Select</option>
+                                {orgList.map((item, _id) => {
+                                    return <option value={item}>
+                                        {item}
+                                    </option>
+                                })}
+                            </Form.Select>
+                        </Form.Group>
+                    </Form>
+                )}
+            </div>
+
 
             {/* <h1>Organisation : {id} </h1> */}
             <Tabs defaultActiveKey="OrgDetails" id="uncontrolled-tab-example" className="mb-3" fill>

@@ -21,7 +21,8 @@ function Admin_Home() {
     var backendPortUrl = Config.back_end_port + '/';
     const params = useParams().id;
     const [orgIdForAdmin, setOrgIdForAdmin] = useState("1");
-    const [homeIdForAdmin, setomeIdForAdmin] = useState("1");
+    const [orgIdForHomeAdmin, setOrgIdForHomeAdmin] = useState("1");
+    const [homeIdForAdmin, setomeIdForAdmin] = useState("");
     const [homeDetails, setHomeDetails] = useState([]);
     const [orgDet4DrpDwn, setOrgDet4DrpDwn] = useState([]);
     const [OrgDetails, setOrgDetails] = useState({});
@@ -42,7 +43,7 @@ function Admin_Home() {
         }
         else {
             // var organizationID = params;
-            var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + orgIdForAdmin;
+            var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + orgIdForHomeAdmin;
             axios.get(gethomeDetailsUrl)
                 .then(res => {
 
@@ -71,14 +72,16 @@ function Admin_Home() {
         }
 
 
-    }, [])
+    }, [orgIdForHomeAdmin, homeIdForAdmin])
 
     var createOrganizationIdList = () => {
         let items = [];
         // items.push(<option value="">All</option>)
 
         for (var i in orgDet4DrpDwn) {
-            items.push(<option value={orgDet4DrpDwn[i].org_id}> {homeDetails[i].org_id} </option>);
+            console.log(orgDet4DrpDwn[i]);
+
+            items.push(<option value={orgDet4DrpDwn[i].org_id}> {orgDet4DrpDwn[i].org_id} </option>);
         }
         return items;
     }
@@ -157,15 +160,14 @@ function Admin_Home() {
 
                         </Col>
                         <Col>
+                            <Form.Select size="lg" style={{ width: "30%" }} onChange={(e) => {
+                                // var homeID = e.target.value;
+                                // console.log(homeID);
+                                setOrgIdForAdmin(e.target.value);
 
-                            <Form.Select as={Col} onChange={(e) => {
-                                var orgID = e.target.value;
-                                setOrgIdForAdmin(orgID);
-                                console.log(orgID);
 
                             }}>
-                                {/* {createOrganizationIdList()} */}
-                                <option value="1">1</option>
+                                {createOrganizationIdList()}
                             </Form.Select>
                         </Col>
 
@@ -235,11 +237,14 @@ function Admin_Home() {
                     <div style={{ display: "flex", marginLeft: "10%" }}>
                         <h2>Organisation ID:  </h2>
                         <Form.Select size="lg" style={{ width: "30%" }} onChange={(e) => {
-                            var homeID = e.target.value;
-                            console.log(homeID);
+                            // var homeID = e.target.value;
+                            // console.log(homeID);
+                            setOrgIdForHomeAdmin(e.target.value);
+                            setomeIdForAdmin("");
+
 
                         }}>
-                            {createOrganizationIdList}
+                            {createOrganizationIdList()}
                         </Form.Select>
                         <h2>HOME ID:  </h2>
                         <Form.Select size="lg" style={{ width: "30%" }} onChange={(e) => {
@@ -248,12 +253,15 @@ function Admin_Home() {
                             console.log(homeID);
 
                         }}>
+                            <option value="">Select one Home</option>
                             {createHomeIDSelectItems()}
 
                         </Form.Select>
 
                     </div>
-                    <HomeDetailComponent homeIdFprAdmin={homeIdForAdmin} />
+                    {(homeIdForAdmin == "") ? <h1>choose home</h1> :
+                        <HomeDetailComponent homeIdFprAdmin={homeIdForAdmin} orgId={orgIdForHomeAdmin} />}
+
                 </Tab>
                 <Tab eventKey="individualView" title="Users" >
                     <EnterIndividualForm />
