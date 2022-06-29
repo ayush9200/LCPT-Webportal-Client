@@ -29,20 +29,37 @@ export default function HomeDetailComponent(props) {
             //alert("Sorry.Access Not Permitted")
 
         }
-        if (sessionStorage.getItem("userType") === 'organization') {
-
-            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
-            var flag = false;
-            for (var i = 0; i < JSON.parse(sessionStorage.getItem("OtherHomeId")).length; i++) {
-                if (String(paramId) == JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]) {
-                    flag = true;
+        if(sessionStorage.getItem("userType")==='organization'){
+           
+           // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+            var flag=false;
+            for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
+                if(String(paramId)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                    console.log("found",String(paramId),JSON.parse(sessionStorage.getItem("OtherHomeId"))[i])
+                    flag=true;
                     break;
                 }
             }
             if (!flag) {
                 return window.location.href = BASE_URL_FRONTEND;
             }
-        }
+          }
+          if(sessionStorage.getItem("userType")==='home'){
+           
+            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+             var flag=false;
+             for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
+                 if(String(paramId)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                     console.log("found",String(paramId),JSON.parse(sessionStorage.getItem("OtherHomeId"))[i])
+                     flag=true;
+                     break;
+                 }
+             }
+             if(!flag){
+                 return window.location.href = BASE_URL_FRONTEND;
+             }
+           }
+       
         if (sessionStorage.getItem("userType") === 'admin') {
             setHomeList(["admin"], ...homeList)
         }

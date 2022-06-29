@@ -9,16 +9,28 @@ import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form';
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+import Spinner from 'react-bootstrap/Spinner'
+
 export default function TrainStandardComponent(props) {
 
+    const [courseList, setCourseList] = useState([]);
     const [trainStandards, setTrainStandards] = useState([]);
     const [show, setShow] = useState(false);
     const [newStandard, setNewStandard] = useState('');
     const [errors, setErrors] = useState(false)
-
-
+    const [roleDetails, setRoleDetails] = useState([]);
+    const [MicroCredShow, setMicroCredShow] = useState(false);
+    const [dispRoleDetail, setDispRoleDetail] = useState('');
+    const handleCloseMicroCred = () => setMicroCredShow(false);
+    const handleshowMicroCred = () => setMicroCredShow(true);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [roleDetailshow, setRoleDetailShow] = useState(false);
+    const handleroleDetailClose = () => setRoleDetailShow(false);
+    const handleroleDetailShow = () => setRoleDetailShow(true);
+    const [dispMicroCred, setDispMicroCred] = useState('');
+    const [showSpinner, setshowSpinner] = useState(false);
+    const toggleshowSpinner = () => setshowSpinner(!showSpinner);
     // const params = useParams().id;
     const params = props.id;
 
@@ -41,13 +53,50 @@ export default function TrainStandardComponent(props) {
         const trainStandardsUrl = BASE_API_URL+"orgnization/getOrganisationDetails/" + params
         axios.get(trainStandardsUrl)
             .then(res => {
-                console.log(res);
+               // console.log(res);
                 if(res!='Something went wrong!' || res!='No Standards Found!');
                 setTrainStandards(res.data[0].train_standards)
             })
             .catch(err => {
                 console.log(err);
             })
+            const getCoursesUrl = BASE_API_URL+"orgnization/getCourseList/"
+            axios.get(getCoursesUrl)
+                .then(res => {
+                    if(res!='Something went wrong!'||res!='No Course Found!'){
+                        //setshowSpinner(false)
+                        setCourseList(res.data)
+                       // console.log(courseList);
+                    }
+                   
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                const getOrgRoleUrl = BASE_API_URL+"orgnization/getOrgRoleList/"+sessionStorage.getItem("orgId");
+            axios.get(getOrgRoleUrl)
+                .then(res => {
+                    if(res!='Something went wrong!'||res!='No Role Found!'){
+                        //setshowSpinner(false)roleDetails
+                        setRoleDetails(res.data);
+                        //console.log(res.data);
+                    }
+                   
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                setshowSpinner(false)
+
+    }
+    function getMicrodetails(event, val) {
+        // console.log(roleDetails[id].course_details[_id])
+        if(val.description)
+        setDispMicroCred(val.description);
+        else
+        setDispMicroCred(val.title) 
+        handleshowMicroCred()
+
     }
     function changeText(event, id) {
         
@@ -80,8 +129,25 @@ export default function TrainStandardComponent(props) {
         //setNewStandard(trainObj)
         //trainObj = {}
     }
+    function changeArchiveStatus(event, role_id) {
+        console.log(role_id, " roleid")
+        const archiveStatusUrl = BASE_API_URL+"orgnization/editRoleArchiveStatus"
+        //var status = ""+event.target.value
+        axios.put(archiveStatusUrl, { "role_id": String(role_id), "archived": String(event.target.value), "org_id": String(params) })
+            .then(res => {
+                console.log(res);
+                // getStaffData();
+                // setNotificationText("Staff Status was changed");
+                // toggleshowNotification()
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 
     function saveNewStandard() {
+        setshowSpinner(true)
+
         console.log(newStandard);
         var tempStandard = {};
         // tempStandard.role_name = newStandard.role_name
@@ -140,6 +206,33 @@ export default function TrainStandardComponent(props) {
         }
       
     }
+    function handleCheckOnChange(event, courseDetail, roleDetail, id) {
+        setshowSpinner(true)
+
+        console.log(event.target.checked, courseDetail, roleDetail, id)
+        var tempArray = roleDetails;
+        if (event.target.checked)
+            tempArray[id].course_details.push({ "id": courseDetail.courseID, "details": courseDetail.title })
+        else
+            tempArray[id].course_details = tempArray[id].course_details.filter(function (el) { return el.id != courseDetail.courseID; });
+        setRoleDetails(tempArray)
+        //console.log(roleDetails)
+        const editOrgCourseDetails = BASE_API_URL+"orgnization/editOrgCourseDetails/"
+
+        axios.put(editOrgCourseDetails, roleDetail)
+            .then(res => {
+                // setshowSpinner(false)
+
+                //console.log(res.data)
+                getTrainingData()
+
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+    }
+
     function removeStandard(event, id) {
 
         let newtrainStandards = [...trainStandards];
@@ -155,6 +248,11 @@ export default function TrainStandardComponent(props) {
             })
     }
 
+    function openDispRoleDetail(event,data){
+        console.log(event.target.value)
+        setDispRoleDetail(data.role_details)
+        handleroleDetailShow()
+    }
 
     return (
         <div className='org-container'>
@@ -194,13 +292,13 @@ export default function TrainStandardComponent(props) {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} onClick={saveText} variant="warning">Save</Button>
-            <Table striped bordered hover>
+            {/* <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} onClick={saveText} variant="warning">Save</Button> */}
+            {/* <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>S.N.</th>
                         <th>HR Training Standards</th>
-                        <th>Action</th>
+                     
 
                     </tr>
                 </thead>
@@ -211,22 +309,160 @@ export default function TrainStandardComponent(props) {
                     return <tbody key={id}>
                         <tr >
                             <td>{id + 1}</td>
-                            {/* <td><div style={{ width: "100%", display: "flex" }}> <input style={{ flex: 1 }} value={data} onChange={(e) => {
-                                changeText(e, id);
-                            }}></input></div>
-                            </td> */}
+                         
                             <td><div style={{ width: "100%", display: "flex" }}><b>{data.role_name}</b></div>
                             <div style={{ width: "100%", display: "flex" }}>{data.role_details}</div>
                             </td>
-                            <td>
-                                <Button variant="link" onClick={(e) => {
-                                    removeStandard(e, id);
-                                }} >Delete</Button></td>
+                           
                         </tr>
                     </tbody>
                 })}
 
-            </Table>
+            </Table> */}
+            {showSpinner ? <div style={{ paddingLeft: "40%", top: "50%", position: "fixed" }}>
+                            <Spinner show={showSpinner} animation="border" size="lg" variant='primary' />
+
+                        </div> : <div></div>}
+              <Table striped bordered hover  id="table-id" >
+              
+                    <thead >
+                        <th style={{width:"25vh"}}></th>
+                        {roleDetails.map((data, id) => {
+                            return <th key={id} style={{width:"25vh"}}>
+{/* 
+                                <Button variant="warning" onClick={(e) => {
+                                    createRole(e, data);
+                                }} style={{ marginTop: "2%", marginRight:"3%",marginLeft:"3%", backgroundColor:"#ffc107" }} >Create Role</Button> */}
+                                {/* <Modal show={showOption} onHide={handleCloseOption}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Enter Role Name</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <Form>
+                                            <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                                                <Form.Label>Enter the Role Name</Form.Label>
+                                                <Form.Control type="text"
+                                                    onChange={(e) => {
+                                                        addRoleText(e, 'hm1');
+                                                    }}
+                                                />
+
+                                            </Form.Group>
+
+                                        </Form>
+
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="secondary" onClick={handleCloseOption} >
+                                            Close
+                                        </Button>
+                                        <Button variant="primary" onClick={getNewRole} >
+                                            Save Changes
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal> */}
+
+                                {/* <Link  to={`/roleTemplate/${data.home_id}/${data.role_id}`}><Button style={{marginTop:"2%"}} variant="warning">View Role</Button></Link> */}
+                                <p>
+                                    <Form>
+                                    <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                                        <Form.Label>Role Archive Status</Form.Label>
+                                        
+                                        <Form.Select aria-label="Default select example" defaultValue={data.archived} onChange={(e) => {
+                                            changeArchiveStatus(e, data.role_id);
+                                        }}>
+                                            <option value="True" >True</option>
+                                            <option value="False"> False</option>
+                                        </Form.Select>
+
+
+                                    </Form.Group>
+                                </Form>
+                                </p>
+                                <p style={{textAlign:"center"}}><b>{data.role_name}</b></p>
+                                <p>            <Button onClick={(e) => {openDispRoleDetail(e,data); }}
+ variant="warning">Show Detail</Button>
+ <Modal show={roleDetailshow} onHide={handleroleDetailClose}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Role Details</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                         {dispRoleDetail}
+
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="secondary" onClick={handleroleDetailClose} >
+                                            Close
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal></p>
+                                {/* <p>
+                                    <Form>
+                                    <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                                        <Form.Label>Role Archive Status</Form.Label>
+                                        <Form.Select aria-label="Default select example" defaultValue={data.archived} onChange={(e) => {
+                                            changeArchiveStatus(e, data.role_id);
+                                        }}>
+                                            <option value="True" >True</option>
+                                            <option value="False"> False</option>
+                                        </Form.Select>
+
+                                    </Form.Group>
+                                </Form>
+                                </p> */}
+
+
+                            </th>
+                        })
+                        }
+
+
+                    </thead>
+
+                    {courseList.map((courses, id) => {
+                        return <tr key={id} >
+                            <td style={{width:"25vh"}}><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
+                                getMicrodetails(e, courses);
+                            }} >View MicroCred Details</Button>
+                                <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>View MicroCred Details</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        {/* This will contain MicroCred Details for */}
+                                         {dispMicroCred}
+
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        {/* <Button variant="secondary" >
+                                            Close
+                                        </Button>
+                                        <Button variant="primary" >
+                                            Save Changes
+                                        </Button> */}
+                                    </Modal.Footer>
+                                </Modal>
+                            </div></td>
+                            {roleDetails.map((data, _id) => {
+                                return <td key={_id} style={{borderRight: "1px solid #000",borderLeft: "1px solid #000",width:"25vh"}}>
+                                    <input
+                                        type="checkbox" style={{ transform: "scale(2)", marginLeft: "50%" }}
+
+                                        defaultChecked={(roleDetails[_id].course_details.find(item =>
+                                            item.id == courseList[id].courseID
+                                        ) != undefined)}
+                                        onChange={(e) => {
+                                            handleCheckOnChange(e, courses, data, _id);
+                                        }}
+
+                                    />
+
+                                </td>
+                            })
+                            }
+                        </tr>
+                    })}
+                </Table>
             <div>
                         {errors ? (
                             <p className="text-danger">*Field Cannot be empty</p>

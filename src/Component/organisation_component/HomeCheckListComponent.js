@@ -57,6 +57,21 @@ export default function HomeCheckListComponent() {
                  return window.location.href = BASE_URL_FRONTEND;
              }
            }
+           if(sessionStorage.getItem("userType")==='home'){
+           
+            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+             var flag=false;
+             for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
+                 if(String(params)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                     console.log("found",String(params),JSON.parse(sessionStorage.getItem("OtherHomeId"))[i])
+                     flag=true;
+                     break;
+                 }
+             }
+             if(!flag){
+                 return window.location.href = BASE_URL_FRONTEND;
+             }
+           }
         
             getInitialData()
         
@@ -107,7 +122,7 @@ export default function HomeCheckListComponent() {
         console.log(event.target.checked, courseDetail, roleDetail, id)
         var tempArray = roleDetails;
         if (event.target.checked)
-            tempArray[id].course_details.push({ "id": courseDetail.courseID, "details": courseDetail.title })
+            tempArray[id].course_details.push({ "id": courseDetail.courseID, "details": courseDetail.title,"description":courseDetail.description })
         else
             tempArray[id].course_details = tempArray[id].course_details.filter(function (el) { return el.id != courseDetail.courseID; });
         setRoleDetails(tempArray)
@@ -142,12 +157,15 @@ export default function HomeCheckListComponent() {
         console.log(radioValue)
 
     }
-    function changeArchiveStatus(event, id) {
-        console.log("id: ", id, " ", event.target.value)
-    }
+    // function changeArchiveStatus(event, id) {
+    //     console.log("id: ", id, " ", event.target.value)
+    // }
     function getMicrodetails(event, val) {
         // console.log(roleDetails[id].course_details[_id])
-        setDispMicroCred(val);
+        if(val.description)
+        setDispMicroCred(val.description);
+        else
+        setDispMicroCred(val.title) 
         handleshowMicroCred()
 
     }
@@ -270,23 +288,23 @@ export default function HomeCheckListComponent() {
                     {courseList.map((courses, id) => {
                         return <tr key={id} >
                             <td style={{width:"25vh"}}><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
-                                getMicrodetails(e, courses.title);
+                                getMicrodetails(e, courses);
                             }} >View MicroCred Details</Button>
                                 <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>View MicroCred Details</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body>
-                                        This will contain MicroCred Details for {dispMicroCred}
-
+                                        {/* This will contain MicroCred Details for  */}
+                                        {dispMicroCred}
                                     </Modal.Body>
                                     <Modal.Footer>
-                                        <Button variant="secondary" >
+                                        {/* <Button variant="secondary" >
                                             Close
                                         </Button>
                                         <Button variant="primary" >
                                             Save Changes
-                                        </Button>
+                                        </Button> */}
                                     </Modal.Footer>
                                 </Modal>
                             </div></td>

@@ -89,9 +89,16 @@ export default function HomeDetailComponent() {
                     <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
                         <Form.Label>Role Name</Form.Label>
                         <Form.Control type="text"
-                            defaultValue={templateDetails.role_name} onChange={(e) => {
-                                changeRoleTemplateText(e, 'det1');
-                            }}
+                            defaultValue={templateDetails.role_name} disabled
+                            // onChange={(e) => {
+                            //     changeRoleTemplateText(e, 'det1');
+                            // }}
+                        />
+                    </Form.Group>
+                    <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
+                        <Form.Label>Role Details</Form.Label>
+                        <Form.Control type="text" 
+                            defaultValue={templateDetails.role_details} disabled
                         />
                     </Form.Group>
                     <Form.Group className="mb-3 col-xs-6" controlId="formBasicEmail">
@@ -130,11 +137,11 @@ export default function HomeDetailComponent() {
                     {/* <div style={{marginLeft:"15%"}}>{templateDetails.course_details.map((courseData) => { return <li style={{ marginBottom: "15px", marginTop: "10px" }} >{courseData.details}</li> })}</div> */}
                     {/* </Form.Group> */}
 
-                    <Button
+                    {/* <Button
                         onClick={saveRoleTemplateText}
                         variant="warning"  >
                         Save Changes
-                    </Button>
+                    </Button> */}
                 </Form>
             </div>
         </div>)

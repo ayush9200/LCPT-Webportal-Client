@@ -26,6 +26,8 @@ function Admin_Home() {
     const [homeDetails, setHomeDetails] = useState([]);
     const [orgDet4DrpDwn, setOrgDet4DrpDwn] = useState([]);
     const [OrgDetails, setOrgDetails] = useState({});
+    const [orgCount, setOrgCount] = useState('1');
+
     const [showOrg, setOrgShow] = useState(false);
     const handleCloseOrg = () => setOrgShow(false);
     const handleShowOrg = () => setOrgShow(true);
@@ -62,15 +64,22 @@ function Admin_Home() {
 
                     console.log(res.data);
                     setOrgDet4DrpDwn(res.data)
-                    // toggleshowSpinner()
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+                
+    
+        })
+        .catch(err => {
+            console.log(err);
+        })
 
-
-        }
-
+        axios.get(BASE_API_URL + "orgnization/getOrgCount")
+        .then(res => {    
+            console.log(res.data);
+            setOrgCount(String(res.data+1))
+            // toggleshowSpinner()
+        })
+        .catch(err => {
+            console.log(err);
+        })}
 
     }, [orgIdForHomeAdmin, homeIdForAdmin])
 
@@ -109,7 +118,7 @@ function Admin_Home() {
             newOrgDetailObj.phone_no = event.target.value;
         else if (id === 'org5')
             newOrgDetailObj.email_id = event.target.value;
-        newOrgDetailObj.org_id = "2";
+        newOrgDetailObj.org_id = orgCount;
         newOrgDetailObj.train_standards = [];
         // newOrgDetailObj.Org_id = newOrgId;
         setOrgDetails(OrgDetails => ({
@@ -123,7 +132,7 @@ function Admin_Home() {
     }
     function saveNewOrgText() {
         console.log(OrgDetails)
-        const saveOrgUrl = BASE_API_URL + "/orgnization/addNewOrg"
+        const saveOrgUrl = BASE_API_URL+"orgnization/addNewOrg"
         axios.post(saveOrgUrl, OrgDetails)
             .then(res => {
                 console.log(res);

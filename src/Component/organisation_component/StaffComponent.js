@@ -39,7 +39,7 @@ export default function StaffComponent() {
     const [newStaffRole, setNewStaffRole] = useState("");
 
     useEffect(() => {
-        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
+        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='home' && sessionStorage.getItem("homeId")!=params)
         {
             //setNotificationText("Sorry.Access Not Permitted")
             alert("Sorry.Access Not Permitted")
@@ -53,6 +53,21 @@ export default function StaffComponent() {
              var flag=false;
              for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
                  if(String(params)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                     flag=true;
+                     break;
+                 }
+             }
+             if(!flag){
+                 return window.location.href = BASE_URL_FRONTEND;
+             }
+           }
+           if(sessionStorage.getItem("userType")==='home'){
+           
+            // console.log(JSON.parse(sessionStorage.getItem("OtherOrgId")))
+             var flag=false;
+             for(var i = 0;i<JSON.parse(sessionStorage.getItem("OtherHomeId")).length;i++){
+                 if(String(params)==JSON.parse(sessionStorage.getItem("OtherHomeId"))[i]){
+                     console.log("found",String(params),JSON.parse(sessionStorage.getItem("OtherHomeId"))[i])
                      flag=true;
                      break;
                  }
@@ -195,23 +210,26 @@ export default function StaffComponent() {
             })
     }
     function addAssignRoleText(event,user_id,home_id,staffId) { 
-        var newAssignRoleObj = {};
-        newAssignRoleObj.home_id = home_id
-        newAssignRoleObj.user_id = user_id
-
-        newAssignRoleObj.role_arr = staffList[staffId].role_arr
-        console.log(newAssignRoleObj.role_arr)
-        var temp_role_id = roleDetails[event.target.value].role_id
-        var temp_role_name = roleDetails[event.target.value].role_name
-
-        if (newAssignRoleObj.role_arr.findIndex((item) => item.role_id === temp_role_id) === -1) {
-            newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
+        if(event.target.value!=-1){
+            var newAssignRoleObj = {};
+            newAssignRoleObj.home_id = home_id
+            newAssignRoleObj.user_id = user_id
+    
+            newAssignRoleObj.role_arr = staffList[staffId].role_arr
+            console.log(newAssignRoleObj.role_arr)
+            var temp_role_id = roleDetails[event.target.value].role_id
+            var temp_role_name = roleDetails[event.target.value].role_name
+    
+            if (newAssignRoleObj.role_arr.findIndex((item) => item.role_id === temp_role_id) === -1) {
+                newAssignRoleObj.role_arr.push({ "role_id": temp_role_id, "role_name": temp_role_name })
+            }
+            var temp_roleArray = newAssignRoleObj.role_arr
+            temp_roleArray.filter((v, i, a) => a.findIndex(v2 => (v2.role_name === v.role_name)) === i)
+    
+            saveAssignRoleDetail(newAssignRoleObj)
+    
         }
-        var temp_roleArray = newAssignRoleObj.role_arr
-        temp_roleArray.filter((v, i, a) => a.findIndex(v2 => (v2.role_name === v.role_name)) === i)
-
-        saveAssignRoleDetail(newAssignRoleObj)
-
+       
     }
     function saveAssignRoleDetail(newAssignRoleObj) {
         console.log(assignRoleDetail)
@@ -336,7 +354,7 @@ export default function StaffComponent() {
                                 }}
                             /> */}
                             <Form.Label>Enter the Date of Birth(YYYY-MM-DD)</Form.Label>
-                            <Form.Control type="date"
+                            <Form.Control type="date" style={{width:"85%"}}
                                 onChange={(e) => {
                                     addStaffText(e, 'st3');
                                 }}
@@ -419,6 +437,7 @@ export default function StaffComponent() {
                                     <Form.Select aria-label="Default select example" onChange={(e) => {
                                         addAssignRoleText(e, data.user_id, data.home_id, id);
                                     }} >
+                                        <option value={-1}>Select Role</option>
                                         {roleDetails.map((item, _id) => {
                                             return <option value={_id}>
                                                 {item.role_name}
