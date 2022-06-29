@@ -141,10 +141,10 @@ function Admin_Home() {
                 <Tab eventKey="profile" title="Profile">
                     <h1 style={{ textAlign: "center" }}>Profile</h1>
                 </Tab>
-                <Tab eventKey="createUser" title="Create User">
+                {/* <Tab eventKey="createUser" title="Create User">
                     <CreateUserForm />
 
-                </Tab>
+                </Tab> */}
                 <Tab eventKey="microCardDash" title="Micro-cred Dashboard" >
                     <MicroCredsDashboard />
                 </Tab>
@@ -241,13 +241,14 @@ function Admin_Home() {
                             // console.log(homeID);
                             setOrgIdForHomeAdmin(e.target.value);
                             setomeIdForAdmin("");
+                            document.getElementById("homeDropDown").value = "";
 
 
                         }}>
                             {createOrganizationIdList()}
                         </Form.Select>
                         <h2>HOME ID:  </h2>
-                        <Form.Select size="lg" style={{ width: "30%" }} onChange={(e) => {
+                        <Form.Select size="lg" style={{ width: "30%" }} id="homeDropDown" onChange={(e) => {
                             var homeID = e.target.value;
                             setomeIdForAdmin(homeID);
                             console.log(homeID);
