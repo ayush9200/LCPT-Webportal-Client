@@ -8,9 +8,9 @@ import { BASE_URL_FRONTEND } from '../Url-config';
 function OrganizationMissingTemplate(props) {
     const [orgStaffTemplateData, setOrgStaffTemplateSumm] = useState([]);
 
+    var orgId = props.org_id;
 
     useEffect(() => {
-        var orgId = props.org_id;
         var gethomeDetailsUrl = BASE_API_URL + "audit-report/org-missing-courses/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
@@ -22,7 +22,7 @@ function OrganizationMissingTemplate(props) {
                 console.log(err);
             })
 
-    }, [])
+    }, [orgId])
     var orgStaffTemplateCols = [{
         dataField: 'user_id',
         text: 'User ID'

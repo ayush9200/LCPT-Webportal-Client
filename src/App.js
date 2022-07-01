@@ -11,6 +11,7 @@ import LoginPage from './Component/Login';
 import StaffComponent from './Component/organisation_component/StaffComponent';
 import HomeDetailComponent from './Component/organisation_component/HomeDetailComponent';
 import HomeCheckListComponent from './Component/organisation_component/HomeCheckListComponent';
+import HomeMainComponent from './Component/organisation_component/HomeMainComponent';
 import RoleTemplate from './Component/organisation_component/RoleTemplate';
 import store from './Redux/store'
 import { Provider } from 'react-redux'
@@ -26,7 +27,7 @@ function App() {
         <Route exact path="/login" element={<LoginForm />} />
         <Route exact path="/admin_home" element={<Admin_Home />} />
         <Route exact path="/organisation/:id" element={<Organisation />} />
-        <Route exact path="/home/:id" element={<HomeDetailComponent />} />
+        <Route exact path="/home/:id" element={<HomeMainComponent />} />
         <Route exact path="/checkList/:id" element={<HomeCheckListComponent />} />
         <Route exact path="/showStaff/:id" element={<StaffComponent />} />
         <Route exact path="/roleTemplate/:homeId/:roleId" element={<RoleTemplate />} />

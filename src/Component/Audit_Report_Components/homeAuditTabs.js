@@ -39,7 +39,7 @@ function HomeAuditTabs(props) {
             })
 
 
-    }, [props.homeID])
+    }, [homeID])
     if (homeSummData == null) {
         return <h1>Loading</h1>
     }

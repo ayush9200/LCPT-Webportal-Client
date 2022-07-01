@@ -8,10 +8,10 @@ import { BASE_URL_FRONTEND } from '../Url-config';
 function OrganizationTemplateSpecificComponent(props) {
     const [orgStaffSummData, setOrgStaffSummData] = useState([]);
 
+    var orgId = props.org_id;
 
     useEffect(() => {
         // https://lcpt-webportal-backend.herokuapp.com/audit-report/org-template-specific/1
-        var orgId = props.org_id;
         var gethomeDetailsUrl = BASE_API_URL + "audit-report/org-template-specific/" + orgId;
         axios.get(gethomeDetailsUrl)
             .then(res => {
@@ -23,7 +23,7 @@ function OrganizationTemplateSpecificComponent(props) {
                 console.log(err);
             })
 
-    }, [])
+    }, [orgId])
     var orgStaffSummCols = [{
         dataField: 'user_id',
         text: 'User ID'
