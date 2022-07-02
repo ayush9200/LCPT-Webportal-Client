@@ -23,30 +23,29 @@ export default function OrganisationListComponent(props) {
     const params = props.id;
 
     useEffect(() => {
-        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
-        {
-            return window.location.href = BASE_URL_FRONTEND;  
+        if (sessionStorage.getItem("userType") != 'organization' && sessionStorage.getItem("userType") != 'admin') {
+            return window.location.href = BASE_URL_FRONTEND;
             //alert("Sorry.Access Not Permitted")
         }
         getHomeData();
 
-    }, [])
+    }, [params])
     function getHomeData() {
-        const homeListUrl = BASE_API_URL+"orgnization/getHomesList/" + params
+        const homeListUrl = BASE_API_URL + "orgnization/getHomesList/" + params
         axios.get(homeListUrl)
             .then(res => {
-                axios.get(BASE_API_URL+"orgnization/getAllHomesCount/").then(newRes=>{
+                axios.get(BASE_API_URL + "orgnization/getAllHomesCount/").then(newRes => {
                     setNewHomeId(String(newRes.data + 1))
                 })
                 console.log(res.data)
-                if(res.data != 'Something went wrong!'&& res.data != 'No Home Found!'){
+                if (res.data != 'Something went wrong!' && res.data != 'No Home Found!') {
                     setHomeListArray(res.data)
-                   
+
                 }
-                else{
-                    
+                else {
+
                     setHomeListArray([])
-                   // setNewHomeId(String(1))
+                    // setNewHomeId(String(1))
                 }
             })
             .catch(err => {
@@ -81,26 +80,26 @@ export default function OrganisationListComponent(props) {
 
     }
     function saveNewHomeText() {
-        if(HomeDetails.name && HomeDetails.address && HomeDetails.contact_firstName && HomeDetails.contact_lastName && HomeDetails.phone_no && HomeDetails.email_id){
+        if (HomeDetails.name && HomeDetails.address && HomeDetails.contact_firstName && HomeDetails.contact_lastName && HomeDetails.phone_no && HomeDetails.email_id) {
             console.log(HomeDetails)
             setErrors(false);
-            const saveHomeUrl = BASE_API_URL+"orgnization/addNewHome"
+            const saveHomeUrl = BASE_API_URL + "orgnization/addNewHome"
             axios.post(saveHomeUrl, HomeDetails)
                 .then(res => {
                     console.log(res);
                     handleCloseHome()
                     getHomeData()
-    
+
                     //  setNotificationText("New Staff Member was added");
                 })
                 .catch(err => {
                     console.log(err);
                 })
         }
-        else{
+        else {
             setErrors(true);
         }
-       
+
     }
 
     return (
@@ -154,14 +153,14 @@ export default function OrganisationListComponent(props) {
                             />
                         </Form.Group>
                         <div>
-                        {errors ? (
-                            <p className="text-danger">*All fields are mandatory</p>
+                            {errors ? (
+                                <p className="text-danger">*All fields are mandatory</p>
 
-                        ) : (
-                            <p className="text-danger"></p>
+                            ) : (
+                                <p className="text-danger"></p>
 
-                        )}
-                    </div>
+                            )}
+                        </div>
                     </Form>
 
                 </Modal.Body>
