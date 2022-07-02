@@ -5,6 +5,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+import HomeDeficiencyReport from './HomeDeficiencyReport';
 function HomeAuditTabs(props) {
     const [staffRoleID, setStaffRoleID] = useState("");
     const [homeSummData, setHomeSummData] = useState(null);
@@ -148,6 +149,11 @@ function HomeAuditTabs(props) {
                             buttonText="Download In Excel" />
                     </div>
                     <BootstrapTable id='homeStaffSpecificTable' keyField='id' data={filteredHomeStaffData} columns={homeStaffCols} />
+                </Tab>
+
+                <Tab eventKey="homeDeficiencyReport" title="Home Deficiency Report">
+
+                    <HomeDeficiencyReport homeId={homeID} />
                 </Tab>
 
             </Tabs></div>
