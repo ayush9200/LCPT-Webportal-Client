@@ -13,7 +13,7 @@ function OrganizationStaffSummary(props) {
     useEffect(() => {
 
 
-    }, [])
+    }, [props.org_id])
 
     return (
         <div>

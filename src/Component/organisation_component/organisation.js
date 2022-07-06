@@ -132,27 +132,27 @@ export default function Organisation(props) {
 
     function changeOrganisation(event) {
         console.log(event.target.value)
-        if(event.target.value!='Select'){
-            sessionStorage.setItem("orgId",event.target.value)
-            const homeListUrl = BASE_API_URL+"orgnization/getHomesList/" + event.target.value
+        if (event.target.value != 'Select') {
+            sessionStorage.setItem("orgId", event.target.value)
+            const homeListUrl = BASE_API_URL + "orgnization/getHomesList/" + event.target.value
             axios.get(homeListUrl)
                 .then(new_res => {
-                    console.log("newRes",new_res)
-                    if(new_res != 'Something went wrong!'||new_res != 'No Home Found!'){
+                    console.log("newRes", new_res)
+                    if (new_res != 'Something went wrong!' || new_res != 'No Home Found!') {
                         var homeArray = []
-                        for(var i=0;i<new_res.data.length;i++){
+                        for (var i = 0; i < new_res.data.length; i++) {
                             homeArray.push((new_res.data[i].home_id))
                         }
-                        sessionStorage.setItem("OtherHomeId",JSON.stringify(homeArray)); 
-                        return window.location.href = BASE_URL_FRONTEND+"organisation/"+String(event.target.value);
+                        sessionStorage.setItem("OtherHomeId", JSON.stringify(homeArray));
+                        return window.location.href = BASE_URL_FRONTEND + "organisation/" + String(event.target.value);
                     }
-                    else{
-                        return window.location.href = BASE_URL_FRONTEND+"organisation/"+String(event.target.value);
+                    else {
+                        return window.location.href = BASE_URL_FRONTEND + "organisation/" + String(event.target.value);
                     }
-    
+
                 })
         }
-        
+
         //return window.location.href = BASE_URL_FRONTEND+"organisation/"+String(event.target.value);
     }
 

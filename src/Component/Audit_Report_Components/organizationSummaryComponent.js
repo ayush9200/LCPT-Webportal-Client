@@ -33,7 +33,7 @@ function OrganizationSummaryComponent(props) {
 
     useEffect(() => {
         // toggleshowSpinner()
-        const gethomeDetailsUrl = BASE_API_URL+"audit-report/org-summary/" + org_id
+        const gethomeDetailsUrl = BASE_API_URL + "audit-report/org-summary/" + org_id
         axios.get(gethomeDetailsUrl)
             .then(res => {
                 console.log(res.data);
@@ -46,7 +46,7 @@ function OrganizationSummaryComponent(props) {
                 console.log(err);
             })
 
-    }, [])
+    }, [org_id])
     // var orgSumm = [{
     //     'home_id': 'h001',
     //     'home_name': '"luffy home" ',

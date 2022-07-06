@@ -11,6 +11,7 @@ import EnterHomeForm from './EnterHomeForm';
 import MicroCredsDashboard from './MicroCredsDashboard';
 import Organisation from '../organisation_component/organisation';
 import HomeDetailComponent from '../organisation_component/HomeDetailComponent';
+import HomeMainComponent from '../organisation_component/HomeMainComponent';
 import AdminUserEditor from './AdminUserEditor';
 import { useParams } from "react-router-dom";
 import { BASE_API_URL } from '../Url-config';
@@ -64,22 +65,23 @@ function Admin_Home() {
 
                     console.log(res.data);
                     setOrgDet4DrpDwn(res.data)
-                
-    
-        })
-        .catch(err => {
-            console.log(err);
-        })
 
-        axios.get(BASE_API_URL + "orgnization/getOrgCount")
-        .then(res => {    
-            console.log(res.data);
-            setOrgCount(String(res.data+1))
-            // toggleshowSpinner()
-        })
-        .catch(err => {
-            console.log(err);
-        })}
+
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+
+            axios.get(BASE_API_URL + "orgnization/getOrgCount")
+                .then(res => {
+                    console.log(res.data);
+                    setOrgCount(String(res.data + 1))
+                    // toggleshowSpinner()
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
 
     }, [orgIdForHomeAdmin, homeIdForAdmin])
 
@@ -132,7 +134,7 @@ function Admin_Home() {
     }
     function saveNewOrgText() {
         console.log(OrgDetails)
-        const saveOrgUrl = BASE_API_URL+"orgnization/addNewOrg"
+        const saveOrgUrl = BASE_API_URL + "orgnization/addNewOrg"
         axios.post(saveOrgUrl, OrgDetails)
             .then(res => {
                 console.log(res);
@@ -270,7 +272,9 @@ function Admin_Home() {
 
                     </div>
                     {(homeIdForAdmin == "") ? <h1>choose home</h1> :
-                        <HomeDetailComponent homeIdFprAdmin={homeIdForAdmin} orgId={orgIdForHomeAdmin} />}
+                        <HomeMainComponent homeIdFprAdmin={homeIdForAdmin} orgId={orgIdForHomeAdmin} />
+
+                    }
 
                 </Tab>
                 <Tab eventKey="individualView" title="Users" >

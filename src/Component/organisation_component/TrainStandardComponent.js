@@ -35,10 +35,9 @@ export default function TrainStandardComponent(props) {
     const params = props.id;
 
     useEffect(() => {
-        if(sessionStorage.getItem("userType")!='organization' && sessionStorage.getItem("userType")!='admin')
-        {
-           // alert("Sorry.Access Not Permitted")
-            return window.location.href = BASE_URL_FRONTEND;  
+        if (sessionStorage.getItem("userType") != 'organization' && sessionStorage.getItem("userType") != 'admin') {
+            // alert("Sorry.Access Not Permitted")
+            return window.location.href = BASE_URL_FRONTEND;
         }
         // if(sessionStorage.getItem("userType")==='organization'){
         //   if(JSON.parse(sessionStorage.getItem("OtherOrgId")).findIndex(String(params))==-1){
@@ -47,83 +46,83 @@ export default function TrainStandardComponent(props) {
         // }
         getTrainingData();
 
-    }, [])
+    }, [params])
 
     function getTrainingData() {
-        const trainStandardsUrl = BASE_API_URL+"orgnization/getOrganisationDetails/" + params
+        const trainStandardsUrl = BASE_API_URL + "orgnization/getOrganisationDetails/" + params
         axios.get(trainStandardsUrl)
             .then(res => {
-               // console.log(res);
-                if(res!='Something went wrong!' || res!='No Standards Found!');
+                // console.log(res);
+                if (res != 'Something went wrong!' || res != 'No Standards Found!');
                 setTrainStandards(res.data[0].train_standards)
             })
             .catch(err => {
                 console.log(err);
             })
-            const getCoursesUrl = BASE_API_URL+"orgnization/getCourseList/"
-            axios.get(getCoursesUrl)
-                .then(res => {
-                    if(res!='Something went wrong!'||res!='No Course Found!'){
-                        //setshowSpinner(false)
-                        setCourseList(res.data)
-                       // console.log(courseList);
-                    }
-                   
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-                const getOrgRoleUrl = BASE_API_URL+"orgnization/getOrgRoleList/"+sessionStorage.getItem("orgId");
-            axios.get(getOrgRoleUrl)
-                .then(res => {
-                    if(res!='Something went wrong!'||res!='No Role Found!'){
-                        //setshowSpinner(false)roleDetails
-                        setRoleDetails(res.data);
-                        //console.log(res.data);
-                    }
-                   
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-                setshowSpinner(false)
+        const getCoursesUrl = BASE_API_URL + "orgnization/getCourseList/"
+        axios.get(getCoursesUrl)
+            .then(res => {
+                if (res != 'Something went wrong!' || res != 'No Course Found!') {
+                    //setshowSpinner(false)
+                    setCourseList(res.data)
+                    // console.log(courseList);
+                }
+
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        const getOrgRoleUrl = BASE_API_URL + "orgnization/getOrgRoleList/" + sessionStorage.getItem("orgId");
+        axios.get(getOrgRoleUrl)
+            .then(res => {
+                if (res != 'Something went wrong!' || res != 'No Role Found!') {
+                    //setshowSpinner(false)roleDetails
+                    setRoleDetails(res.data);
+                    //console.log(res.data);
+                }
+
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        setshowSpinner(false)
 
     }
     function getMicrodetails(event, val) {
         // console.log(roleDetails[id].course_details[_id])
-        if(val.description)
-        setDispMicroCred(val.description);
+        if (val.description)
+            setDispMicroCred(val.description);
         else
-        setDispMicroCred(val.title) 
+            setDispMicroCred(val.title)
         handleshowMicroCred()
 
     }
     function changeText(event, id) {
-        
-            trainStandards[id] = event.target.value
-            console.log(event.target.value)
-            console.log(trainStandards[id])
-            trainStandards[id] = event.target.value
-            if(event.target.value){
-                setErrors(false)
+
+        trainStandards[id] = event.target.value
+        console.log(event.target.value)
+        console.log(trainStandards[id])
+        trainStandards[id] = event.target.value
+        if (event.target.value) {
+            setErrors(false)
             let newtrainStandards = [...trainStandards];
             newtrainStandards[id] = event.target.value;
             console.log(newtrainStandards)
             setTrainStandards(newtrainStandards);
         }
-        else{
+        else {
             setErrors(true)
         }
-        
+
     }
     var trainObj = {}
     function addTrainingText(event, id) {
-        
-        if(id=='tran1'){
+
+        if (id == 'tran1') {
             trainObj.role_name = event.target.value
 
         }
-        else{
+        else {
             trainObj.role_details = event.target.value
         }
         //setNewStandard(trainObj)
@@ -131,7 +130,7 @@ export default function TrainStandardComponent(props) {
     }
     function changeArchiveStatus(event, role_id) {
         console.log(role_id, " roleid")
-        const archiveStatusUrl = BASE_API_URL+"orgnization/editRoleArchiveStatus"
+        const archiveStatusUrl = BASE_API_URL + "orgnization/editRoleArchiveStatus"
         //var status = ""+event.target.value
         axios.put(archiveStatusUrl, { "role_id": String(role_id), "archived": String(event.target.value), "org_id": String(params) })
             .then(res => {
@@ -154,38 +153,38 @@ export default function TrainStandardComponent(props) {
         // tempStandard.role_details = newStandard.role_details
         tempStandard.role_name = trainObj.role_name
         tempStandard.role_details = trainObj.role_details
-        axios.get(BASE_API_URL+"orgnization/getRoleLength/")
-        .then(res => {
-          //  console.log(res);
-            if(res){
-                tempStandard.role_id = String(res.data+1);
-                setNewStandard(...newStandard,tempStandard)
-                if (tempStandard.role_name && tempStandard.role_details && tempStandard.role_id) {
-                    // setErrors(false);
-                     handleClose();
-                     let newtrainStandards = [...trainStandards];
-                     newtrainStandards.push(tempStandard);
-                     console.log(newtrainStandards)
-                     setTrainStandards(newtrainStandards);
-                     let trainStandardsUrl = BASE_API_URL+"orgnization/addNewStandard/"
-                     axios.post(trainStandardsUrl, { id: params, trainStandards: newtrainStandards,newStandard:tempStandard })
-                         .then(res => {
-                             console.log(res);
-                             if(res)
-                             getTrainingData();
-                             //setTrainStandards(res.data[0].train_standards)
-                         })
-                         .catch(err => {
-                             console.log(err);
-                         })
-                 }
-                trainObj = {}
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        })
-        
+        axios.get(BASE_API_URL + "orgnization/getRoleLength/")
+            .then(res => {
+                //  console.log(res);
+                if (res) {
+                    tempStandard.role_id = String(res.data + 1);
+                    setNewStandard(...newStandard, tempStandard)
+                    if (tempStandard.role_name && tempStandard.role_details && tempStandard.role_id) {
+                        // setErrors(false);
+                        handleClose();
+                        let newtrainStandards = [...trainStandards];
+                        newtrainStandards.push(tempStandard);
+                        console.log(newtrainStandards)
+                        setTrainStandards(newtrainStandards);
+                        let trainStandardsUrl = BASE_API_URL + "orgnization/addNewStandard/"
+                        axios.post(trainStandardsUrl, { id: params, trainStandards: newtrainStandards, newStandard: tempStandard })
+                            .then(res => {
+                                console.log(res);
+                                if (res)
+                                    getTrainingData();
+                                //setTrainStandards(res.data[0].train_standards)
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    }
+                    trainObj = {}
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
         // else{
         //     setErrors(true);
 
@@ -193,18 +192,18 @@ export default function TrainStandardComponent(props) {
 
     }
     function saveText(event) {
-        if(!errors){
+        if (!errors) {
             console.log("saveText")
-            axios.put(BASE_API_URL+"orgnization/editTrainingStandards", { id: params, trainStandards: trainStandards })
+            axios.put(BASE_API_URL + "orgnization/editTrainingStandards", { id: params, trainStandards: trainStandards })
                 .then(res => {
                     console.log(res);
-    
+
                 })
                 .catch(err => {
                     console.log(err);
                 })
         }
-      
+
     }
     function handleCheckOnChange(event, courseDetail, roleDetail, id) {
         setshowSpinner(true)
@@ -217,7 +216,7 @@ export default function TrainStandardComponent(props) {
             tempArray[id].course_details = tempArray[id].course_details.filter(function (el) { return el.id != courseDetail.courseID; });
         setRoleDetails(tempArray)
         //console.log(roleDetails)
-        const editOrgCourseDetails = BASE_API_URL+"orgnization/editOrgCourseDetails/"
+        const editOrgCourseDetails = BASE_API_URL + "orgnization/editOrgCourseDetails/"
 
         axios.put(editOrgCourseDetails, roleDetail)
             .then(res => {
@@ -239,7 +238,7 @@ export default function TrainStandardComponent(props) {
 
         newtrainStandards.splice(id, 1);
         console.log(newtrainStandards)
-        axios.put(BASE_API_URL+"orgnization/editTrainingStandards", { id: params, trainStandards: newtrainStandards })
+        axios.put(BASE_API_URL + "orgnization/editTrainingStandards", { id: params, trainStandards: newtrainStandards })
             .then(res => {
                 getTrainingData();
             })
@@ -248,7 +247,7 @@ export default function TrainStandardComponent(props) {
             })
     }
 
-    function openDispRoleDetail(event,data){
+    function openDispRoleDetail(event, data) {
         console.log(event.target.value)
         setDispRoleDetail(data.role_details)
         handleroleDetailShow()
@@ -320,20 +319,20 @@ export default function TrainStandardComponent(props) {
 
             </Table> */}
             {showSpinner ? <div style={{ paddingLeft: "40%", top: "50%", position: "fixed" }}>
-                            <Spinner show={showSpinner} animation="border" size="lg" variant='primary' />
+                <Spinner show={showSpinner} animation="border" size="lg" variant='primary' />
 
-                        </div> : <div></div>}
-              <Table striped bordered hover  id="table-id" >
-              
-                    <thead >
-                        <th style={{width:"25vh"}}></th>
-                        {roleDetails.map((data, id) => {
-                            return <th key={id} style={{width:"25vh"}}>
-{/* 
+            </div> : <div></div>}
+            <Table striped bordered hover id="table-id" >
+
+                <thead >
+                    <th style={{ width: "25vh" }}></th>
+                    {roleDetails.map((data, id) => {
+                        return <th key={id} style={{ width: "25vh" }}>
+                            {/* 
                                 <Button variant="warning" onClick={(e) => {
                                     createRole(e, data);
                                 }} style={{ marginTop: "2%", marginRight:"3%",marginLeft:"3%", backgroundColor:"#ffc107" }} >Create Role</Button> */}
-                                {/* <Modal show={showOption} onHide={handleCloseOption}>
+                            {/* <Modal show={showOption} onHide={handleCloseOption}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Enter Role Name</Modal.Title>
                                     </Modal.Header>
@@ -362,12 +361,12 @@ export default function TrainStandardComponent(props) {
                                     </Modal.Footer>
                                 </Modal> */}
 
-                                {/* <Link  to={`/roleTemplate/${data.home_id}/${data.role_id}`}><Button style={{marginTop:"2%"}} variant="warning">View Role</Button></Link> */}
-                                <p>
-                                    <Form>
+                            {/* <Link  to={`/roleTemplate/${data.home_id}/${data.role_id}`}><Button style={{marginTop:"2%"}} variant="warning">View Role</Button></Link> */}
+                            <p>
+                                <Form>
                                     <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
                                         <Form.Label>Role Archive Status</Form.Label>
-                                        
+
                                         <Form.Select aria-label="Default select example" defaultValue={data.archived} onChange={(e) => {
                                             changeArchiveStatus(e, data.role_id);
                                         }}>
@@ -378,16 +377,16 @@ export default function TrainStandardComponent(props) {
 
                                     </Form.Group>
                                 </Form>
-                                </p>
-                                <p style={{textAlign:"center"}}><b>{data.role_name}</b></p>
-                                <p>            <Button onClick={(e) => {openDispRoleDetail(e,data); }}
- variant="warning">Show Detail</Button>
- <Modal show={roleDetailshow} onHide={handleroleDetailClose}>
+                            </p>
+                            <p style={{ textAlign: "center" }}><b>{data.role_name}</b></p>
+                            <p>            <Button onClick={(e) => { openDispRoleDetail(e, data); }}
+                                variant="warning">Show Detail</Button>
+                                <Modal show={roleDetailshow} onHide={handleroleDetailClose}>
                                     <Modal.Header closeButton>
                                         <Modal.Title>Role Details</Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body>
-                                         {dispRoleDetail}
+                                        {dispRoleDetail}
 
                                     </Modal.Body>
                                     <Modal.Footer>
@@ -396,7 +395,7 @@ export default function TrainStandardComponent(props) {
                                         </Button>
                                     </Modal.Footer>
                                 </Modal></p>
-                                {/* <p>
+                            {/* <p>
                                     <Form>
                                     <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
                                         <Form.Label>Role Archive Status</Form.Label>
@@ -412,65 +411,65 @@ export default function TrainStandardComponent(props) {
                                 </p> */}
 
 
-                            </th>
-                        })
-                        }
+                        </th>
+                    })
+                    }
 
 
-                    </thead>
+                </thead>
 
-                    {courseList.map((courses, id) => {
-                        return <tr key={id} >
-                            <td style={{width:"25vh"}}><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
-                                getMicrodetails(e, courses);
-                            }} >View MicroCred Details</Button>
-                                <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
-                                    <Modal.Header closeButton>
-                                        <Modal.Title>View MicroCred Details</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        {/* This will contain MicroCred Details for */}
-                                         {dispMicroCred}
+                {courseList.map((courses, id) => {
+                    return <tr key={id} >
+                        <td style={{ width: "25vh" }}><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
+                            getMicrodetails(e, courses);
+                        }} >View MicroCred Details</Button>
+                            <Modal show={MicroCredShow} onHide={handleCloseMicroCred}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>View MicroCred Details</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    {/* This will contain MicroCred Details for */}
+                                    {dispMicroCred}
 
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        {/* <Button variant="secondary" >
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    {/* <Button variant="secondary" >
                                             Close
                                         </Button>
                                         <Button variant="primary" >
                                             Save Changes
                                         </Button> */}
-                                    </Modal.Footer>
-                                </Modal>
-                            </div></td>
-                            {roleDetails.map((data, _id) => {
-                                return <td key={_id} style={{borderRight: "1px solid #000",borderLeft: "1px solid #000",width:"25vh"}}>
-                                    <input
-                                        type="checkbox" style={{ transform: "scale(2)", marginLeft: "50%" }}
+                                </Modal.Footer>
+                            </Modal>
+                        </div></td>
+                        {roleDetails.map((data, _id) => {
+                            return <td key={_id} style={{ borderRight: "1px solid #000", borderLeft: "1px solid #000", width: "25vh" }}>
+                                <input
+                                    type="checkbox" style={{ transform: "scale(2)", marginLeft: "50%" }}
 
-                                        defaultChecked={(roleDetails[_id].course_details.find(item =>
-                                            item.id == courseList[id].courseID
-                                        ) != undefined)}
-                                        onChange={(e) => {
-                                            handleCheckOnChange(e, courses, data, _id);
-                                        }}
+                                    defaultChecked={(roleDetails[_id].course_details.find(item =>
+                                        item.id == courseList[id].courseID
+                                    ) != undefined)}
+                                    onChange={(e) => {
+                                        handleCheckOnChange(e, courses, data, _id);
+                                    }}
 
-                                    />
+                                />
 
-                                </td>
-                            })
-                            }
-                        </tr>
-                    })}
-                </Table>
+                            </td>
+                        })
+                        }
+                    </tr>
+                })}
+            </Table>
             <div>
-                        {errors ? (
-                            <p className="text-danger">*Field Cannot be empty</p>
+                {errors ? (
+                    <p className="text-danger">*Field Cannot be empty</p>
 
-                        ) : (
-                            <p className="text-danger"></p>
+                ) : (
+                    <p className="text-danger"></p>
 
-                        )}
-                    </div>
+                )}
+            </div>
         </div>);
 }

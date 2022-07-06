@@ -20,7 +20,7 @@ function OrganizationAuditTabs(props) {
     const organizationID = props.organizationID;
 
     useEffect(() => {
-        var gethomeDetailsUrl = BASE_API_URL+"orgnization/getHomesList/" + organizationID;
+        var gethomeDetailsUrl = BASE_API_URL + "orgnization/getHomesList/" + organizationID;
         axios.get(gethomeDetailsUrl)
             .then(res => {
 
@@ -32,7 +32,7 @@ function OrganizationAuditTabs(props) {
                 console.log(err);
             })
 
-    }, [])
+    }, [organizationID])
     var createHomeIDSelectItems = () => {
         let items = [];
         // items.push(<option value="">All</option>)
@@ -84,7 +84,7 @@ function OrganizationAuditTabs(props) {
 
                     </div>
 
-                    <HomeAuditTabs homeID={chosenHome} />
+                    <HomeAuditTabs homeID={chosenHome} orgId={organizationID} />
                     {/* <ViewCourseTable /> */}
                 </Tab>
                 <Tab eventKey="staff-summary" title="Organization Staff Summary">
