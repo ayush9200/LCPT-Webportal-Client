@@ -72,7 +72,7 @@ export default function TrainStandardComponent(props) {
             .catch(err => {
                 console.log(err);
             })
-        const getOrgRoleUrl = BASE_API_URL + "orgnization/getOrgRoleList/" + sessionStorage.getItem("orgId");
+        const getOrgRoleUrl = BASE_API_URL + "orgnization/getOrgRoleList/" + params;
         axios.get(getOrgRoleUrl)
             .then(res => {
                 if (res != 'Something went wrong!' || res != 'No Role Found!') {
@@ -255,7 +255,7 @@ export default function TrainStandardComponent(props) {
 
     return (
         <div className='org-container'>
-            <h1>Set Training Standards for Organisation</h1>
+            <h1>Set Training Standards for Organisation: {params}</h1>
             <Button style={{ float: "right", marginRight: "1%", marginBottom: "1%" }} variant="warning" onClick={handleShow}>Add New Standard</Button>
 
             <Modal show={show} onHide={handleClose}>
@@ -327,7 +327,7 @@ export default function TrainStandardComponent(props) {
                 <thead >
                     <th style={{ width: "25vh" }}></th>
                     {roleDetails.map((data, id) => {
-                        return <th key={id} style={{ width: "25vh" }}>
+                        return (<th key={id} style={{ width: "25vh" }}>
                             {/* 
                                 <Button variant="warning" onClick={(e) => {
                                     createRole(e, data);
@@ -411,7 +411,7 @@ export default function TrainStandardComponent(props) {
                                 </p> */}
 
 
-                        </th>
+                        </th>)
                     })
                     }
 
@@ -419,7 +419,7 @@ export default function TrainStandardComponent(props) {
                 </thead>
 
                 {courseList.map((courses, id) => {
-                    return <tr key={id} >
+                    return (<tr key={id} >
                         <td style={{ width: "25vh" }}><b>{courses.title}</b><div><Button style={{ marginBottom: "5px" }} variant="warning" onClick={(e) => {
                             getMicrodetails(e, courses);
                         }} >View MicroCred Details</Button>
@@ -443,7 +443,7 @@ export default function TrainStandardComponent(props) {
                             </Modal>
                         </div></td>
                         {roleDetails.map((data, _id) => {
-                            return <td key={_id} style={{ borderRight: "1px solid #000", borderLeft: "1px solid #000", width: "25vh" }}>
+                            return (<td key={_id} style={{ borderRight: "1px solid #000", borderLeft: "1px solid #000", width: "25vh" }}>
                                 <input
                                     type="checkbox" style={{ transform: "scale(2)", marginLeft: "50%" }}
 
@@ -456,10 +456,10 @@ export default function TrainStandardComponent(props) {
 
                                 />
 
-                            </td>
+                            </td>)
                         })
                         }
-                    </tr>
+                    </tr>)
                 })}
             </Table>
             <div>
