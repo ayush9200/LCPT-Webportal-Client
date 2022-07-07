@@ -72,7 +72,7 @@ export default function TrainStandardComponent(props) {
             .catch(err => {
                 console.log(err);
             })
-        const getOrgRoleUrl = BASE_API_URL + "orgnization/getOrgRoleList/" + sessionStorage.getItem("orgId");
+        const getOrgRoleUrl = BASE_API_URL + "orgnization/getOrgRoleList/" + params;
         axios.get(getOrgRoleUrl)
             .then(res => {
                 if (res != 'Something went wrong!' || res != 'No Role Found!') {
@@ -90,8 +90,15 @@ export default function TrainStandardComponent(props) {
     }
     function getMicrodetails(event, val) {
         // console.log(roleDetails[id].course_details[_id])
-        if (val.description)
-            setDispMicroCred(val.description);
+        if (val.description){
+            var obj={}
+            obj['description'] = val.description
+            obj['title'] = val.title
+            obj['training_duration'] = val.training_duration
+            obj['validity_duration'] = val.validity_duration
+            setDispMicroCred(obj);
+        }
+            
         else
             setDispMicroCred(val.title)
         handleshowMicroCred()
@@ -429,7 +436,9 @@ export default function TrainStandardComponent(props) {
                                 </Modal.Header>
                                 <Modal.Body>
                                     {/* This will contain MicroCred Details for */}
-                                    {dispMicroCred}
+                                    <h5><b>Title</b> : {dispMicroCred.title}</h5>
+                                       <h5><b>Description</b> : {dispMicroCred.description}</h5> 
+                                       <h5><b>Traing Duration</b> : {dispMicroCred.training_duration} minuites</h5>
 
                                 </Modal.Body>
                                 <Modal.Footer>

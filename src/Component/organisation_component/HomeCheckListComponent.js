@@ -54,6 +54,7 @@ export default function HomeCheckListComponent() {
                  }
              }
              if(!flag){
+                alert("Sorry.Access Not Permitted")
                  return window.location.href = BASE_URL_FRONTEND;
              }
            }
@@ -69,6 +70,7 @@ export default function HomeCheckListComponent() {
                  }
              }
              if(!flag){
+                alert("Sorry.Access Not Permitted")
                  return window.location.href = BASE_URL_FRONTEND;
              }
            }
@@ -86,7 +88,7 @@ export default function HomeCheckListComponent() {
                 if(res!='Something went wrong!'||res!='No Course Found!'){
                     setshowSpinner(false)
                     setCourseList(res.data)
-                    console.log(courseList);
+                    console.log(res.data);
                 }
                
             })
@@ -162,8 +164,15 @@ export default function HomeCheckListComponent() {
     // }
     function getMicrodetails(event, val) {
         // console.log(roleDetails[id].course_details[_id])
-        if(val.description)
-        setDispMicroCred(val.description);
+        if(val.description){
+            var obj={}
+             obj['description'] = val.description
+             obj['title'] = val.title
+             obj['training_duration'] = val.training_duration
+             obj['validity_duration'] = val.validity_duration
+            setDispMicroCred(obj);
+
+        }
         else
         setDispMicroCred(val.title) 
         handleshowMicroCred()
@@ -296,7 +305,9 @@ export default function HomeCheckListComponent() {
                                     </Modal.Header>
                                     <Modal.Body>
                                         {/* This will contain MicroCred Details for  */}
-                                        {dispMicroCred}
+                                        <h5><b>Title</b> : {dispMicroCred.title}</h5>
+                                       <h5><b>Description</b> : {dispMicroCred.description}</h5> 
+                                       <h5><b>Traing Duration</b> : {dispMicroCred.training_duration} minuites</h5>
                                     </Modal.Body>
                                     <Modal.Footer>
                                         {/* <Button variant="secondary" >

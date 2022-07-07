@@ -58,6 +58,7 @@ export default function StaffComponent() {
                  }
              }
              if(!flag){
+                alert("Sorry.Access Not Permitted")
                  return window.location.href = BASE_URL_FRONTEND;
              }
            }
@@ -73,6 +74,7 @@ export default function StaffComponent() {
                  }
              }
              if(!flag){
+                alert("Sorry.Access Not Permitted")
                  return window.location.href = BASE_URL_FRONTEND;
              }
            }
@@ -397,10 +399,10 @@ export default function StaffComponent() {
                         <th>S.N.</th>
                         <th>Employee Name</th>
                         <th>Role</th>
-                        <th>Status</th>
+                        <th>Employment Status</th>
                         <th>Date of Birth</th>
-                        <th>Assign Role to Staff Member</th>
-                        {/* <th>Action</th> */}
+                        {/* <th>Assign Role to Staff Member</th> */}
+                        <th>Action</th>
 
                     </tr>
                 </thead>
@@ -426,11 +428,11 @@ export default function StaffComponent() {
                             }}>
                                 {/* <option>{data.emp_status}</option> */}
                                 <option value="Active" >Active</option>
-                                <option value="Inactive"> Inactive</option>
-                                <option value="Pending"> Pending</option>
+                                <option value="Archived"> Archived</option>
+                                <option value="Hold"> Hold</option>
                             </Form.Select></td>
                             <td>{data.dob}</td>
-                            <td> <Form>
+                            {/* <td> <Form>
                                 <Form.Group controlId="formBasicEmail">
 
 
@@ -448,7 +450,9 @@ export default function StaffComponent() {
                                     </Form.Select>
                                 </Form.Group>
 
-                            </Form></td>
+                            </Form></td> */}
+                            <td>            <Link  to={`/getStaffCourseRoleCheckList/${data.user_id}/${data.home_id}`}><Button  variant="warning">View Role Details</Button></Link>
+</td>
                             {/* <td><span><Button variant='warning'>Save Role Changes</Button></span></td> */}
                             {/* <td><Button variant='warning' onClick={handleShowAssignRole}>Assign Role</Button></td> */}
                             {/* <Modal show={showAssignRole} onHide={handleCloseAssignRole}>

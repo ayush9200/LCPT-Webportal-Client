@@ -13,6 +13,7 @@ import HomeDetailComponent from './Component/organisation_component/HomeDetailCo
 import HomeCheckListComponent from './Component/organisation_component/HomeCheckListComponent';
 import HomeMainComponent from './Component/organisation_component/HomeMainComponent';
 import RoleTemplate from './Component/organisation_component/RoleTemplate';
+import StaffRoleCourseChecklistComponent from './Component/organisation_component/StaffRoleCourseChecklistComponent';
 import store from './Redux/store'
 import { Provider } from 'react-redux'
 
@@ -32,6 +33,7 @@ function App() {
         <Route exact path="/showStaff/:id" element={<StaffComponent />} />
         <Route exact path="/roleTemplate/:homeId/:roleId" element={<RoleTemplate />} />
         <Route exact path="/user/:id" element={<UserHomePage />} />
+        <Route exact path="/getStaffCourseRoleCheckList/:userId/:homeId" element={<StaffRoleCourseChecklistComponent />} />
         <Route exact path="/userRegistration" element={<UserRegistration />} />
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Routes>

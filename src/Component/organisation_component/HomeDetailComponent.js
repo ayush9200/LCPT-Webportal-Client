@@ -25,6 +25,7 @@ export default function HomeDetailComponent(props) {
 
     useEffect(() => {
         if (sessionStorage.getItem("userType") != 'organization' && sessionStorage.getItem("userType") != 'admin' && sessionStorage.getItem("userType") != 'home' && sessionStorage.getItem("homeId") != params) {
+            alert("Sorry.Access Not Permitted")
             return window.location.href = BASE_URL_FRONTEND;
             //alert("Sorry.Access Not Permitted")
 
@@ -41,6 +42,7 @@ export default function HomeDetailComponent(props) {
                 }
             }
             if (!flag) {
+                alert("Sorry.Access Not Permitted")
                 return window.location.href = BASE_URL_FRONTEND;
             }
         }
@@ -56,6 +58,7 @@ export default function HomeDetailComponent(props) {
                 }
             }
             if (!flag) {
+                alert("Sorry.Access Not Permitted")
                 return window.location.href = BASE_URL_FRONTEND;
             }
         }
