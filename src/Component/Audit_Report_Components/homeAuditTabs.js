@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Tabs, Tab, Form } from 'react-bootstrap'
+import React, { useEffect, useState } from 'react';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { Tabs, Tab, Form } from 'react-bootstrap';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from 'axios'
@@ -113,6 +115,43 @@ function HomeAuditTabs(props) {
         })
     }
 
+    var exportHomeDefPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+
+        const marginLeft = 5;
+        const doc = new jsPDF(orientation, unit, size);
+
+        doc.setFontSize(15);
+
+        const title = "Home Staff Report";
+
+        var headers = [["role_id", "role_name", "user_id", "user_name", "status", "is_complaint"]];
+
+        var dataArr = [];
+
+        for (let i = 0; i < filteredHomeStaffData.length; i++) {
+            var tempArr = [filteredHomeStaffData[i]["role_id"], filteredHomeStaffData[i]["role_name"], filteredHomeStaffData[i]["user_id"],
+            filteredHomeStaffData[i]["user_name"], filteredHomeStaffData[i]["status"], filteredHomeStaffData[i]["is_complaint"]];
+
+            dataArr.push(tempArr);
+
+
+        }
+
+
+        let content = {
+            startY: 50,
+            head: headers,
+            body: dataArr
+        };
+
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        doc.save("homeStaffReport.pdf")
+    }
+
     return (
         <div key={props.homeID}>
             <h3 style={{ textAlign: "center" }}> Home ID : {props.homeID} </h3>
@@ -139,6 +178,8 @@ function HomeAuditTabs(props) {
                         }}>
                             {createRoleIDSelectItems()}
                         </select>
+                        <button onClick={() => exportHomeDefPDF()}>Generate PDF Report</button>
+
 
                         <ReactHTMLTableToExcel
                             id="test-table-xls-button"
