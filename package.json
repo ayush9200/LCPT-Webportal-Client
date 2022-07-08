@@ -14,6 +14,7 @@
     "html2canvas": "^1.4.1",
     "jquery": "^3.6.0",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "pdfmake": "^0.2.5",
     "react": "^17.0.2",
     "react-bootstrap": "^2.2.3",

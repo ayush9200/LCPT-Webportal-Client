@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import BootstrapTable from 'react-bootstrap-table-next';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { useParams } from "react-router-dom";
 import { BASE_API_URL } from '../Url-config';
@@ -83,11 +85,39 @@ function OrganizationSummaryComponent(props) {
         )
     }
 
+    var exportPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+
+        const marginLeft = 10;
+        const doc = new jsPDF(orientation, unit, size);
+
+        doc.setFontSize(15);
+
+        const title = "Organization Summary Report";
+
+        var headers = [["home_id", "home_name", "is_complaint", "num_complaint", "num_non_complaint"]]
+
+        console.log(orgSummDetails);
+
+
+        let content = {
+            startY: 50,
+            head: headers,
+            body: orgSummDetails
+        };
+
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        doc.save("report.pdf")
+    }
+
     return (
         <div>
             <BootstrapTable id='organizationSummaryTable' keyField='home_id' data={orgSummFinal} columns={columns} />
             {/* <OrganizationSummaryComponent /> */}
-
+            <button onClick={() => exportPDF()}>Generate PDF Report</button>
             <ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="download-table-xls-button btn btn-dark mb-3"
