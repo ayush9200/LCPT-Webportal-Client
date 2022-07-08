@@ -105,7 +105,7 @@ function UserProfile() {
         const getUserData = BASE_URL_USER + params
         axios.get(getUserData)
             .then(res => {
-                console.log(res.data.data);
+                console.log("Profile:  ",res.data.data);
                 if(res.data !== undefined){
                     setSelectedCountry(res.data.data.country);
                     setSelectedState(res.data.data.state);
@@ -160,6 +160,12 @@ function UserProfile() {
         <div>
             <Container>
                 <Row>
+                    <Row className="mb-12">
+                        <Col className='text-right'>
+                            <h5 className='text-right'>User ID: {params}</h5>
+                            <br></br>
+                        </Col>
+                    </Row>
                     <Form onSubmit={handleOnSubmit}>
                             <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridName">

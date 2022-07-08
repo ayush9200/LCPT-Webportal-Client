@@ -1,5 +1,5 @@
 import React, {useState,useEffect, useRef} from 'react'
-import { Form, Row, Col, Button, Container, Table, Modal } from 'react-bootstrap';
+import { Form, Row, Col, Button, Container, Table, Modal, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
@@ -21,17 +21,21 @@ function UserCourses() {
     const [roleId, setroleId] = useState(0);
     const [userId, setuserId] = useState(0);
     const [homeList, sethomelist] = useState([{'':''}]);
+    const [mappedHomeList, setmappedHomeList] = useState([{'':''}]);
     const [roleList, setroleList] = useState([{'':''}]); 
     const [courseList, setCourseList] = useState([]); 
     const [completedCourses, setCompletedCourses] = useState([]);
     const [pendingCourses, setPendingCourses] = useState([]);
+    const [waitMsg, setWaitMsg] = useState('Loading..');
 
     const [modalInfo, setmodalInfo] = useState('');
     const [show, setshow] = useState(false);
+    const [alertshow, setalertShow] = useState(false);
 
     const [dateTime, setDateTime] = useState(date);
     const [courseBadgeUrl, setCourseBadgeUrl] = useState('');
     const [selectedCourseId, setSelectedCourseId] = useState('');
+    
    
 
   
@@ -42,6 +46,7 @@ function UserCourses() {
     const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
     const BASE_URL_SAVE_BADGE_URL = BASE_API_URL+"user/saveBadgeUrl/";
+    const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL+"orgnization/getHomeInfo/";
 
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
@@ -51,6 +56,7 @@ function UserCourses() {
     }
        // fetchData();
        console.log('User ID: ', params);
+       setuserId(params);
         const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;
        const res = axios.get(getUserHomeRoleData, {
         headers: {
@@ -63,30 +69,15 @@ function UserCourses() {
         });
     },[]);
 
-    // async function fetchData() {
-    //     const BASE_URL_USER = "https://lcpt-webportal-backend.herokuapp.com/user/getUser/";
-    //     const getUserData = BASE_URL_USER + params
-    //     let response = await axios.get(
-    //         getUserData
-    //     );
-    //          let responseJson = response.data.data;
-    //         console.log(" ==== Response json ==== ",responseJson);
-    //         getHomeList(responseJson.orgId,responseJson.homeId,responseJson.roleId,responseJson.userId);
-    // }
     
    const getHomeList = (resp) => {
      try {
-        // setorgId(passOrg);
-        // sethomeId(passHome);
-        // setroleId(passRole);
-        // setuserId(passUser);
-        
         const res = axios.get(BASE_URL_GET_All_HOMELIST, {
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response =>{
-            console.log(" ========== Home List > ", response);
+            console.log(" ========== Home List > ", response.data);
             
             const userMappedHome = resp.map((c)=>{  
                 const inner = response.data.find(
@@ -104,7 +95,8 @@ function UserCourses() {
                 return (inner);   
             }); 
             console.log('==== Only Required home === ',userMappedHome);
-            sethomelist(userMappedHome);
+            setmappedHomeList(userMappedHome);
+            sethomelist(response.data);
             console.log('==== Only Required home 2 === ',homeList);
         });
            console.log("Home list : "+homeList);
@@ -118,19 +110,35 @@ function UserCourses() {
         console.log("Dropdown filter : ",homeList);
         const{name, value} = e.target
         console.log(" Value ", value);
-        const roleHomeMapping = mappingData.map((c)=>{  
-            sethomeId(value);
-            setuserId(c.user_id);
-            //setroleList([{'':''}]);
-            console.log('Value ',value,' Select Home ', c.home_id);
-            if(String(value) === String(c.home_id)){
-                if(c.role_arr && c.role_arr.length>0){
-                console.log('Role going on : ', c.role_arr);
-                setroleList(c.role_arr);
-                return (c.role_arr);
-                }
-            }
-        });    
+        sethomeId(value);
+        
+        if(value !== 0){
+            setroleList([{'':''}]);
+            const getUserData = BASE_URL_GET_HOME_ROLE_CRS_LIST+value
+                axios.get(getUserData).then(function (response) {
+                        setroleList(response.data.result);
+                        if(response.data.result.length === 0){
+                            setWaitMsg("There is no role mapped with selected Home.")
+                            setalertShow(true); 
+                        }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });;
+        }
+        // const roleHomeMapping = mappingData.map((c)=>{  
+        //     sethomeId(value);
+        //     setuserId(c.user_id);
+        //     //setroleList([{'':''}]);
+        //     console.log('Value ',value,' Select Home ', c.home_id);
+        //     if(String(value) === String(c.home_id)){
+        //         if(c.role_arr && c.role_arr.length>0){
+        //         console.log('Role going on : ', c.role_arr);
+        //         setroleList(c.role_arr);
+        //         return (c.role_arr);
+        //         }
+        //     }
+        // });    
     }
 
     const setRoleValue = e => {
@@ -143,6 +151,9 @@ function UserCourses() {
         const body = JSON.stringify({ userId: userId, orgId: orgId, roleId: roleId, homeId: homeId });
         console.log("Body to send => ",body);
         var resJson = [];
+        setCompletedCourses([{'':''}]);
+        setPendingCourses([{'':''}]);
+        setWaitMsg('');
         axios.post(BASE_URL_GET_COURSELIST, body, {
             headers: {
                 'Content-Type': 'application/json'
@@ -152,15 +163,20 @@ function UserCourses() {
                 resJson = res.data;
                 if(resJson!==undefined){
                     setCourseList(resJson);
-                    setCompletedCourses(courseList.completedCourses);
-                    setPendingCourses(courseList.pendingCourses);
+                    //setCompletedCourses(courseList.completedCourses);
+                    //setPendingCourses(courseList.pendingCourses);
                     lastMethodCall(resJson);
                     if(resJson.completedCourses.length === 0
                         && resJson.pendingCourses.length === 0){
-                        alert("Not able to fetch courses.\nNiether user has completed any course nor any course is registered with selected role. \n\nPlease contact your LCPT support team.");
+                            setWaitMsg("Not able to fetch courses.\nNiether user has completed any course nor any course is registered with selected role. \n\nPlease contact your LCPT support team.")
+                       // alert();
+                       setalertShow(true);
                     }else if(resJson.completedCourses.length === 0
                         && resJson.pendingCourses.length > 0){
-                            alert("All courses are pending.");
+                            //alert("All courses are pending.");
+                            setWaitMsg("All courses are pending.")
+                            // alert();
+                            setalertShow(true);
                     }
                   }else{
                     return alert("Selected role don't have courses specified yet. Please contact admin and try again");
@@ -212,7 +228,7 @@ function UserCourses() {
             console.log(error);
          }
     };
-
+    const handleAlertClose = () => setalertShow(false);
     const handleClose = () => setshow(false);
     const handleShow = () => {
         setshow(true)
@@ -274,6 +290,12 @@ function UserCourses() {
         <div>
                 <Container>
             <Row>
+            <Alert variant="danger" show={alertshow} onClose={() => setalertShow(false)} dismissible>
+                <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                <p>
+                            {waitMsg}
+                </p>
+            </Alert>
             <Col xs={6} md={3}>
             <h2 style={{ textAlign: "left" }}>Employer Details</h2>
                 <Form style={{minHeight: '15pc'}}>
@@ -282,7 +304,9 @@ function UserCourses() {
                             <Form.Label>Home</Form.Label>
                             <Form.Select defaultValue="Choose..." onChange={filterRoleDropdown}>
                             <option> -- Select Home -- </option>
-                            {homeList?.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))} 
+                            {homeList?.map((data, id) => (
+                                <option value={data.home_id} key={data.home_id}>{data.name}</option>
+                            ))} 
                             </Form.Select>
                         </Form.Group>
                         </Row>
@@ -324,32 +348,44 @@ function UserCourses() {
                     </tr>
                 </thead>
                 {completedCourses?.map((data, id) => { 
-                    return <tbody key={id}>
+                    if(data.crsId === undefined || data.crsId === ""){
+                        return <tbody key={id}>
                         <tr >
-                            <td hidden={true}>{data.homeId}</td>
-                            <td hidden={true}>{data.roleId}</td>
-                            <td hidden={true}>{data.userId}</td>
-                            <td hidden={true}>{data.roleName}</td>
-                            <td hidden={true}>{data.trainDuration}</td>
-                            <td hidden={true}>{data.validity}</td>
-
-                            <td>{data.crsId}</td>
-                            <td>{data.title}</td>
-                            <td>{data.title}</td>
-                            <td>{data.extDoc}</td>
-                            <td>{data.sharedEmp}</td>
-                            <td>{data.status}</td>
-                            <td>
-                                {/* <OverlayTrigger trigger="click" placement="left" overlay={popover}>
-                                    <Button variant="success">...</Button>
-                                </OverlayTrigger> */}
-                                <Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
-                                    data.trainDuration,data.validity, data.crsId, data.title,'completed');}}>
-                                        Details
-                                    </Button></td>
-                                    
+                            <td colSpan={13} className="text-center" >
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                            </td>
                         </tr>
                     </tbody>
+                    }else{
+                        return <tbody key={id}>
+                            <tr >
+                                <td hidden={true}>{data.homeId}</td>
+                                <td hidden={true}>{data.roleId}</td>
+                                <td hidden={true}>{data.userId}</td>
+                                <td hidden={true}>{data.roleName}</td>
+                                <td hidden={true}>{data.trainDuration}</td>
+                                <td hidden={true}>{data.validity}</td>
+
+                                <td>{data.crsId}</td>
+                                <td>{data.title}</td>
+                                <td>{data.title}</td>
+                                <td>{data.extDoc}</td>
+                                <td>{data.sharedEmp}</td>
+                                <td>{data.status}</td>
+                                <td>
+                                    {/* <OverlayTrigger trigger="click" placement="left" overlay={popover}>
+                                        <Button variant="success">...</Button>
+                                    </OverlayTrigger> */}
+                                    <Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
+                                        data.trainDuration,data.validity, data.crsId, data.title,'completed');}}>
+                                            Details
+                                        </Button></td>
+                                        
+                            </tr>
+                        </tbody>
+                        }
                 })}
             </Table>
             </Col>
@@ -374,28 +410,40 @@ function UserCourses() {
                         </tr>
                     </thead>
                     {pendingCourses?.map((data, id) => {
-                    return <tbody key={id}>
-                        <tr >
-                            <td hidden={true}>{data.homeId}</td>
-                            <td hidden={true}>{data.roleId}</td>
-                            <td hidden={true}>{data.userId}</td>
-                            <td hidden={true}>{data.roleName}</td>
-                            <td hidden={true}>{data.trainDuration}</td>
-                            <td hidden={true}>{data.validity}</td>
+                        if(data.crsId === undefined || data.crsId === ""){
+                            return <tbody key={id}>
+                            <tr >
+                                <td colSpan={13} className="text-center" >
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                                    </td>
+                            </tr>
+                        </tbody>
+                        }else{
+                            return <tbody key={id}>
+                                <tr >
+                                    <td hidden={true}>{data.homeId}</td>
+                                    <td hidden={true}>{data.roleId}</td>
+                                    <td hidden={true}>{data.userId}</td>
+                                    <td hidden={true}>{data.roleName}</td>
+                                    <td hidden={true}>{data.trainDuration}</td>
+                                    <td hidden={true}>{data.validity}</td>
 
-                            <td>{data.crsId}</td>
-                            <td>{data.title}</td>
-                            <td>{data.title}</td>
-                            <td>{data.extDoc}</td>
-                            <td>{data.sharedEmp}</td>
-                            <td>{data.status}</td>
-                            <td><Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
-                                    data.trainDuration,data.validity, data.crsId, data.title, 'pending');}}>
-                                        Details
-                                    </Button></td>
-                        </tr>
-                    </tbody>
-                })}
+                                    <td>{data.crsId}</td>
+                                    <td>{data.title}</td>
+                                    <td>{data.title}</td>
+                                    <td>{data.extDoc}</td>
+                                    <td>{data.sharedEmp}</td>
+                                    <td>{data.status}</td>
+                                    <td><Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
+                                            data.trainDuration,data.validity, data.crsId, data.title, 'pending');}}>
+                                                Details
+                                            </Button></td>
+                                </tr>
+                            </tbody>
+                        }
+                     })}
                 </Table>
             </Row>
             <Row className='text-center'>
@@ -473,6 +521,7 @@ function UserCourses() {
            
             </div>
         </div>
+        
     )
 }
 

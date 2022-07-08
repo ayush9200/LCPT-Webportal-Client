@@ -1,11 +1,11 @@
 import React, {useState,useEffect} from 'react'
-import { Form, Row, Col, Button, Container, Table } from 'react-bootstrap'
+import { Form, Row, Col, Button, Container, Table, Spinner } from 'react-bootstrap'
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
-import { FaFileExcel, FaFilePdf , FaUserCheck} from 'react-icons/fa';
+import { FaFileExcel, FaRegPaperPlane , FaUserCheck} from 'react-icons/fa';
 //import { PDFDownloadLink } from '@react-pdf/renderer';
 //import PdfAuditReport from './PdfAuditReport';
 import { jsPDF } from 'jspdf';
@@ -28,8 +28,14 @@ function UserAuditReport() {
 
     const params = useParams().id;
     const [userList, setUserList] = useState([]);
-    const [finalList, setFinalList] = useState([]);
+    const [finalList, setFinalList] = useState([{'':''}]);
     const [mappingData, setMappingData] = useState([{'':''}]);
+
+    const [roleList, setroleList] = useState([{'':''}]); 
+    const [homeList, setHomeList] = useState([{'home_id':'0'}]);
+    const [selectedHomeId, setselectedHomeId] = useState(0);
+
+    const [msg, setmsg] = useState(''); 
     
    
     // https://lcpt-webportal.herokuapp.com/
@@ -37,6 +43,9 @@ function UserAuditReport() {
     const BASE_URL_USER = BASE_API_URL+"user/getUser/";
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
     const BASE_URL_GET_APPLIED_CRS = BASE_API_URL+"course/fetchPendingCourses/";
+    const BASE_URL_GET_ALL_HOMELIST = BASE_API_URL+"orgnization/getAllHomes";
+    const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL+"orgnization/getHomeInfo/";
+    const BASE_URL_GET_HRC_LIST = BASE_API_URL+"orgnization/getHRCInfo/";
 
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
@@ -52,10 +61,12 @@ function UserAuditReport() {
              'Content-Type': 'application/json'
          }
          }).then(response =>{
+            
             // console.log(" ========== > ", response);
              setMappingData(response.data);
              fetchCourseDetails(response.data);
              fetchData();
+             
          });
     },[]);
 
@@ -66,6 +77,16 @@ function UserAuditReport() {
         );
         //fetchCourseDetails(response.data.data);
         setUserList(response.data.data);
+
+        const getData = BASE_URL_GET_ALL_HOMELIST
+            axios.get(getData).then(function (response) {
+            console.log("=====> Res Audit homes ===> ", response);
+            //this.setState({homeList: response.data})
+            setHomeList(response.data);
+          })
+         .catch(function (error) {
+            console.log(error);
+         });;
     }
 
    
@@ -139,6 +160,7 @@ function UserAuditReport() {
                         });
             return list;
         });
+            setmsg("Report based on all courses");
             setFinalList(list);
        }catch (error) {
            console.log(error);
@@ -148,34 +170,32 @@ function UserAuditReport() {
      //Excel
      const printAuditReport = async e =>{
          var arrayOfData = [];
-      // arrayOfData.push(mapForUserData);
-      var courseIds = [];
-        {finalList?.map((data, id) => { 
-            //console.log(" >><<< ", data)
-            var mapForCourses = {
-                'USER NAME': userList.userName,
-                'USER ID': userList.user_id,
-                'EMAIL ID': userList.email,
-                'CONTACT NUMBER': userList.number,
-                'DATE OF BIRTH': userList.dob,
-                'ADDRESS': userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode,
-                'COURSE ID': data.crsId,
-                'COURSE TITLE': data.title,
-                'STATUS': data.status,
-                'VALIDITY': data.validity,
-                'SHARED WITH EMPLOYER': data.sharedEmp,
-                'EXTERNAL DOCUMENT': data.extDoc,
-                'TRAINING DURATION': data.trainDuration
-            }
-            arrayOfData.push(mapForCourses);
-           })};
+            {finalList?.map((data, id) => { 
+                //console.log(" >><<< ", data)
+                var mapForCourses = {
+                    'USER NAME': userList.userName,
+                    'USER ID': userList.user_id,
+                    'EMAIL ID': userList.email,
+                    'CONTACT NUMBER': userList.number,
+                    'DATE OF BIRTH': userList.dob,
+                    'ADDRESS': userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode,
+                    'COURSE ID': data.crsId,
+                    'COURSE TITLE': data.title,
+                    'STATUS': data.status,
+                    'VALIDITY': data.validity,
+                    'SHARED WITH EMPLOYER': data.sharedEmp,
+                    'EXTERNAL DOCUMENT': data.extDoc,
+                    'TRAINING DURATION': data.trainDuration
+                }
+                arrayOfData.push(mapForCourses);
+            })};
 
-        const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-        XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-        XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
+            const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+            XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+            XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
      }
 
      //pdf
@@ -188,6 +208,78 @@ function UserAuditReport() {
         });
      }
 
+     const formatChange = e => {
+        const{name, value} = e.target;
+        
+     }
+     
+     const handleOnChange = e => {
+        const{name, value} = e.target;
+        setselectedHomeId(value);
+        setmsg("");
+        var index = e.nativeEvent.target.selectedIndex;
+        setmsg("User course report : "+e.nativeEvent.target[index].text);
+        if(value !== 0){
+            const getUserData = BASE_URL_GET_HOME_ROLE_CRS_LIST+value
+                axios.get(getUserData).then(function (response) {
+                    setroleList(response.data.result);
+                    if(response.data.result.length === 0){
+                        alert("There is no role mapped with selected Home.");
+                    }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });;
+        }
+     }
+
+     const fetchAllCourses = e =>{
+        const{name, value} = e.target;
+        setFinalList([{'':''}]);
+        var index = e.nativeEvent.target.selectedIndex;
+        var text = msg;
+        text = text.split(" - ")[0];
+        text+= " - "+ e.nativeEvent.target[index].text;
+        setmsg(text);
+       // setcondition(true);
+        if(value !== undefined){
+            var list = [];
+            var courseIds = [];
+            var json = { 'userId': params, 'roleId': value, 'homeId': selectedHomeId };
+            axios.post(BASE_URL_GET_COURSELIST, json, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => {
+                    var resJson = res.data;
+                    console.log("Hola ... ",resJson);
+                   // const arrayOfResponse = resJson.map((c)=>{  
+                        const inner = resJson.completedCourses.find(
+                            (s) => {
+                                if(!courseIds.includes(s.crsId)){
+                                    courseIds.push(s.crsId);
+                                        list.push(s)
+                                }
+                                
+                            });
+                            const inner2 = resJson.pendingCourses.find(
+                                (s) => {
+                                    if(!courseIds.includes(s.crsId)){
+                                        courseIds.push(s.crsId);
+                                        list.push(s)
+                                    }
+                                    
+                                });
+                       // return list;
+                   // });
+                    setFinalList(list);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+       
+    }
 
     return (
         <div>
@@ -213,22 +305,52 @@ function UserAuditReport() {
                     </Col>
                     <Col>
                         <Form>
-                            <Form.Group id="formGridCheckbox">
-                                <Form.Label>Please select format to download Audit Report</Form.Label>
-                                    <Row>
-                                        <Form.Group as={Col} controlId="formGridName">
-                                            <Button variant="primary" onClick={printAuditReport}><FaFileExcel/> Excel Report</Button>
+                           
+                            <Row className="mb-3">
+                                    <Form.Group as={Col} controlId="formGridState">
+                                        <Form.Label>Home</Form.Label>
+                                        <Form.Select name="format" onChange={handleOnChange}>
+                                            <option value={0} key='0'> -- Please select -- </option>
+                                            {homeList?.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))}
+                                        </Form.Select>
+                                        </Form.Group>
+                                        <Form.Group as={Col} controlId="formGridState">
+                                        <Form.Label>Role</Form.Label>
+                                        <Form.Select name="format" onChange={fetchAllCourses}>
+                                            <option value={0} key='0'> -- Please select -- </option>
+                                            {roleList?.map((data, id) => (<option value={data.role_id} key={data.role_id}>{data.role_name}</option>))}
+                                        </Form.Select>
+                                        </Form.Group>
+                                </Row>
+                                <br></br>
+                                <hr></hr>
+                                <Form.Group id="formGridCheckbox">
+                                <Form.Label>Please select format for Audit Report</Form.Label>
+                                        <Form.Select name="format" onChange={formatChange}>
+                                            <option> -- Choose your format -- </option>
+                                                    <option value="excel" key="1">Excel</option>
+                                                    <option value="pdf" key="2"> PDF</option>
+                                           
+                                        </Form.Select>
+                                </Form.Group>
+                                <br></br>
+                                <Form.Group>
+                                            <Form.Check type="checkbox" label="Verify and send all data to Employer" />
+                                        </Form.Group>
+                                        <br></br>
+                                        <Row className="mb-3">
+                                       
+                                        <Form.Group  as={Col} controlId="formGridName">
+                                            <Form.Label>Email ID</Form.Label>
+                                            <Form.Control type="text" name="email"  placeholder="Enter employer email ID" />
                                         </Form.Group>
                                         <Form.Group  as={Col} controlId="formGridName">
-                                            <Button variant="primary" onClick={printPdfReport}><FaFilePdf/> Pdf Report</Button>
+                                            <Button variant="primary" onClick={printPdfReport}><FaRegPaperPlane/> Send</Button>
                                         </Form.Group>
-                                    </Row>
-                                <br></br>
-                               <br></br>
-                                <Form.Check type="checkbox" label="Verify and send all data to Employer" />
-                                <hr></hr>
-                               
-                            </Form.Group>
+                                        </Row>
+                                        <br></br>
+                                       <hr></hr>
+                              
                         </Form>
                     </Col>
                     </Row>
@@ -240,6 +362,11 @@ function UserAuditReport() {
             <Row>
                
                 <hr></hr>
+                <Row>
+                    <Col>
+                    <h5>{msg}</h5>
+                    </Col>
+                </Row>
                 <div id="content">
                     <Table striped bordered hover>
                         <thead>
@@ -255,18 +382,30 @@ function UserAuditReport() {
                             </tr>
                         </thead>
                         {finalList?.map((data, id) => { 
-                    return <tbody key={id}>
-                                <tr>
-                                    <td>{userList.userName}</td>
-                                    <td>{data.crsId}</td>
-                                    <td>{data.title}</td>
-                                    <td>{data.status}</td>
-                                    <td>{data.validity}</td>
-                                    <td>{data.sharedEmp}</td>
-                                    <td>{data.extDoc}</td>
-                                    <td>{data.trainDuration}</td>
+                            if(data.crsId === undefined || data.crsId === ""){
+                                return <tbody key={id}>
+                                <tr >
+                                    <td colSpan={13} className="text-center" >
+                                        <Spinner animation="border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </Spinner>
+                                    </td>
                                 </tr>
                             </tbody>
+                            }else{
+                            return <tbody key={id}>
+                                        <tr>
+                                            <td>{userList.userName}</td>
+                                            <td>{data.crsId}</td>
+                                            <td>{data.title}</td>
+                                            <td>{data.status}</td>
+                                            <td>{data.validity}</td>
+                                            <td>{data.sharedEmp}</td>
+                                            <td>{data.extDoc}</td>
+                                            <td>{data.trainDuration}</td>
+                                        </tr>
+                                    </tbody>
+                            }
                         })}
                         {/* {pendingCourses?.map((data, id) => {
                     return <tbody key={id}>
