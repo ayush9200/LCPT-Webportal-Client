@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@mui/material": "^5.8.7",
     "@react-pdf/renderer": "^2.2.0",
     "@react-pdf/zlib": "^2.0.0",
     "@reduxjs/toolkit": "^1.8.2",
