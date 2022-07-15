@@ -397,15 +397,7 @@ function UserCourses(props) {
                                 }
                             })}
                         </Table>
-                    </Col>
-                </Row>
-                <br></br>
-                <br></br>
-                <hr></hr>
-                <br></br>
-                <br></br>
-                <Row>
-                    <h2>Pending Courses</h2>
+                        <h2>Pending Courses</h2>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -457,7 +449,13 @@ function UserCourses(props) {
                         }
                 })}
             </Table>
-            </Row>
+                    </Col>
+                </Row>
+                <br></br>
+                <br></br>
+                <hr></hr>
+              
+              
                 {/* <h2>Pending Courses</h2>
                 <Table striped bordered hover>
                     <thead>
@@ -508,11 +506,6 @@ function UserCourses(props) {
                      })}
                 </Table> */}
                
-            <br></br>
-            <br></br>
-            <hr></hr>
-            <br></br>
-            <br></br>
             
             <Row className='text-center'>
                 <Col xs={12} style={{alignContent: 'center'}}>
