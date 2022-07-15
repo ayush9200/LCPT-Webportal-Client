@@ -8,7 +8,8 @@ import { BASE_URL_FRONTEND } from '../Url-config';
 import { FaFileExcel, FaRegPaperPlane , FaUserCheck} from 'react-icons/fa';
 //import { PDFDownloadLink } from '@react-pdf/renderer';
 //import PdfAuditReport from './PdfAuditReport';
-import { jsPDF } from 'jspdf';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 //import PDF, { Text, AddPage, Line, Image, Html } from 'jspdf-react';
 
@@ -31,9 +32,11 @@ function UserAuditReport() {
     const [finalList, setFinalList] = useState([{'':''}]);
     const [mappingData, setMappingData] = useState([{'':''}]);
 
-    const [roleList, setroleList] = useState([{'':''}]); 
+    const [roleList, setroleList] = useState([{'':''}]);
+    const [format, setformat] = useState(0); 
     const [homeList, setHomeList] = useState([{'home_id':'0'}]);
     const [selectedHomeId, setselectedHomeId] = useState(0);
+    const [empEmailId, setempEmailId] = useState(''); 
 
     const [msg, setmsg] = useState(''); 
     
@@ -45,7 +48,8 @@ function UserAuditReport() {
     const BASE_URL_GET_APPLIED_CRS = BASE_API_URL+"course/fetchPendingCourses/";
     const BASE_URL_GET_ALL_HOMELIST = BASE_API_URL+"orgnization/getAllHomes";
     const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL+"orgnization/getHomeInfo/";
-    const BASE_URL_GET_HRC_LIST = BASE_API_URL+"orgnization/getHRCInfo/";
+    const BASE_URL_EMAIL_TO_EMPLOYER = BASE_API_URL+"user/sendEmailEmp";
+    
 
     useEffect(() => {
         if(sessionStorage.getItem("userType")!='admin' && sessionStorage.getItem("userType")!='user')
@@ -168,7 +172,7 @@ function UserAuditReport() {
      }
 
      //Excel
-     const printAuditReport = async e =>{
+     const exportAuditExcel = async e =>{
          var arrayOfData = [];
             {finalList?.map((data, id) => { 
                 //console.log(" >><<< ", data)
@@ -193,12 +197,14 @@ function UserAuditReport() {
             const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-            let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-            XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-            XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
+            let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+            const data = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+            console.log(data);
+            return data;
+            //XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
      }
 
-     //pdf
+     //pdf- Not in use
      const printPdfReport = () => {
         var doc = new jsPDF("p","pt","a4");
         doc.html(document.querySelector("#content"),{
@@ -208,9 +214,38 @@ function UserAuditReport() {
         });
      }
 
+     //pdf
+     var exportAuditPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+        const marginLeft = 5;
+        const doc = new jsPDF(orientation, unit, size);
+        doc.setFontSize(15);
+        const title = "LCPT User Audit Report";
+        var headers = [["userName", "user_id", "email", "number", "dob", "address", "crsId", 
+        "title", "status", "validity", "sharedEmp", "extDoc", "trainDuration"]];
+        var dataArr = [];
+        for (let i = 0; i < finalList.length; i++) {
+            var tempArr = [userList.userName, userList.user_id, userList.email,userList.number,userList.dob, userList.address,
+            finalList[i]["crsId"],finalList[i]["title"],finalList[i]["status"],finalList[i]["validity"],
+            finalList[i]["sharedEmp"],finalList[i]["extDoc"],finalList[i]["trainDuration"]];
+            dataArr.push(tempArr);
+        }
+        let content = {
+            startY: 50,
+            head: headers,
+            body: dataArr
+        };
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        var blob =doc.output('blob')
+        return blob;
+    }
+
      const formatChange = e => {
         const{name, value} = e.target;
-        
+        (value == "pdf")? setformat(1): setformat(0);
      }
      
      const handleOnChange = e => {
@@ -231,6 +266,30 @@ function UserAuditReport() {
                 console.log(error);
             });;
         }
+     }
+
+     const sendDataThroughEmail = e => {
+        var fileBlob = "";
+        var data = new FormData();
+        data.append("userId", params);
+        data.append("emailId", empEmailId);
+        if(format == 0){
+            //excel
+            fileBlob = exportAuditExcel();
+        }else{
+            //pdf
+            fileBlob = exportAuditPDF();
+        }
+        data.append("file", fileBlob);
+        axios.post(BASE_URL_EMAIL_TO_EMPLOYER, data)
+            .then(response => {
+                console.log(response);
+            });
+     }
+
+     const updateEmpEmailId = e =>{
+        const{name, value} = e.target;
+        setempEmailId(value);
      }
 
      const fetchAllCourses = e =>{
@@ -291,10 +350,8 @@ function UserAuditReport() {
           
             <h3 className='text-center' style={{color:'#0f6fc5'}}> <FaUserCheck/> User Report</h3>
                 <br></br>
-                <br></br>
-                <br></br>
                     <Row>
-                    <Col>
+                    <Col xs={6} md={5}>
                     <div className='text-left'>
                     <h5><b>User ID :</b> {userList.user_id}</h5>
                     <h5><b>Username : </b>{userList.userName}</h5>
@@ -303,8 +360,8 @@ function UserAuditReport() {
                     <h5><b>Address : </b>{userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode}</h5>
                     </div>
                     </Col>
-                    <Col>
-                        <Form>
+                    <Col xs={6} md={7} className='shadow p-3 mb-5 bg-white rounded'>
+                        <Form >
                            
                             <Row className="mb-3">
                                     <Form.Group as={Col} controlId="formGridState">
@@ -322,7 +379,6 @@ function UserAuditReport() {
                                         </Form.Select>
                                         </Form.Group>
                                 </Row>
-                                <br></br>
                                 <hr></hr>
                                 <Form.Group id="formGridCheckbox">
                                 <Form.Label>Please select format for Audit Report</Form.Label>
@@ -338,18 +394,19 @@ function UserAuditReport() {
                                             <Form.Check type="checkbox" label="Verify and send all data to Employer" />
                                         </Form.Group>
                                         <br></br>
-                                        <Row className="mb-3">
-                                       
-                                        <Form.Group  as={Col} controlId="formGridName">
-                                            <Form.Label>Email ID</Form.Label>
-                                            <Form.Control type="text" name="email"  placeholder="Enter employer email ID" />
-                                        </Form.Group>
-                                        <Form.Group  as={Col} controlId="formGridName">
-                                            <Button variant="primary" onClick={printPdfReport}><FaRegPaperPlane/> Send</Button>
-                                        </Form.Group>
+                                        <Row className="sm-3">
+                                            <Col xs={6} md={9}>
+                                            <Form.Group  as={Col} controlId="formGridName">
+                                                <Form.Label>Email ID</Form.Label>
+                                                <Form.Control className="w-50" type="text" name="email" onBlur={updateEmpEmailId} placeholder="Employer email ID" />
+                                            </Form.Group>
+                                            </Col>
+                                            <Col xs={6} md={3}>
+                                            <Form.Group  as={Col} controlId="formGridName">
+                                                <Button variant="primary" onClick={sendDataThroughEmail}><FaRegPaperPlane/> Send</Button>
+                                            </Form.Group>
+                                            </Col>
                                         </Row>
-                                        <br></br>
-                                       <hr></hr>
                               
                         </Form>
                     </Col>

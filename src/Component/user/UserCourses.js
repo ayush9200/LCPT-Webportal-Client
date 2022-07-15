@@ -296,9 +296,9 @@ function UserCourses() {
                             {waitMsg}
                 </p>
             </Alert>
-            <Col xs={6} md={3}>
+            <Col xs={6} md={3} className='shadow p-3 mb-5 bg-white rounded'>
             <h2 style={{ textAlign: "left" }}>Employer Details</h2>
-                <Form style={{minHeight: '15pc'}}>
+                <Form style={{minHeight: '13pc'}}>
                     <Row className="mb-3">
                         <Form.Group as={Col} controlId="formGridHome">
                             <Form.Label>Home</Form.Label>
@@ -388,14 +388,6 @@ function UserCourses() {
                         }
                 })}
             </Table>
-            </Col>
-            </Row>
-            <br></br>
-            <br></br>
-            <hr></hr>
-            <br></br>
-            <br></br>
-            <Row>
                 <h2>Pending Courses</h2>
                 <Table striped bordered hover>
                     <thead>
@@ -445,7 +437,14 @@ function UserCourses() {
                         }
                      })}
                 </Table>
+                </Col>
             </Row>
+            <br></br>
+            <br></br>
+            <hr></hr>
+            <br></br>
+            <br></br>
+            
             <Row className='text-center'>
                 <Col xs={12} style={{alignContent: 'center'}}>
                     <div>

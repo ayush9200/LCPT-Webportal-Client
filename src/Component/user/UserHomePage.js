@@ -3,7 +3,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import UserEmployment from './UserEmployment';
 import UserProfile from './UserProfile';
 import UserAuditReport from './UserAuditReport';
-import UserCourses from './UserCourses';
+
 
 function UserHomePage() {
     return (
@@ -13,7 +13,7 @@ function UserHomePage() {
                     <UserProfile/>
                 </Tab>
                 <Tab eventKey="createUser" title="Employment">
-                    <UserCourses/>
+                    <UserEmployment/>
                 </Tab>
                 <Tab eventKey="verifyCredentials" title="Report" >
                     <UserAuditReport/>
