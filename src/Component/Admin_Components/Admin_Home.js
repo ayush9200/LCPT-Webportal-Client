@@ -12,6 +12,8 @@ import MicroCredsDashboard from './MicroCredsDashboard';
 import Organisation from '../organisation_component/organisation';
 import HomeDetailComponent from '../organisation_component/HomeDetailComponent';
 import HomeMainComponent from '../organisation_component/HomeMainComponent';
+import AddPermissionAdminTab from './AddPermissionsInAdmin';
+
 import AdminUserEditor from './AdminUserEditor';
 import { useParams } from "react-router-dom";
 import { BASE_API_URL } from '../Url-config';
@@ -279,6 +281,9 @@ function Admin_Home() {
                 </Tab>
                 <Tab eventKey="individualView" title="Users" >
                     <EnterIndividualForm />
+                </Tab>
+                <Tab eventKey="addPermissions" title="Add Permissions" >
+                    <AddPermissionAdminTab />
                 </Tab>
             </Tabs>
         </div>)
