@@ -16,6 +16,10 @@ export default function HomeCheckListComponent() {
     const [MicroCredShow, setMicroCredShow] = useState(false);
     const handleCloseMicroCred = () => setMicroCredShow(false);
     const handleshowMicroCred = () => setMicroCredShow(true);
+    const [showPosition, setPositionShow] = useState(false);
+    const handleClosePosition = () => setPositionShow(false);
+    const handleShowPosition = () => setPositionShow(true);
+    const [positionDetail, setPositionDetail] = useState({});
     const [showOption, setShowOption] = useState(false);
     const handleCloseOption = () => setShowOption(false);
     const handleShowOption = () => setShowOption(true);
@@ -24,7 +28,7 @@ export default function HomeCheckListComponent() {
     const [radioValue, setRadioButtonValue] = useState([]);
     const [dispMicroCred, setDispMicroCred] = useState('');
     const [courseList, setCourseList] = useState([]);
-    const [radio2Value, setRadio2Value] = useState([]);
+    const [showCreateRole, setShowCreateRole] = useState(false);
     const [counter, setCounter] = useState(0);
     const [globalRole, setGlobalRole] = useState({});
     const [loading, setLoading] = useState(false);
@@ -103,12 +107,18 @@ export default function HomeCheckListComponent() {
                 if(res!='Something went wrong!'||res!='No Role Found!'){
                     setRoleDetails(res.data)
                     setshowSpinner(false)
+                    setShowCreateRole(false)
 
                     // var tableElement = document.getElementById('table-id');
                     // if(res.data.length>3){
                         
                     // }
 
+                }
+                if(res=='Something went wrong!'||res=='No Role Found!' || res.data.length==0){
+                    setShowCreateRole(true)
+                    setRoleDetails(res.data)
+                    setshowSpinner(false)
                 }
 
                 console.log(roleDetails);
@@ -117,6 +127,9 @@ export default function HomeCheckListComponent() {
             })
             .catch(err => {
                 console.log(err);
+                setShowCreateRole(true)
+               // setRoleDetails(res.data)
+                setshowSpinner(false)
             })
     }
 
@@ -221,6 +234,36 @@ export default function HomeCheckListComponent() {
         setGlobalRole(tempObj)
 
     }
+    function addPositionText(event, id) {
+        let newPositionDetailObj = {};
+        newPositionDetailObj = { ...positionDetail };
+        if (id === 'pos1')
+            newPositionDetailObj.role_name = event.target.value;
+            newPositionDetailObj.role_id = String(roleDetails.length + 1);
+
+        newPositionDetailObj.home_id = String(params);
+
+        setPositionDetail(newPositionDetailObj);
+        console.log("position details:", positionDetail)
+
+
+    }
+    function savePositionDetail(event){
+        console.log("position details:", positionDetail)
+        const savePositionUrl = BASE_API_URL+"orgnization/addNewPosition"
+        axios.post(savePositionUrl, positionDetail)
+            .then(res => {
+                console.log(res);
+                //setStaffList(res.data)
+                handleClosePosition()
+                // getStaffData()
+                getInitialData()
+                // setNotificationText("New Role was added");
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 
     return (
         <div style={{ marginTop: "10vh" }}>
@@ -230,6 +273,38 @@ export default function HomeCheckListComponent() {
                             <Spinner show={showSpinner} animation="border" size="lg" variant='primary' />
 
                         </div> : <div></div>}
+                        {showCreateRole ?<div> <Button variant='warning' onClick={handleShowPosition} >Create New Role</Button>
+                        <Modal show={showPosition} onHide={handleClosePosition}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add New Position</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Enter the Position Name</Form.Label>
+                            <Form.Control type="text"
+                                onChange={(e) => {
+                                    addPositionText(e, 'pos1');
+                                }}
+                            />
+                          
+
+                        </Form.Group>
+
+                    </Form>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClosePosition}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={savePositionDetail}  >
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            </div>
+                        :<div></div>}
 
 
                 <Table striped bordered hover style={{width:"300vh",height:"80vh",tableLayout:"fixed"}} id="table-id" className='table-responsive'>

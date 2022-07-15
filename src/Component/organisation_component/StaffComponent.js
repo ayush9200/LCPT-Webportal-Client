@@ -196,11 +196,14 @@ export default function StaffComponent() {
             }
     }
 
-    function changeEmpStatus(event, id) {
+    function changeEmpStatus(event,userId,data, id) {
         //console.log(event.target.value," for ",id)
+        console.log("event log",event.target.value,userId,data,id)
+        var role_array  = data.role_arr
+        role_array[id].emp_status = event.target.value
         const staffStatusUrl = BASE_API_URL+"orgnization/editStaffStatus"
         //var status = ""+event.target.value
-        axios.put(staffStatusUrl, { "id": id, "emp_status": String(event.target.value) })
+        axios.put(staffStatusUrl, { "role_arr": role_array, user_id:String(userId), home_id:String(params) })
             .then(res => {
                 console.log(res);
                 getStaffData();
@@ -233,19 +236,31 @@ export default function StaffComponent() {
         }
        
     }
-    function saveAssignRoleDetail(newAssignRoleObj) {
-        console.log(assignRoleDetail)
-        axios.put(BASE_API_URL+"orgnization/addAssignRoleText", newAssignRoleObj)
-            .then(res => {
-                console.log(res);
-                getStaffData();
-                handleCloseAssignRole()
-                setNotificationText("Role was assigned");
-                toggleshowNotification()
-            })
-            .catch(err => {
-                console.log(err);
-            })
+    function saveAssignRoleDetail() {
+        if(positionDetail){
+            const staffListUrl = BASE_API_URL+"orgnization/addNewStaff"
+            console.log(staffDetail)
+            axios.post(staffListUrl, staffDetail)
+                .then(res => {
+                    console.log(res);
+                    //setStaffList(res.data)
+                    handleCloseStaff()
+                    getStaffData()
+    
+                    setNotificationText("New Role was assigned");
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+            }
+    }
+    function addStaffRole(event,user_id,home_id,dob){
+        console.log(roleDetails[event.target.value],user_id,home_id,dob)
+        let newPositionDetailObj = {};
+        newPositionDetailObj = { ...positionDetail };
+        newPositionDetailObj.role_id = roleDetails[event.target.value].role_id
+        newPositionDetailObj.dob = roleDetails[event.target.value].role_name
+        
     }
     function assignUserRole(event){
 
@@ -253,6 +268,19 @@ export default function StaffComponent() {
         setNewStaffRole(state=>{
             return event.target.value
         })
+    }
+    function openAssignRole(e,data){
+        let newPositionDetailObj = {};
+        newPositionDetailObj = { ...positionDetail };
+        newPositionDetailObj.user_name = data.user_name
+        newPositionDetailObj.user_id = data.user_id
+        newPositionDetailObj.home_id = String(params)
+        newPositionDetailObj.dob = data.dob
+
+
+        console.log(data)
+        setPositionDetail(newPositionDetailObj)
+        handleShowAssignRole()
     }
 
     return (
@@ -399,10 +427,10 @@ export default function StaffComponent() {
                         <th>S.N.</th>
                         <th>Employee Name</th>
                         <th>Role</th>
-                        <th>Employment Status</th>
+                        <th>Role Status</th>
                         <th>Date of Birth</th>
                         {/* <th>Assign Role to Staff Member</th> */}
-                        <th>Action</th>
+                        {/* <th>Assign Role</th> */}
 
                     </tr>
                 </thead>
@@ -413,7 +441,7 @@ export default function StaffComponent() {
                     return <tbody key={id}>
                         <tr >
                             <td>{id + 1}</td>
-                            <td>{data.user_name}</td>
+                            <td><Link to={`/getStaffCourseRoleCheckList/${data.user_id}/${data.home_id}`}>{data.user_name}</Link></td>
                             {/* <td>{data.role_name}</td> */}
                             <td><ul>{data.role_arr.map((val, _id) => {
                                 return <li key={_id}>
@@ -422,15 +450,79 @@ export default function StaffComponent() {
 
 
                             })
-                            }</ul></td>
-                            <td><Form.Select aria-label="Default select example" defaultValue={data.emp_status} onChange={(e) => {
-                                changeEmpStatus(e, data.user_id);
+                            }
+                            {/* <li></li> */}
+                            </ul>
+                            <p style={{color:"blue",cursor:"pointer"}} onClick={(e) => {
+                                        openAssignRole(e, data);
+                                    }}>+ Assign New Role</p>
+                           
+                           <Modal show={showAssignRole} onHide={handleCloseAssignRole}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Assign Position</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Staff Name</Form.Label>
+                            <Form.Control type="text"
+                            readOnly
+                           
+                            value={positionDetail.user_name} 
+                            />
+                            <Form.Label>Staff User Id </Form.Label>
+                            <Form.Control type="text"
+                            value={positionDetail.user_id} readOnly
+                            />
+                            <Form.Label>Role Name</Form.Label>
+                            <Form.Select aria-label="Default select example" style={{width:"85%"}}
+                             onChange={(e) => {
+                                        addStaffRole(e, positionDetail.user_id, positionDetail.home_id,positionDetail.dob);
+                                    }}
+                                     >
+                                        <option value={-1}>Select Role</option>
+                                        {roleDetails.map((item, _id) => {
+                                            return <option value={_id}>
+                                                {item.role_name}
+                                            </option>
+
+
+                                        })}
+                                    </Form.Select>
+
+                        </Form.Group>
+
+                    </Form>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseAssignRole}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={saveAssignRoleDetail}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+                            </td>
+                            <td>
+                            <ul>{data.role_arr.map((val, _id) => {
+                                return <li key={_id}>
+                                     {/* <Form.Select aria-label="Default select example" defaultValue={val.emp_status} readOnly
+                                      onChange={(e) => {
+                                changeEmpStatus(e, data.user_id,data,_id);
                             }}>
-                                {/* <option>{data.emp_status}</option> */}
                                 <option value="Active" >Active</option>
                                 <option value="Archived"> Archived</option>
                                 <option value="Hold"> Hold</option>
-                            </Form.Select></td>
+                            </Form.Select> */}
+                            {val.emp_status}
+                                </li>
+
+
+                            })
+                            }</ul>
+                               </td>
                             <td>{data.dob}</td>
                             {/* <td> <Form>
                                 <Form.Group controlId="formBasicEmail">
@@ -451,8 +543,60 @@ export default function StaffComponent() {
                                 </Form.Group>
 
                             </Form></td> */}
-                            <td>            <Link  to={`/getStaffCourseRoleCheckList/${data.user_id}/${data.home_id}`}><Button  variant="warning">View Role Details</Button></Link>
-</td>
+                            {/* <td>            <Link  to={`/getStaffCourseRoleCheckList/${data.user_id}/${data.home_id}`}><Button  variant="warning">View Role Details</Button></Link>
+</td> */}
+{/* <td>
+    <Button variant='warning' onClick={handleShowAssignRole}>Assign Role</Button>
+                           <Modal show={showAssignRole} onHide={handleCloseAssignRole}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Assign Position</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-2 col-xs-6" controlId="formBasicEmail">
+                            <Form.Label>Staff Name</Form.Label>
+                            <Form.Control type="text"
+                            readOnly
+                            //  onChange={(e) => {
+                            //     addAssignRoleText(e, 'rol1',data.user_id,data.role_id,data.role_arr);
+                            // }}
+                            value={data.user_name} 
+                            />
+                            <Form.Label>Staff User Id </Form.Label>
+                            <Form.Control type="text"
+                            value={data.user_id} readOnly
+                            />
+                            <Form.Label>Role Name</Form.Label>
+                            <Form.Select aria-label="Default select example" style={{width:"85%"}}
+                             onChange={(e) => {
+                                        addStaffRole(e, data.user_id, data.home_id,data.dob);
+                                    }}
+                                     >
+                                        <option value={-1}>Select Role</option>
+                                        {roleDetails.map((item, _id) => {
+                                            return <option value={_id}>
+                                                {item.role_name}
+                                            </option>
+
+
+                                        })}
+                                    </Form.Select>
+
+                        </Form.Group>
+
+                    </Form>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseAssignRole}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={saveAssignRoleDetail}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            </td> */}
                             {/* <td><span><Button variant='warning'>Save Role Changes</Button></span></td> */}
                             {/* <td><Button variant='warning' onClick={handleShowAssignRole}>Assign Role</Button></td> */}
                             {/* <Modal show={showAssignRole} onHide={handleCloseAssignRole}>
