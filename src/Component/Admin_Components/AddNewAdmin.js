@@ -4,9 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
 import axios from 'axios';
-import UserHomePage from "../user/UserHomePage";
 
-function EnterIndividualForm() {
+function AddNewAdmin() {
     const [userIdList, setUserIdList] = useState([]);
     const [userId, setUserId] = useState("");
 
@@ -63,10 +62,12 @@ function EnterIndividualForm() {
             />
 
 
-            {(userId == "") ? <h1>Select a User</h1> : <UserHomePage homeID={userId} />}
+
+
+
 
         </div>
     )
 }
 
-export default EnterIndividualForm
+export default AddNewAdmin
