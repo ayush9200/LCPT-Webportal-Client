@@ -120,7 +120,7 @@ function UserCourseApplication() {
         if(row.applied === "No"){
             return <Button variant="warning" onClick={function(event){ handleShow(); func2(row.userId,row.roleId,row.roleName,
                 row.trainDuration,row.validity, row.crsId, row.title,row.status, row.badgeUrl, row.description, row.extDoc);}}>
-                    Apply
+                    &nbsp;Add&nbsp;
             </Button>;
         }else{
             return <Button variant="success" onClick={function(event){ handleShow(); func2(row.userId,row.roleId,row.roleName,

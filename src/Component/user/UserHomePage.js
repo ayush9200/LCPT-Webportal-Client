@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
 import { Tabs, Tab } from 'react-bootstrap';
-import UserEmployment from './UserEmployment';
+//import UserEmployment from './UserEmployment';
 import UserProfile from './UserProfile';
-import UserAuditReport from './UserAuditReport';
+//import UserAuditReport from './UserAuditReport';
+import UserCourseApplication from './UserCourseApplication';
+import UserCourses from './UserCourses';
 
 
 function UserHomePage(props) {
@@ -21,12 +23,15 @@ function UserHomePage(props) {
                 <Tab eventKey="profile" title="Profile">
                     <UserProfile homeId={props.homeID} />
                 </Tab>
-                <Tab eventKey="createUser" title="Employment">
-                    <UserEmployment/>
+                <Tab eventKey="courses" title="Courses">
+                    <UserCourseApplication/>
                 </Tab>
-                <Tab eventKey="verifyCredentials" title="Report" >
+                <Tab eventKey="employment" title="Employment">
+                    <UserCourses/>
+                </Tab>
+                {/* <Tab eventKey="verifyCredentials" title="Report" >
                     <UserAuditReport homeId={props.homeID} />
-                </Tab>
+                </Tab> */}
             </Tabs></div>)
 }
 
