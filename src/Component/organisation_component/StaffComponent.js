@@ -239,12 +239,12 @@ export default function StaffComponent() {
     function saveAssignRoleDetail() {
         if(positionDetail){
             const staffListUrl = BASE_API_URL+"orgnization/addNewStaff"
-            console.log(staffDetail)
-            axios.post(staffListUrl, staffDetail)
+            console.log(positionDetail)
+            axios.post(staffListUrl, positionDetail)
                 .then(res => {
                     console.log(res);
                     //setStaffList(res.data)
-                    handleCloseStaff()
+                    setShowAssignRole(false)
                     getStaffData()
     
                     setNotificationText("New Role was assigned");
@@ -259,8 +259,9 @@ export default function StaffComponent() {
         let newPositionDetailObj = {};
         newPositionDetailObj = { ...positionDetail };
         newPositionDetailObj.role_id = roleDetails[event.target.value].role_id
-        newPositionDetailObj.dob = roleDetails[event.target.value].role_name
-        
+        newPositionDetailObj.role_name = roleDetails[event.target.value].role_name
+        setPositionDetail(newPositionDetailObj)
+
     }
     function assignUserRole(event){
 
