@@ -75,7 +75,7 @@ function UserAuditReport(props) {
             fetchData();
 
         });
-    }, [params]);
+    }, [props.homeId]);
 
     async function fetchData() {
         const getUserData = BASE_URL_USER + params

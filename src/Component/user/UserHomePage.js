@@ -27,6 +27,7 @@ function UserHomePage(props) {
                 <Tab eventKey="verifyCredentials" title="Report" >
                     <UserAuditReport homeId={props.homeID} />
                 </Tab>
+                
             </Tabs></div>)
 }
 
