@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Form, Row, Col, Button, Container, Table, Modal, Spinner, Alert } from 'react-bootstrap';
+import { Form, Row, Col, Button, Container, Modal, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import { FaFileExcel, FaRegPaperPlane, FaUserCheck } from 'react-icons/fa';
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 
 var today = new Date();
@@ -24,44 +31,51 @@ function UserCourses(props) {
     }
 
     const [mappingData, setMappingData] = useState([{ '': '' }]);
-    const [orgId, setorgId] = useState(0);
+    //const [orgId, setorgId] = useState(0);
     const [homeId, sethomeId] = useState(0);
     const [roleId, setroleId] = useState(0);
     const [userId, setuserId] = useState(0);
     const [homeList, sethomelist] = useState([{ '': '' }]);
-    const [mappedHomeList, setmappedHomeList] = useState([{ '': '' }]);
+    //const [mappedHomeList, setmappedHomeList] = useState([{ '': '' }]);
     const [roleList, setroleList] = useState([{ '': '' }]);
-    const [courseList, setCourseList] = useState([]);
-    const [completedCourses, setCompletedCourses] = useState([]);
-    const [pendingCourses, setPendingCourses] = useState([]);
+    //const [courseList, setCourseList] = useState([]);
+    //const [completedCourses, setCompletedCourses] = useState([]);
+    //const [pendingCourses, setPendingCourses] = useState([]);
+    const [completeCourses, setCompleteCourses] = useState([]);
     const [waitMsg, setWaitMsg] = useState('Loading..');
 
     const [modalInfo, setmodalInfo] = useState('');
     const [show, setshow] = useState(false);
     const [alertshow, setalertShow] = useState(false);
+    const [successAlertshow, setsuccessAlertshow] = useState(false);
 
-    const [dateTime, setDateTime] = useState(date);
     const [courseBadgeUrl, setCourseBadgeUrl] = useState('');
     const [selectedCourseId, setSelectedCourseId] = useState('');
 
+    const [format, setformat] = useState(0);
+    const [empEmailId, setempEmailId] = useState('');
+    const [userList, setUserList] = useState([]);
+    const [mapHomeList, setmapHomeList] = useState([]);
+    const [mapRoleList, setmapRoleList] = useState([]);
 
 
 
 
-
+    const BASE_URL_EMAIL_TO_EMPLOYER = BASE_API_URL + "user/sendEmailEmp";
     const BASE_URL_GET_All_HOMELIST = BASE_API_URL + "orgnization/getAllHomes";
-    const BASE_URL_GET_ROLELIST = BASE_API_URL + "orgnization/getRoleByHomeId/";
+    //const BASE_URL_GET_ROLELIST = BASE_API_URL + "orgnization/getRoleByHomeId/";
     const BASE_URL_GET_COURSELIST = BASE_API_URL + "course/fetchCourseDetails";
     const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL + "user/fetchUHRdetails/";
     const BASE_URL_SAVE_BADGE_URL = BASE_API_URL + "user/saveBadgeUrl/";
     const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL + "orgnization/getHomeInfo/";
+    const BASE_URL_USER = BASE_API_URL + "user/getUser/";
 
     useEffect(() => {
         if (sessionStorage.getItem("userType") != 'admin' && sessionStorage.getItem("userType") != 'user') {
             return window.location.href = BASE_URL_FRONTEND;
 
         }
-        // fetchData();
+        fetchData();
         console.log('User ID: ', params);
         setuserId(params);
         const getUserHomeRoleData = BASE_URL_GET_USER_HOME_ROLE + params;
@@ -76,6 +90,14 @@ function UserCourses(props) {
         });
     }, [params]);
 
+    async function fetchData() {
+        const getUserData = BASE_URL_USER + params
+        let response = await axios.get(
+            getUserData
+        );
+        setUserList(response.data.data);
+    }
+
 
     const getHomeList = (resp) => {
         try {
@@ -84,46 +106,56 @@ function UserCourses(props) {
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
-                console.log(" ========== Home List > ", response.data);
-
-                const userMappedHome = resp.map((c) => {
-                    const inner = response.data.find(
+                console.log(" ========== All Home List > ", response.data);
+                var allHomesList = response.data;
+                var onlyMappedHome = resp;
+                var list = [];
+                const userMappedHomes = allHomesList.map((c) => {
+                    const inner = onlyMappedHome.find(
                         (s) => {
-                            console.log(c.home_id, "   ", s.home_id);
+                            //console.log(c.home_id, "   ", s.home_id);
                             if (c.home_id === s.home_id) {
-                                return (s);
+                                list.push(c);
                             }
                         });
-
-                    // ((allHome)=>{
-                    //     if(c.home_id === allHome.home_id) 
-                    //         return (allHome)
-                    // });
                     return (inner);
                 });
-                console.log('==== Only Required home === ', userMappedHome);
-                setmappedHomeList(userMappedHome);
+                setmapHomeList(list);
+                //setmappedHomeList(userMappedHomes);
                 sethomelist(response.data);
-                console.log('==== Only Required home 2 === ', homeList);
             });
-            console.log("Home list : " + homeList);
-
         } catch (error) {
             console.log(error);
         }
     };
 
     const filterRoleDropdown = e => {
-        console.log("Dropdown filter : ", homeList);
         const { name, value } = e.target
-        console.log(" Value ", value);
         sethomeId(value);
-
         if (value !== 0) {
             setroleList([{ '': '' }]);
             const getUserData = BASE_URL_GET_HOME_ROLE_CRS_LIST + value
             axios.get(getUserData).then(function (response) {
                 setroleList(response.data.result);
+                var list = [];
+                const userMappedHomes = response.data.result.map((c) => {
+                    const inner = mappingData.find(
+                        (s) => {
+                            // console.log("Check roles Home => ",c.home_id, "   ", s.home_id);
+                            if (c.home_id === s.home_id) {
+                                //console.log("Check roles Role => ",c.role_id);
+                                s.role_arr.find(
+                                    (v) => {
+                                        //console.log("Role inner loop => ",v ," ", v.role_id == c.role_id, " ", v.emp_status == "Active")
+                                        if (v.role_id == c.role_id && v.emp_status == "Active") {
+                                            list.push(c)
+                                        }
+                                    })
+                            }
+                        });
+                    return (inner);
+                });
+                setmapRoleList(list);
                 if (response.data.result.length === 0) {
                     setWaitMsg("There is no role mapped with selected Home.")
                     setalertShow(true);
@@ -133,19 +165,6 @@ function UserCourses(props) {
                     console.log(error);
                 });;
         }
-        // const roleHomeMapping = mappingData.map((c)=>{  
-        //     sethomeId(value);
-        //     setuserId(c.user_id);
-        //     //setroleList([{'':''}]);
-        //     console.log('Value ',value,' Select Home ', c.home_id);
-        //     if(String(value) === String(c.home_id)){
-        //         if(c.role_arr && c.role_arr.length>0){
-        //         console.log('Role going on : ', c.role_arr);
-        //         setroleList(c.role_arr);
-        //         return (c.role_arr);
-        //         }
-        //     }
-        // });    
     }
 
     const setRoleValue = e => {
@@ -155,12 +174,12 @@ function UserCourses(props) {
 
     const fetchCourseDetails = () => {
         try {
-            const body = JSON.stringify({ userId: userId, orgId: orgId, roleId: roleId, homeId: homeId });
-            console.log("Body to send => ", body);
+            const body = JSON.stringify({ userId: userId, orgId: "", roleId: roleId, homeId: homeId });
+            //console.log("Body to send => ", body);
             var resJson = [];
-            setCompletedCourses([{ '': '' }]);
-            setPendingCourses([{ '': '' }]);
+            setCompleteCourses([]);
             setWaitMsg('');
+            (mapRoleList.some(item => item.role_id == roleId)) ? setsuccessAlertshow(true) : setsuccessAlertshow(false);
             axios.post(BASE_URL_GET_COURSELIST, body, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -169,10 +188,29 @@ function UserCourses(props) {
                 console.log(res);
                 resJson = res.data;
                 if (resJson !== undefined) {
-                    setCourseList(resJson);
+                    //setCourseList(resJson);
                     //setCompletedCourses(courseList.completedCourses);
                     //setPendingCourses(courseList.pendingCourses);
-                    lastMethodCall(resJson);
+                    var list = [];
+                    var courseIds = [];
+                    const inner = resJson.completedCourses.find(
+                        (s) => {
+                            if (!courseIds.includes(s.crsId)) {
+                                courseIds.push(s.crsId);
+                                list.push(s)
+                            }
+
+                        });
+                    const inner2 = resJson.pendingCourses.find(
+                        (s) => {
+                            if (!courseIds.includes(s.crsId)) {
+                                courseIds.push(s.crsId);
+                                list.push(s)
+                            }
+
+                        });
+                    setCompleteCourses(list);
+                    //lastMethodCall(resJson);
                     if (resJson.completedCourses.length === 0
                         && resJson.pendingCourses.length === 0) {
                         setWaitMsg("Not able to fetch courses.\nNiether user has completed any course nor any course is registered with selected role. \n\nPlease contact your LCPT support team.")
@@ -197,30 +235,13 @@ function UserCourses(props) {
         }
     }
 
-    const lastMethodCall = (passresJson) => {
-        try {
-            setCourseList(passresJson.allCourseList);
-            setCompletedCourses(passresJson.completedCourses);
-            setPendingCourses(passresJson.pendingCourses);
-            console.log("Course list : " + courseList);
-            console.log("Pending Courses : " + pendingCourses);
-            console.log("CompletedCourses : " + completedCourses);
-            console.log("Course list All in system : " + courseList.allCourseList);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-
     const setBadgeUrlMethod = e => {
         const { name, value } = e.target
         setCourseBadgeUrl(value);
     };
 
     const submitBadgeUrl = () => {
-        // alert(badgeUrl);
         setshow(false);
-        //const [selectedCourseId, setSelectedCourseId] = useState('');
         try {
             const body = JSON.stringify({ userId: userId, courseId: selectedCourseId, badgeUrl: courseBadgeUrl });
             axios.post(BASE_URL_SAVE_BADGE_URL, body, {
@@ -278,114 +299,350 @@ function UserCourses(props) {
         </Modal>);
     }
 
-    const printContent2 = () => {
-        let printContents = document.getElementById('printContent').innerHTML;
-        let originalContents = document.body.innerHTML;
+    const buttonFormatter = (data, row) => {
+        if (row.status === "Incomplete") {
+            return <Button variant="warning" onClick={function (event) {
+                handleShow(); func2(row.userId, row.roleId, row.roleName,
+                    row.trainDuration, row.validity, row.crsId, row.title, row.status, row.badgeUrl, row.description, row.extDoc);
+            }}>
+                &nbsp;Add&nbsp;
+            </Button>;
+        } else {
+            return <Button variant="success" onClick={function (event) {
+                handleShow(); func2(row.userId, row.roleId, row.roleName,
+                    row.trainDuration, row.validity, row.crsId, row.title, row.status, row.badgeUrl, row.description, row.extDoc);
+            }}>
+                View
+            </Button>;
+        }
+    };
 
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
+    const options = {
+        // pageStartIndex: 0,
+        sizePerPage: 5,
+        hideSizePerPage: false,
+        hidePageListOnlyOnePage: false
+    };
+
+
+    const columns = [
+        {
+            dataField: "crsId",
+            text: "Course ID",
+            sort: true,
+            filter: textFilter(),
+            style: {
+                fontWeight: 'bold',
+                height: '5%'
+            }
+
+        },
+        {
+            dataField: "title",
+            text: "Title",
+            sort: true,
+            filter: textFilter(),
+            title: (cell, row, rowIndex, colIndex) => `${cell}`
+        },
+        {
+            dataField: "trainDuration",
+            text: "Training Duration",
+        },
+        {
+            dataField: "validity",
+            text: "Validity",
+        },
+        {
+            dataField: "status",
+            text: "Status",
+        },
+        {
+            dataField: "valid",
+            text: "Valid Upto",
+        },
+        {
+            dataField: "",
+            text: "View",
+            formatter: buttonFormatter
+        }];
+
+    const updateEmpEmailId = e => {
+        const { name, value } = e.target;
+        setempEmailId(value);
     }
 
-    const componentRef = useRef();
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-    });
+    const sendDataThroughEmail = e => {
+        var fileBlob = "";
+        var data = new FormData();
+        data.append("userId", params);
+        data.append("emailId", empEmailId);
+        if (format == 0) {
+            //excel
+            fileBlob = exportAuditExcel();
+        } else {
+            //pdf
+            fileBlob = exportAuditPDF();
+        }
+        data.append("file", fileBlob);
+        axios.post(BASE_URL_EMAIL_TO_EMPLOYER, data)
+            .then(response => {
+                console.log(response);
+            });
+    }
 
+    //pdf
+    var exportAuditPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+        const marginLeft = 5;
+        const doc = new jsPDF(orientation, unit, size);
+        doc.setFontSize(15);
+        const title = "LCPT User Audit Report";
+        var headers = [["userName", "user_id", "email", "number", "dob", "address", "crsId",
+            "title", "status", "validity", "sharedEmp", "extDoc", "trainDuration"]];
+        var dataArr = [];
+        for (let i = 0; i < completeCourses.length; i++) {
+            var tempArr = [userList.userName, userList.user_id, userList.email, userList.number, userList.dob, userList.address,
+            completeCourses[i]["crsId"], completeCourses[i]["title"], completeCourses[i]["status"], completeCourses[i]["validity"],
+            completeCourses[i]["sharedEmp"], completeCourses[i]["extDoc"], completeCourses[i]["trainDuration"]];
+            dataArr.push(tempArr);
+        }
+        let content = {
+            startY: 50,
+            head: headers,
+            body: dataArr
+        };
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        var blob = doc.output('blob')
+        return blob;
+    }
+
+    const formatChange = e => {
+        const { name, value } = e.target;
+        (value == "pdf") ? setformat(1) : setformat(0);
+    }
+
+    //Excel
+    const exportAuditExcel = async e => {
+        var arrayOfData = [];
+        {
+            completeCourses?.map((data, id) => {
+                //console.log(" >><<< ", data)
+                var mapForCourses = {
+                    'USER NAME': userList.userName,
+                    'USER ID': userList.user_id,
+                    'EMAIL ID': userList.email,
+                    'CONTACT NUMBER': userList.number,
+                    'DATE OF BIRTH': userList.dob,
+                    'ADDRESS': userList.address + ", " + userList.city + ", " + userList.state + " , " + userList.postalCode,
+                    'COURSE ID': data.crsId,
+                    'COURSE TITLE': data.title,
+                    'STATUS': data.status,
+                    'VALIDITY': data.validity,
+                    'SHARED WITH EMPLOYER': data.sharedEmp,
+                    'EXTERNAL DOCUMENT': data.extDoc,
+                    'TRAINING DURATION': data.trainDuration
+                }
+                arrayOfData.push(mapForCourses);
+            })
+        };
+
+        const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const data = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+        console.log(data);
+        return data;
+        //XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
+    }
 
     return (
         <div>
             <Container>
+                <Alert variant="danger" show={alertshow} onClose={() => setalertShow(false)} dismissible>
+                    <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                    <p>{waitMsg}</p>
+                </Alert>
+                <Alert variant="success" show={successAlertshow} onClose={() => setsuccessAlertshow(false)} dismissible>
+                    <span><FaUserCheck /><p style={{ display: 'inline' }}>&nbsp; Course details are available to your employer.</p></span>
+                </Alert>
                 <Row>
-                    <Alert variant="danger" show={alertshow} onClose={() => setalertShow(false)} dismissible>
-                        <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
-                        <p>
-                            {waitMsg}
-                        </p>
-                    </Alert>
-                    <Col xs={6} md={3}>
-                        <h2 style={{ textAlign: "left" }}>Employer Details</h2>
-                        <Form style={{ minHeight: '15pc' }}>
-                            <Row className="mb-3">
+                    <Col xs={6} md={12} className='shadow p-3 mb-5 bg-white rounded'>
+                        <h2>Employer Details</h2>
+                        <Row>
+                            <Col xs={6} md={5}>
                                 <Form.Group as={Col} controlId="formGridHome">
                                     <Form.Label>Home</Form.Label>
                                     <Form.Select defaultValue="Choose..." onChange={filterRoleDropdown}>
                                         <option> -- Select Home -- </option>
                                         {homeList?.map((data, id) => (
-                                            <option value={data.home_id} key={data.home_id}>{data.name}</option>
+                                            (mapHomeList.some(item => item.home_id == data.home_id)) ? <option value={data.home_id} key={data.home_id}>{data.name} &nbsp; &#10004;</option> : <option value={data.home_id} key={data.home_id}>{data.name}</option>
                                         ))}
                                     </Form.Select>
                                 </Form.Group>
-                            </Row>
-                            <Row className="mb-3">
+                            </Col>
+                            <Col xs={6} md={5}>
                                 <Form.Group as={Col} controlId="formGridRole">
                                     <Form.Label>Role</Form.Label>
                                     <Form.Select defaultValue="Choose..." onChange={setRoleValue}>
                                         <option> -- Select Role -- </option>
+                                        {roleList?.map((data, id) => (
+                                            (mapRoleList.some(item => item.role_id == data.role_id)) ? <option value={data.role_id} key={data.role_id}>{data.role_name} &nbsp; &#10004;</option> : <option value={data.role_id} key={data.role_id}>{data.role_name}</option>
+                                        ))}
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                            <Col xs={6} md={2} style={{ marginTop: '2pc' }}>
+                                <Button variant="primary" onClick={(e) => {
+                                    fetchCourseDetails();
+                                }}>Fetch details</Button>
+                            </Col>
+                        </Row>
+                        <br></br>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <br></br>
+                    <Col xs={12} md={12}>
+                        <BootstrapTable columns={columns}
+                            keyField="id"
+                            data={completeCourses}
+                            pagination={paginationFactory(options)}
+                            filter={filterFactory()}
+                            filterPosition="top"
+                            striped
+                            hover
+                            condensed />
+                    </Col>
+                </Row>
+                <br></br>
+                <br></br>
+
+                {/* <Form style={{minHeight: '13pc'}}>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} controlId="formGridHome">
+                                    <Form.Label>Home</Form.Label>
+                                    <Form.Select defaultValue="Choose..." onChange={filterRoleDropdown}>
+                                    <option> -- Select Home -- </option>
+                                    {homeList?.map((data, id) => (
+                                        <option value={data.home_id} key={data.home_id}>{data.name}</option>
+                                    ))} 
+                                    </Form.Select>
+                                </Form.Group>
+                                </Row>
+                                <Row className="mb-3">
+                                <Form.Group as={Col} controlId="formGridRole">
+                                    <Form.Label>Role</Form.Label>
+                                    <Form.Select defaultValue="Choose..." onChange={setRoleValue}>
+                                    <option> -- Select Role -- </option>
                                         {roleList?.map((data, id) => (<option value={data.role_id} key={data.role_id}>{data.role_name}</option>))}
                                     </Form.Select>
                                 </Form.Group>
                             </Row>
-                            <br></br>
-                            <Row>
-                                <Form.Group as={Col} controlId="formGridCheckbox">
-                                    <Form.Check type="checkbox" label="Share with employer" />
-                                </Form.Group>
-                            </Row>
+                        
+                            <div class="vr"></div>
                             <br></br>
                             <Row>
                                 <Button variant="primary" onClick={(e) => {
-                                    fetchCourseDetails();
-                                }}>Fetch details</Button>
+                                        fetchCourseDetails();
+                                    }}>Fetch details</Button>
                             </Row>
-                        </Form>
-                    </Col>
-                    <Col xs={12} md={9}>
-                        <h2>Enrolled Courses</h2>
-                        <Table striped bordered hover style={{ maxHeight: '35pc' }}>
-                            <thead>
-                                <tr>
-                                    <th>Code</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>External Document</th>
-                                    <th>Shared with Employer</th>
-                                    <th>Status</th>
-                                    <th>View</th>
-                                </tr>
-                            </thead>
-                            {completedCourses?.map((data, id) => {
-                                if (data.crsId === undefined || data.crsId === "") {
-                                    return <tbody key={id}>
-                                        <tr >
-                                            <td colSpan={13} className="text-center" >
-                                                <Spinner animation="border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
-                                                </Spinner>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                } else {
-                                    return <tbody key={id}>
-                                        <tr >
-                                            <td hidden={true}>{data.homeId}</td>
-                                            <td hidden={true}>{data.roleId}</td>
-                                            <td hidden={true}>{data.userId}</td>
-                                            <td hidden={true}>{data.roleName}</td>
-                                            <td hidden={true}>{data.trainDuration}</td>
-                                            <td hidden={true}>{data.validity}</td>
+                        </Form> */}
+                <Row>
+                    <Col xs={6} md={12} className='shadow p-3 mb-5 bg-white rounded'>
+                        <h2 className='text-center'>Generate Audit Reports</h2>
+                        <Row>
+                            <Col xs={6} md={4}>
+                                <p className='text-muted text-left'>Step 1</p>
+                                <Form.Group id="formGridCheckbox">
+                                    <Form.Label>Please select format for Audit Report</Form.Label>
+                                    <Form.Select name="format" onChange={formatChange}>
+                                        <option> -- Choose your format -- </option>
+                                        <option value="excel" key="1">Excel</option>
+                                        <option value="pdf" key="2"> PDF</option>
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                            <Col xs={6} md={4}>
+                                <p className='text-muted text-left'>Step 2</p>
+                                <Form.Group as={Col} controlId="formGridName">
+                                    <Form.Label>Employer's Email address</Form.Label>
+                                    <Form.Control type="input" name="email" onBlur={updateEmpEmailId} placeholder="abc@xyz.com" />
+                                </Form.Group>
+                            </Col>
+                            <Col xs={6} md={4}>
+                                <p className='text-muted text-left'>Step 3</p>
+                                <Row>
+                                    <Col xs={6} md={6} style={{ marginTop: '1pc' }}>
+                                        <Form.Group>
+                                            <Form.Check type="checkbox" label="Verify and send all data to Employer" />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col xs={6} md={6} style={{ marginTop: '1pc' }}>
+                                        <Form.Group as={Col} controlId="formGridName">
+                                            <Button variant="primary" onClick={sendDataThroughEmail}><FaRegPaperPlane /> Send</Button>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
 
-                                            <td>{data.crsId}</td>
-                                            <td>{data.title}</td>
-                                            <td>{data.title}</td>
-                                            <td>{data.extDoc}</td>
-                                            <td>{data.sharedEmp}</td>
-                                            <td>{data.status}</td>
-                                            <td>
-                                                {/* <OverlayTrigger trigger="click" placement="left" overlay={popover}>
+
+                            </Col>
+                            <br></br>
+                        </Row>
+                    </Col>
+                </Row>
+
+            </Container>
+            {show ? <ModalContent /> : null}
+            {/* <h2>Enrolled Courses</h2>
+            <Table striped bordered hover style={{maxHeight: '35pc'}}>
+                <thead>
+                    <tr>
+                    <th>Code</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>External Document</th>
+                    <th>Shared with Employer</th>
+                    <th>Status</th>
+                    <th>View</th>
+                    </tr>
+                </thead>
+                {completedCourses?.map((data, id) => { 
+                    if(data.crsId === undefined || data.crsId === ""){
+                        return <tbody key={id}>
+                        <tr >
+                            <td colSpan={13} className="text-center" >
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                            </td>
+                        </tr>
+                    </tbody>
+                    }else{
+                        return <tbody key={id}>
+                            <tr >
+                                <td hidden={true}>{data.homeId}</td>
+                                <td hidden={true}>{data.roleId}</td>
+                                <td hidden={true}>{data.userId}</td>
+                                <td hidden={true}>{data.roleName}</td>
+                                <td hidden={true}>{data.trainDuration}</td>
+                                <td hidden={true}>{data.validity}</td>
+
+                                <td>{data.crsId}</td>
+                                <td>{data.title}</td>
+                                <td>{data.title}</td>
+                                <td>{data.extDoc}</td>
+                                <td>{data.sharedEmp}</td>
+                                <td>{data.status}</td>
+                                <td>
+                                    {/* <OverlayTrigger trigger="click" placement="left" overlay={popover}>
                                         <Button variant="success">...</Button>
                                     </OverlayTrigger> */}
-                                                <Button variant="warning" onClick={function (event) {
+            {/* <Button variant="warning" onClick={function (event) {
                                                     handleShow(); func2(data.userId, data.roleId, data.roleName,
                                                         data.trainDuration, data.validity, data.crsId, data.title, 'completed');
                                                 }}>
@@ -397,15 +654,7 @@ function UserCourses(props) {
                                 }
                             })}
                         </Table>
-                    </Col>
-                </Row>
-                <br></br>
-                <br></br>
-                <hr></hr>
-                <br></br>
-                <br></br>
-                <Row>
-                    <h2>Pending Courses</h2>
+                        <h2>Pending Courses</h2>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
@@ -451,86 +700,62 @@ function UserCourses(props) {
                                         }}>
                                             Details
                                         </Button></td>
-                                    </tr>
-                                </tbody>
-                            }
-                        })}
-                    </Table>
-                </Row>
-                <Row className='text-center'>
-                    <Col xs={12} style={{ alignContent: 'center' }}>
-                        <div>
-                            <br></br>
-                            <br></br>
-                            <h4>Print all courses with details</h4> <Button variant="primary" >Print</Button>
-                            {/* <UserProfile ref={componentRef} />
-      <button onClick={handlePrint}>Print this out!</button> */}
-                        </div>
-                        <br></br>
-                    </Col>
-                </Row>
-            </Container>
-            {show ? <ModalContent /> : null}
-            <div hidden={true} id='printContent'>
-                <Row>
-                    <Col className='text-center' style={{ color: '#0f6fc5' }}>
-                        <h1>LCPT Course report</h1>
-                        <h3>User Registration ID: {userId}</h3>
-                        <h3>Date: {dateTime}</h3>
-                        <hr></hr>
-                    </Col>
-                    <Col>
-                        <Table striped bordered hover className='py-4'>
-                            <thead>
-                                <tr>
-                                    <th>Course Code</th>
-                                    <th>Title</th>
-                                    <th>Designation</th>
-                                    <th>Description</th>
-                                    <th>External Document</th>
-                                    <th>Shared with Employer</th>
-                                    <th>Status</th>
-                                    <th>Training Duration</th>
-                                    <th>Course Validity</th>
-                                </tr>
-                            </thead>
-                            {completedCourses?.map((data, id) => {
-                                return <tbody key={id}>
-                                    <tr >
-                                        <td>{data.crsId}</td>
-                                        <td>{data.title}</td>
-                                        <td>{data.title}</td>
-                                        <td>{data.roleName}</td>
-                                        <td>{data.extDoc}</td>
-                                        <td>{data.sharedEmp}</td>
-                                        <td>{data.status}</td>
-                                        <td>{data.trainDuration}</td>
-                                        <td>{data.validity}</td>
-                                    </tr>
-                                </tbody>
-                            })}
-                            {pendingCourses?.map((data, id) => {
-                                return <tbody key={id}>
-                                    <tr >
-                                        <td>{data.crsId} **</td>
-                                        <td>{data.title}</td>
-                                        <td>{data.title}</td>
-                                        <td>{data.roleName}</td>
-                                        <td>{data.extDoc}</td>
-                                        <td>{data.sharedEmp}</td>
-                                        <td>{data.status}</td>
-                                        <td>{data.trainDuration}</td>
-                                        <td>{data.validity}</td>
-                                    </tr>
-                                </tbody>
-                            })}
-                        </Table>
-                    </Col>
-                    <hr></hr>
-                    <Col><p className='text-muted'>** Course(s) needed to be completed</p><p className='text-muted'>Course status are subject to change as per approval from employer</p></Col>
-                </Row>
+                                        
+                            </tr>
+                        </tbody>
+                        }
+                })} }
+            </Table> */}
 
-            </div>
+            {/* <h2>Pending Courses</h2>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>Code</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>External Document</th>
+                        <th>Shared with Employer</th>
+                        <th>Status</th>
+                        <th>View</th>
+                        </tr>
+                    </thead>
+                    {pendingCourses?.map((data, id) => {
+                        if(data.crsId === undefined || data.crsId === ""){
+                            return <tbody key={id}>
+                            <tr >
+                                <td colSpan={13} className="text-center" >
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                                    </td>
+                            </tr>
+                        </tbody>
+                        }else{
+                            return <tbody key={id}>
+                                <tr >
+                                    <td hidden={true}>{data.homeId}</td>
+                                    <td hidden={true}>{data.roleId}</td>
+                                    <td hidden={true}>{data.userId}</td>
+                                    <td hidden={true}>{data.roleName}</td>
+                                    <td hidden={true}>{data.trainDuration}</td>
+                                    <td hidden={true}>{data.validity}</td>
+
+                                    <td>{data.crsId}</td>
+                                    <td>{data.title}</td>
+                                    <td>{data.title}</td>
+                                    <td>{data.extDoc}</td>
+                                    <td>{data.sharedEmp}</td>
+                                    <td>{data.status}</td>
+                                    <td><Button variant="warning" onClick={function(event){ handleShow(); func2(data.userId,data.roleId,data.roleName,
+                                            data.trainDuration,data.validity, data.crsId, data.title, 'pending');}}>
+                                                Details
+                                            </Button></td>
+                                </tr>
+                            </tbody>
+                        }
+                     })}
+                </Table> */}
         </div>
 
     )

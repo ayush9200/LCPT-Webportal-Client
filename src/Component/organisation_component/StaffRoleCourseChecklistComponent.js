@@ -15,6 +15,8 @@ import ToastBody from 'react-bootstrap/ToastBody'
 import Spinner from 'react-bootstrap/Spinner'
 import { BASE_API_URL } from '../Url-config';
 import { BASE_URL_FRONTEND } from '../Url-config';
+import { Tabs, Tab } from 'react-bootstrap'
+
 export default function StaffRoleCourseChecklistComponent() {
 
 
@@ -139,6 +141,17 @@ export default function StaffRoleCourseChecklistComponent() {
     function getCourseListByUser() {
 
     }
+    function setArhiveStatus(role_id,id){
+console.log(role_id,id)
+axios.put(BASE_API_URL + "orgnization/setArchiveStatus/" ,{home_id:homeId,user_id:userId,role_id:role_id,id:id})
+.then(res => {
+    console.log(res)
+    
+})
+.catch(err => {
+    console.log(err);
+})
+    }
 
     return (
         <div className='org-container'>
@@ -152,15 +165,19 @@ export default function StaffRoleCourseChecklistComponent() {
 
                 <div style={{ width: "100%" }}>
                     <h1>Course Requirments for roles of user : {userId}</h1>
-                    <div style={{ display: "flex", justifyContent: "space-evenly", flexDirection: "row" }}>
+                    <div>
+                        <Tabs  id="uncontrolled-tab-example" className="mb-3" fill>
                         {staffRoleDetails.map((data, id) => {
                             return (
-                                <div>
+                                
+                                    <Tab eventKey={data.role_id} title={data.role_name} key={id}>
                                     <h2>Courses completion Status: {data.course_status}</h2>
+                                    {/* <h2>Role Status: {data.emp_status}</h2> */}
 
-                                    <Table style={{ width: "100%", flex: "50%" }} id={id}>
+                                    <Table style={{width:"80%"}} id={id}>
                                         <thead>
-                                            <th>Course</th>
+                                            <th>Course ID</th>
+                                            <th>Course Title</th>
                                             <th style={{ textAlign: "center" }}>{data.role_name}</th>
                                         </thead>
 
@@ -168,12 +185,9 @@ export default function StaffRoleCourseChecklistComponent() {
                                             return (
                                                 <tr>
                                                     <td>{item.id}</td>
+                                                    <td>{item.details}</td>
                                                     <td> <input
                                                         type="checkbox" style={{ transform: "scale(1.5)", marginLeft: "50%" }}
-
-                                                        // defaultChecked={(courseListDetails.find(x =>
-                                                        //     x.course_id == item.id
-                                                        // ) !== undefined)} disabled
                                                         defaultChecked={item.isComp} disabled
                                                     /></td>
                                                 </tr>
@@ -184,14 +198,21 @@ export default function StaffRoleCourseChecklistComponent() {
 
 
                                     </Table>
-                                    <ReactHTMLTableToExcel
+                                     <ReactHTMLTableToExcel
                                         id="test-table-xls-button"
                                         className="download-table-xls-button btn btn-dark mb-3"
                                         table={id}
                                         filename="tablexls"
                                         sheet="tablexls"
                                         buttonText="Download In Excel" />
-                                </div>
+
+                                        <Button style={{marginTop:"-1%",marginLeft:"3%"}} variant='warning' onClick= {(e) => {
+                                            {setArhiveStatus(data.role_id,id)}
+                                        }}
+                                        >Archive Role</Button>
+                                    </Tab>
+                                   
+                                
 
 
                             )
@@ -199,7 +220,7 @@ export default function StaffRoleCourseChecklistComponent() {
 
                         })
                         }
-
+                        </Tabs>
                     </div>
                 </div>
             )

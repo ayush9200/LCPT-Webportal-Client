@@ -8,7 +8,8 @@ import { BASE_URL_FRONTEND } from '../Url-config';
 import { FaFileExcel, FaRegPaperPlane, FaUserCheck } from 'react-icons/fa';
 //import { PDFDownloadLink } from '@react-pdf/renderer';
 //import PdfAuditReport from './PdfAuditReport';
-import { jsPDF } from 'jspdf';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 //import PDF, { Text, AddPage, Line, Image, Html } from 'jspdf-react';
 
@@ -39,21 +40,24 @@ function UserAuditReport(props) {
     const [finalList, setFinalList] = useState([{ '': '' }]);
     const [mappingData, setMappingData] = useState([{ '': '' }]);
 
-    const [roleList, setroleList] = useState([{ '': '' }]);
-    const [homeList, setHomeList] = useState([{ 'home_id': '0' }]);
+    const [roleList, setroleList] = useState([{'':''}]);
+    const [format, setformat] = useState(0); 
+    const [homeList, setHomeList] = useState([{'home_id':'0'}]);
     const [selectedHomeId, setselectedHomeId] = useState(0);
+    const [empEmailId, setempEmailId] = useState(''); 
 
     const [msg, setmsg] = useState('');
 
 
     // https://lcpt-webportal.herokuapp.com/
-    const BASE_URL_GET_COURSELIST = BASE_API_URL + "course/fetchCourseDetails";
-    const BASE_URL_USER = BASE_API_URL + "user/getUser/";
-    const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL + "user/fetchUHRdetails/";
-    const BASE_URL_GET_APPLIED_CRS = BASE_API_URL + "course/fetchPendingCourses/";
-    const BASE_URL_GET_ALL_HOMELIST = BASE_API_URL + "orgnization/getAllHomes";
-    const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL + "orgnization/getHomeInfo/";
-    const BASE_URL_GET_HRC_LIST = BASE_API_URL + "orgnization/getHRCInfo/";
+    const BASE_URL_GET_COURSELIST = BASE_API_URL+"course/fetchCourseDetails";
+    const BASE_URL_USER = BASE_API_URL+"user/getUser/";
+    const BASE_URL_GET_USER_HOME_ROLE = BASE_API_URL+"user/fetchUHRdetails/";
+    const BASE_URL_GET_APPLIED_CRS = BASE_API_URL+"course/fetchPendingCourses/";
+    const BASE_URL_GET_ALL_HOMELIST = BASE_API_URL+"orgnization/getAllHomes";
+    const BASE_URL_GET_HOME_ROLE_CRS_LIST = BASE_API_URL+"orgnization/getHomeInfo/";
+    const BASE_URL_EMAIL_TO_EMPLOYER = BASE_API_URL+"user/sendEmailEmp";
+    
 
     useEffect(() => {
         if (sessionStorage.getItem("userType") != 'admin' && sessionStorage.getItem("userType") != 'user') {
@@ -174,11 +178,10 @@ function UserAuditReport(props) {
         }
     }
 
-    //Excel
-    const printAuditReport = async e => {
-        var arrayOfData = [];
-        {
-            finalList?.map((data, id) => {
+     //Excel
+     const exportAuditExcel = async e =>{
+         var arrayOfData = [];
+            {finalList?.map((data, id) => { 
                 //console.log(" >><<< ", data)
                 var mapForCourses = {
                     'USER NAME': userList.userName,
@@ -196,34 +199,64 @@ function UserAuditReport(props) {
                     'TRAINING DURATION': data.trainDuration
                 }
                 arrayOfData.push(mapForCourses);
-            })
-        };
+            })};
 
-        const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-        XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-        XLSX.writeFile(workbook, "LCPT_UserAuditReport_" + userList.user_id + ".xlsx");
-    }
+            const worksheet = XLSX.utils.json_to_sheet(arrayOfData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+            const data = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+            console.log(data);
+            return data;
+            //XLSX.writeFile(workbook, "LCPT_UserAuditReport_"+userList.user_id+".xlsx");
+     }
 
-    //pdf
-    const printPdfReport = () => {
-        var doc = new jsPDF("p", "pt", "a4");
-        doc.html(document.querySelector("#content"), {
-            callback: function (pdf) {
+     //pdf- Not in use
+     const printPdfReport = () => {
+        var doc = new jsPDF("p","pt","a4");
+        doc.html(document.querySelector("#content"),{
+            callback: function(pdf){
                 pdf.save("mypdf.pdf");
             }
         });
+     }
+
+     //pdf
+     var exportAuditPDF = () => {
+        const unit = "pt";
+        const size = "A4"; // Use A1, A2, A3 or A4
+        const orientation = "portrait"; // portrait or landscape
+        const marginLeft = 5;
+        const doc = new jsPDF(orientation, unit, size);
+        doc.setFontSize(15);
+        const title = "LCPT User Audit Report";
+        var headers = [["userName", "user_id", "email", "number", "dob", "address", "crsId", 
+        "title", "status", "validity", "sharedEmp", "extDoc", "trainDuration"]];
+        var dataArr = [];
+        for (let i = 0; i < finalList.length; i++) {
+            var tempArr = [userList.userName, userList.user_id, userList.email,userList.number,userList.dob, userList.address,
+            finalList[i]["crsId"],finalList[i]["title"],finalList[i]["status"],finalList[i]["validity"],
+            finalList[i]["sharedEmp"],finalList[i]["extDoc"],finalList[i]["trainDuration"]];
+            dataArr.push(tempArr);
+        }
+        let content = {
+            startY: 50,
+            head: headers,
+            body: dataArr
+        };
+        doc.text(title, marginLeft, 40);
+        doc.autoTable(content);
+        var blob =doc.output('blob')
+        return blob;
     }
 
-    const formatChange = e => {
-        const { name, value } = e.target;
-
-    }
-
-    const handleOnChange = e => {
-        const { name, value } = e.target;
+     const formatChange = e => {
+        const{name, value} = e.target;
+        (value == "pdf")? setformat(1): setformat(0);
+     }
+     
+     const handleOnChange = e => {
+        const{name, value} = e.target;
         setselectedHomeId(value);
         setmsg("");
         var index = e.nativeEvent.target.selectedIndex;
@@ -242,9 +275,33 @@ function UserAuditReport(props) {
         }
     }
 
-    const fetchAllCourses = e => {
-        const { name, value } = e.target;
-        setFinalList([{ '': '' }]);
+     const sendDataThroughEmail = e => {
+        var fileBlob = "";
+        var data = new FormData();
+        data.append("userId", params);
+        data.append("emailId", empEmailId);
+        if(format == 0){
+            //excel
+            fileBlob = exportAuditExcel();
+        }else{
+            //pdf
+            fileBlob = exportAuditPDF();
+        }
+        data.append("file", fileBlob);
+        axios.post(BASE_URL_EMAIL_TO_EMPLOYER, data)
+            .then(response => {
+                console.log(response);
+            });
+     }
+
+     const updateEmpEmailId = e =>{
+        const{name, value} = e.target;
+        setempEmailId(value);
+     }
+
+     const fetchAllCourses = e =>{
+        const{name, value} = e.target;
+        setFinalList([{'':''}]);
         var index = e.nativeEvent.target.selectedIndex;
         var text = msg;
         text = text.split(" - ")[0];
@@ -293,35 +350,33 @@ function UserAuditReport(props) {
     return (
         <div>
             <br></br>
-            <Container style={{ minHeight: '20pc' }}>
-                <Row>
-
-                    <Col>
-
-                        <h3 className='text-center' style={{ color: '#0f6fc5' }}> <FaUserCheck /> User Report</h3>
-                        <br></br>
-                        <br></br>
-                        <br></br>
-                        <Row>
-                            <Col>
-                                <div className='text-left'>
-                                    <h5><b>User ID :</b> {userList.user_id}</h5>
-                                    <h5><b>Username : </b>{userList.userName}</h5>
-                                    <h5><b>Contact : </b>{userList.number}</h5>
-                                    <h5><b>Email ID : </b>{userList.email}</h5>
-                                    <h5><b>Address : </b>{userList.address + ", " + userList.city + ", " + userList.state + " , " + userList.postalCode}</h5>
-                                </div>
-                            </Col>
-                            <Col>
-                                <Form>
-
-                                    <Row className="mb-3">
-                                        <Form.Group as={Col} controlId="formGridState">
-                                            <Form.Label>Home</Form.Label>
-                                            <Form.Select name="format" onChange={handleOnChange}>
-                                                <option value={0} key='0'> -- Please select -- </option>
-                                                {homeList?.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))}
-                                            </Form.Select>
+            <Container style={{minHeight:'20pc'}}>
+            <Row>
+           
+            <Col>
+          
+            <h3 className='text-center' style={{color:'#0f6fc5'}}> <FaUserCheck/> User Report</h3>
+                <br></br>
+                    <Row>
+                    <Col xs={6} md={5}>
+                    <div className='text-left'>
+                    <h5><b>User ID :</b> {userList.user_id}</h5>
+                    <h5><b>Username : </b>{userList.userName}</h5>
+                    <h5><b>Contact : </b>{userList.number}</h5>
+                    <h5><b>Email ID : </b>{userList.email}</h5>
+                    <h5><b>Address : </b>{userList.address+", "+userList.city+", "+userList.state+" , "+userList.postalCode}</h5>
+                    </div>
+                    </Col>
+                    <Col xs={6} md={7} className='shadow p-3 mb-5 bg-white rounded'>
+                        <Form >
+                           
+                            <Row className="mb-3">
+                                    <Form.Group as={Col} controlId="formGridState">
+                                        <Form.Label>Home</Form.Label>
+                                        <Form.Select name="format" onChange={handleOnChange}>
+                                            <option value={0} key='0'> -- Please select -- </option>
+                                            {homeList?.map((data, id) => (<option value={data.home_id} key={data.home_id}>{data.name}</option>))}
+                                        </Form.Select>
                                         </Form.Group>
                                         <Form.Group as={Col} controlId="formGridState">
                                             <Form.Label>Role</Form.Label>
@@ -330,40 +385,50 @@ function UserAuditReport(props) {
                                                 {roleList?.map((data, id) => (<option value={data.role_id} key={data.role_id}>{data.role_name}</option>))}
                                             </Form.Select>
                                         </Form.Group>
-                                    </Row>
-                                    <br></br>
-                                    <hr></hr>
-                                    <Form.Group id="formGridCheckbox">
-                                        <Form.Label>Please select format for Audit Report</Form.Label>
+                                </Row>
+                                <hr></hr>
+                                <Form.Group id="formGridCheckbox">
+                                <Form.Label>Please select format for Audit Report</Form.Label>
                                         <Form.Select name="format" onChange={formatChange}>
                                             <option> -- Choose your format -- </option>
                                             <option value="excel" key="1">Excel</option>
                                             <option value="pdf" key="2"> PDF</option>
 
                                         </Form.Select>
-                                    </Form.Group>
-                                    <br></br>
-                                    <Form.Group>
-                                        <Form.Check type="checkbox" label="Verify and send all data to Employer" />
-                                    </Form.Group>
-                                    <br></br>
-                                    <Row className="mb-3">
-
-                                        <Form.Group as={Col} controlId="formGridName">
-                                            <Form.Label>Email ID</Form.Label>
-                                            <Form.Control type="text" name="email" placeholder="Enter employer email ID" />
+                                </Form.Group>
+                                <br></br>
+                                <Form.Group>
+                                            <Form.Check type="checkbox" label="Verify and send all data to Employer" />
                                         </Form.Group>
-                                        <Form.Group as={Col} controlId="formGridName">
-                                            <Button variant="primary" onClick={printPdfReport}><FaRegPaperPlane /> Send</Button>
-                                        </Form.Group>
-                                    </Row>
-                                    <br></br>
-                                    <hr></hr>
-
-                                </Form>
-                            </Col>
-                        </Row>
-
+                                        <br></br>
+                                        <Row className="sm-3">
+                                            <Col xs={6} md={9}>
+                                            <Form.Group  as={Col} controlId="formGridName">
+                                                <Form.Label>Email ID</Form.Label>
+                                                <Form.Control className="w-50" type="text" name="email" onBlur={updateEmpEmailId} placeholder="Employer email ID" />
+                                            </Form.Group>
+                                            </Col>
+                                            <Col xs={6} md={3}>
+                                            <Form.Group  as={Col} controlId="formGridName">
+                                                <Button variant="primary" onClick={sendDataThroughEmail}><FaRegPaperPlane/> Send</Button>
+                                            </Form.Group>
+                                            </Col>
+                                        </Row>
+                              
+                        </Form>
+                    </Col>
+                    </Row>
+                   
+            </Col>
+            </Row>
+            <br></br>
+            <br></br>
+           
+               
+                <hr></hr>
+                <Row>
+                    <Col>
+                    <h5>{msg}</h5>
                     </Col>
                 </Row>
                 <br></br>
